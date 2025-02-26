@@ -1,5 +1,5 @@
 import { Request , Response } from "express";
-import Post from "../models/post_model";
+import Post from "../models/campaign_model";
 
 const createPost = async (req: Request, res: Response) => {
     try {

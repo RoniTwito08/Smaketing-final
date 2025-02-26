@@ -1,13 +1,13 @@
 {
-  "name": "cwc---content-with-coffee",
+  "name": "Smaketing",
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "server": "cd backend-cwc && npm i && cp .env_dev .env && npx ts-node app.ts",
-    "server_prod": "cd backend-cwc && npm i && cp .env_prod .env && npx ts-node app.ts",
-    "client": "cd frontend-cwc && cp .env_dev .env && npm i && npm run dev",
-    "client_prod": "cd frontend-cwc && cp .env_prod .env && npm i && npm run build",
+    "server": "cd backend && npm i && shx cp .env_dev .env && npx ts-node app.ts",
+    "server_prod": "cd backend && npm i && cp .env_prod .env && npx ts-node app.ts",
+    "client": "cd frontend && cp .env_dev .env && npm i && npm run dev",
+    "client_prod": "cd frontend && cp .env_prod .env && npm i && npm run build",
     "dev": "npm i && concurrently \"npm run server\" \"npm run client\"",
     "prod": "npm i && npm run client_prod && npm run server_prod "
   },
@@ -17,6 +17,7 @@
   "description": "",
   "dependencies": {
     "@react-oauth/google": "^0.12.1",
+    "@types/express": "^5.0.0",
     "@types/react-select": "^5.0.0",
     "axios": "^1.7.9",
     "concurrently": "^9.1.2",
@@ -28,6 +29,7 @@
   "devDependencies": {
     "@types/cors": "^2.8.17",
     "@types/node": "^22.10.4",
+    "shx": "^0.3.4",
     "ts-node": "^10.9.2"
   }
 }

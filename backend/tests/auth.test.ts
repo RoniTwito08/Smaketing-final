@@ -2,7 +2,7 @@ import request from "supertest";
 import app , { connectDB } from "../server";
 import User , { UserInterface } from "../models/user_model";
 import mongoose from "mongoose";
-import Post from "../models/post_model";
+import Post from "../models/campaign_model";
 
 beforeAll(async () => {
     console.log("Jest starting!");

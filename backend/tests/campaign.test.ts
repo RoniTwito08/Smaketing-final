@@ -1,6 +1,6 @@
 import request from "supertest";
 import app , { connectDB } from "../server";
-import Post , { PostInterface } from "../models/post_model";
+import Post , { PostInterface } from "../models/campaign_model";
 import User , { UserInterface } from "../models/user_model";
 import mongoose from "mongoose";
 

@@ -7,8 +7,7 @@ export interface PostInterface {
     image?: string;
     tags?: string[];
     createdAt?: Date;
-    likesCount?: number;
-    commentsCount?: number;
+  
 }
 
 const postSchema = new mongoose.Schema({
@@ -32,14 +31,7 @@ const postSchema = new mongoose.Schema({
         type: Date,
         default: Date.now,
     },
-    likesCount:{
-        type: Number,
-        default: 0,
-    },
-    commentsCount:{
-        type: Number,
-        default: 0,
-    }
+
 });
 
 const Post = mongoose.model("Post", postSchema);

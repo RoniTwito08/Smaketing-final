@@ -5,10 +5,10 @@ import express from "express";
 const PORT = process.env.PORT || 8080;
 
 connectDB().then(() => {
-app.use(express.static(path.join(__dirname, "../frontend-cwc/dist")));
+app.use(express.static(path.join(__dirname, "../frontend/dist")));
 
 app.get("*", (req, res) => {
-  res.sendFile(path.join(__dirname, "../frontend-cwc/dist/index.html"));
+  res.sendFile(path.join(__dirname, "../frontend/dist/index.html"));
 });
     app.listen(PORT, () => {
         console.log(`Server listening on port ${PORT}`);

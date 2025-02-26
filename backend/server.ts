@@ -4,10 +4,7 @@ import bodyParser from 'body-parser';
 import mongoose from 'mongoose';
 import cors from 'cors';
 import AuthRoutes from './routes/auth_routes';
-import PostRoutes from './routes/post_routes';
-import CommentRoutes from './routes/comment_routes';
-import LikeRoutes from './routes/like_routes';
-import MessagesRoutes from './routes/message_routes';
+import CampaignRoutes from './routes/campaign_routes';
 import UserRoutes from './routes/user_routes';
 
 dotenv.config();
@@ -33,10 +30,7 @@ app.use(express.static('public'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use('/api/auth', AuthRoutes);
-app.use('/api/post', PostRoutes);
-app.use('/api/comment', CommentRoutes);
-app.use('/api/like', LikeRoutes);
-app.use('/api/messages', MessagesRoutes);
+app.use('/api/campaign', CampaignRoutes);
 app.use('/api/user', UserRoutes);
 
 export default app;
