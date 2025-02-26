@@ -10,7 +10,7 @@ export interface PostInterface {
   
 }
 
-const postSchema = new mongoose.Schema({
+const CampaignSchema = new mongoose.Schema({
     userId: {
         type: String,
         required: true,
@@ -34,6 +34,6 @@ const postSchema = new mongoose.Schema({
 
 });
 
-const Post = mongoose.model("Post", postSchema);
-export default Post;
+const Campaign = mongoose.model("Post", CampaignSchema);
+export default Campaign;
     
