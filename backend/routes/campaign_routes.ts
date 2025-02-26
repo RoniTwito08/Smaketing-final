@@ -1,20 +1,20 @@
 import express from "express";
-import PostControllers from "../controllers/post_controller";
+import CampaignControllers from "../controllers/campaign_controller";
 import { Router } from "express";
 import { authMiddleware } from "../controllers/auth_controller";
 
 const router = express.Router();
 
-router.post("/createPost", authMiddleware, PostControllers.createPost);
+router.post("/createCampaign", authMiddleware, CampaignControllers.createCampaign);
 
-router.get("/getPosts", PostControllers.getPosts);
+router.get("/getCampaign", CampaignControllers.getCampaign);
 
-router.get("/getPostById/:postId", PostControllers.getPostById);
+router.get("/getCampaignById/:postId", CampaignControllers.getCampaignById);
 
-router.get("/getPostByUserId" ,authMiddleware , PostControllers.getPostByUserId);
+router.get("/getPostByUserId" ,authMiddleware , CampaignControllers.getCampaignByUserId);
 
-router.put("/updatePostById/:postId", authMiddleware, PostControllers.updatePostById);
+router.put("/updatePostById/:postId", authMiddleware, CampaignControllers.updateCampaignById);
 
-router.delete("/deletePostById/:postId", authMiddleware, PostControllers.deletePostById);
+router.delete("/deletePostById/:postId", authMiddleware, CampaignControllers.deleteCampaignById);
 
 export default router;

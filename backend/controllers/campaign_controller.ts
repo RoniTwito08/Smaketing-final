@@ -1,7 +1,7 @@
 import { Request , Response } from "express";
-import Post from "../models/campaign_model";
+import Campaign from "../models/campaign_model";
 
-const createPost = async (req: Request, res: Response) => {
+const createCampaign = async (req: Request, res: Response) => {
     try {
         const { content, image, tags } = req.body;
         const userId = req.user?._id; 
@@ -11,8 +11,8 @@ const createPost = async (req: Request, res: Response) => {
             return;
         }
 
-        const post = await Post.create({ userId, content, image, tags });
-        res.status(201).json({ success: true, data: post });
+        const campaign = await Campaign.create({ userId, content, image, tags });
+        res.status(201).json({ success: true, data: campaign });
     } catch (error) {
         console.error(error);
         res.status(500).json({ success: false, message: "Internal server error" });
@@ -20,69 +20,69 @@ const createPost = async (req: Request, res: Response) => {
 };
 
 
-const getPosts = async (req: Request, res: Response) => {
+const getCampaign = async (req: Request, res: Response) => {
     try {
-        const posts = await Post.find();
-        if (!posts) {
-            res.status(404).json({ message: "No posts found" });
+        const campaign = await Campaign.find();
+        if (!campaign) {
+            res.status(404).json({ message: "No campaign found" });
             return;
         }
-        res.status(200).json({ posts , success: true });
+        res.status(200).json({ campaign , success: true });
     } catch (error) {
         res.status(500).json({ message: "Internal server error" });
     }
 }
 
-const getPostById = async (req: Request, res: Response) => {
+const getCampaignById = async (req: Request, res: Response) => {
     try {
-        const postId = req.params.postId;
-        const post = await Post.findById(postId);
-        if (!post) {
+        const campaignId = req.params.campaignId;
+        const campaign = await Campaign.findById(campaignId);
+        if (!campaign) {
             res.status(404).json({ message: "Post not found" });
             return;
         }
-        res.status(200).json({ post , success: true });
+        res.status(200).json({ campaign , success: true });
     } catch (error) {
         res.status(500).json({ message: "Internal server error" });
     }
 }
 
-const getPostByUserId = async (req: Request, res: Response) => {
+const getCampaignByUserId = async (req: Request, res: Response) => {
     try {
         const userId = req.user?._id; 
-        const posts = await Post.find({userId});
-        if (!posts) {
-            res.status(404).json({ message: "No posts found" });
+        const campaign = await Campaign.find({userId});
+        if (!campaign) {
+            res.status(404).json({ message: "No campaign found" });
             return;
         }
-        res.status(200).json({ posts ,success: true });
+        res.status(200).json({ campaign ,success: true });
     } catch (error) {
         res.status(500).json({ message: "Internal server error" });
     }
 }
 
-const updatePostById = async (req: Request, res: Response) => {
+const updateCampaignById = async (req: Request, res: Response) => {
     try {
-        const postId = req.params.postId;
+        const campaignId = req.params.campaignId;
         const { content, tags } = req.body;
         const userId = req.user?._id;
 
-        const post = await Post.findById(postId);
-        if (!post) {
+        const campaign = await Campaign.findById(campaignId);
+        if (!campaign) {
             res.status(404).json({ success: false, message: "Post not found" });
             return;
         }
 
-        if (post.userId !== userId) {
+        if (campaign.userId !== userId) {
             res.status(403).json({ success: false, message: "Unauthorized to update this post" });
             return;
         }
 
-        post.content = content || post.content;
-        post.tags = tags || post.tags;
-        await post.save();
+        campaign.content = content || campaign.content;
+        campaign.tags = tags || campaign.tags;
+        await campaign.save();
 
-        res.status(200).json({ success: true, data: post });
+        res.status(200).json({ success: true, data: campaign });
     } catch (error) {
         console.error(error);
         res.status(500).json({ success: false, message: "Internal server error" });
@@ -90,23 +90,23 @@ const updatePostById = async (req: Request, res: Response) => {
 };
 
 
-const deletePostById = async (req: Request, res: Response) => {
+const deleteCampaignById = async (req: Request, res: Response) => {
     try {
-        const postId = req.params.postId;
+        const campaignId = req.params.campaignId;
         const userId = req.user?._id;
 
-        const post = await Post.findById(postId);
-        if (!post) {
+        const campaign = await Campaign.findById(campaignId);
+        if (!campaign) {
             res.status(404).json({ success: false, message: "Post not found" });
             return;
         }
 
-        if (post.userId !== userId) {
+        if (campaign.userId !== userId) {
             res.status(403).json({ success: false, message: "Unauthorized to delete this post" });
             return;
         }
 
-        await post.deleteOne();
+        await campaign.deleteOne();
         res.status(200).json({ success: true });
     } catch (error) {
         console.error(error);
@@ -114,9 +114,9 @@ const deletePostById = async (req: Request, res: Response) => {
     }
 };
  
-const PostController = { createPost, getPosts, getPostById, getPostByUserId, updatePostById, deletePostById};
+const CampaignController = { createCampaign, getCampaign, getCampaignById, getCampaignByUserId, updateCampaignById, deleteCampaignById};
 
-export default PostController;
+export default CampaignController;
 
 
         

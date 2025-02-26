@@ -4,7 +4,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "server": "cd backend && npm i && shx cp .env_dev .env && npx ts-node app.ts",
+    "server": "cd backend && npm i &&  cp .env_dev .env && npx ts-node app.ts",
     "server_prod": "cd backend && npm i && cp .env_prod .env && npx ts-node app.ts",
     "client": "cd frontend && cp .env_dev .env && npm i && npm run dev",
     "client_prod": "cd frontend && cp .env_prod .env && npm i && npm run build",
