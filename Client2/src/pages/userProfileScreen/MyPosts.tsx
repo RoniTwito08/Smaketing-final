@@ -14,7 +14,7 @@ export const MyPosts = () => {
   const currentUser: User = {
     id: "current123",
     name: "דן כהן",
-    profilePicture: "https://placehold.co/150x150"
+    profilePicture: "https://placehold.co/150x150",
   };
 
   useEffect(() => {
@@ -24,20 +24,26 @@ export const MyPosts = () => {
     }
   }, [initialized]);
 
-  const handleCreatePost = (postData: string, image?: File, userName?: string) => {
+  const handleCreatePost = (
+    postData: string,
+    image?: File,
+    userName?: string
+  ) => {
     const newPost: Post = {
       id: `post-${Date.now()}`,
       user: {
         id: `user-${Date.now()}`,
         name: userName || "משתמש אנונימי",
-        profilePicture: "https://placehold.co/150x150" 
+        profilePicture: "https://placehold.co/150x150",
       },
-      image: image ? URL.createObjectURL(image) : "https://picsum.photos/400/300",
-      comments: []
+      image: image
+        ? URL.createObjectURL(image)
+        : "https://picsum.photos/400/300",
+      comments: [],
     };
 
-    setLocalPosts(prevPosts => {
-      console.log('Previous posts:', prevPosts);
+    setLocalPosts((prevPosts) => {
+      console.log("Previous posts:", prevPosts);
       return [newPost, ...prevPosts];
     });
     setIsCreateModalOpen(false);
@@ -52,7 +58,7 @@ export const MyPosts = () => {
             className={styles.createPostButton}
             onClick={() => setIsCreateModalOpen(true)}
           >
-            צור פוסט
+            צור פוטס
           </button>
         </div>
         <FeedPage posts={localPosts} className={styles.feed} />
@@ -65,4 +71,4 @@ export const MyPosts = () => {
       />
     </div>
   );
-}; 
+};

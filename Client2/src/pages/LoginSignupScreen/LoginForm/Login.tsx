@@ -6,8 +6,9 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import { loginUser } from "../api";
+import { loginUser, googleSignin } from "../api";
 import { useAuth } from "../../../context/AuthContext";
+import { CredentialResponse, GoogleLogin } from "@react-oauth/google";
 
 type LoginInputs = {
   email: string;
@@ -52,17 +53,6 @@ const LoginForm: React.FC = () => {
     }
   };
 
-  const handleGoogleLogin = async () => {
-    try {
-      // TODO: Replace with actual Google auth endpoint
-      const response = await axios.get("/api/auth/google");
-      window.location.href = response.data.authUrl;
-    } catch (error) {
-      console.error("Google login failed:", error);
-      toast.error("ההתחברות עם Google נכשלה. אנא נסה שוב");
-    }
-  };
-
   const handleErrors = () => {
     // הודעות שגיאה למייל
     if (errors.email?.type === "required") {
@@ -81,6 +71,22 @@ const LoginForm: React.FC = () => {
     }
   };
 
+  const googleResponseMessage = async (
+    credentialResponse: CredentialResponse
+  ) => {
+    console.log({ credentialResponse });
+    try {
+      const res = await googleSignin(credentialResponse);
+      navigate("/profile", { replace: true });
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  const googleErrorMessage = () => {
+    console.log("Google error");
+  };
+
   return (
     <form
       className={styles.form}
@@ -89,14 +95,10 @@ const LoginForm: React.FC = () => {
       <ToastContainer />
       <h1>היכנס עכשיו</h1>
 
-      <button
-        type="button"
-        className={styles.googleButton}
-        onClick={handleGoogleLogin}
-      >
-        <img src="/google-icon.svg" alt="Google" />
-        התחבר עם Google
-      </button>
+      <GoogleLogin
+        onSuccess={googleResponseMessage}
+        onError={googleErrorMessage}
+      />
 
       <div className={styles.divider}>
         <span>או</span>

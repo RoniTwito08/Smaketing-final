@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import styles from './CreatePostModal.module.css';
+import { useState } from "react";
+import styles from "./CreatePostModal.module.css";
 
 interface CreatePostModalProps {
   isOpen: boolean;
@@ -7,11 +7,14 @@ interface CreatePostModalProps {
   onSubmit: (postData: string, image?: File, userName?: string) => void;
 }
 
-export const CreatePostModal = ({ isOpen, onClose, onSubmit }: CreatePostModalProps) => {
-  const [postContent, setPostContent] = useState('');
+export const CreatePostModal = ({
+  isOpen,
+  onClose,
+  onSubmit,
+}: CreatePostModalProps) => {
+  const [postContent, setPostContent] = useState("");
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
-  const [userName, setUserName] = useState('');
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -28,11 +31,10 @@ export const CreatePostModal = ({ isOpen, onClose, onSubmit }: CreatePostModalPr
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (postContent.trim()) {
-      onSubmit(postContent, selectedImage || undefined, userName);
-      setPostContent('');
+      onSubmit(postContent, selectedImage || undefined);
+      setPostContent("");
       setSelectedImage(null);
       setImagePreview(null);
-      setUserName('');
       onClose();
     }
   };
@@ -42,23 +44,18 @@ export const CreatePostModal = ({ isOpen, onClose, onSubmit }: CreatePostModalPr
   return (
     <div className={styles.modalOverlay}>
       <div className={styles.modal}>
-        <button className={styles.closeButton} onClick={onClose}>×</button>
+        <button className={styles.closeButton} onClick={onClose}>
+          ×
+        </button>
         <h2>יצירת פוסט חדש</h2>
         <form onSubmit={handleSubmit}>
-          <input
-            type="text"
-            value={userName}
-            onChange={(e) => setUserName(e.target.value)}
-            placeholder="שם המשתמש"
-            className={styles.input}
-          />
           <textarea
             value={postContent}
             onChange={(e) => setPostContent(e.target.value)}
             placeholder="על מה תרצה לשתף?"
             className={styles.contentInput}
           />
-          
+
           <div className={styles.imageUpload}>
             <input
               type="file"
@@ -68,7 +65,7 @@ export const CreatePostModal = ({ isOpen, onClose, onSubmit }: CreatePostModalPr
               className={styles.fileInput}
             />
             <label htmlFor="imageInput" className={styles.uploadButton}>
-              {imagePreview ? 'שנה תמונה' : 'הוסף תמונה'}
+              {imagePreview ? "שנה תמונה" : "הוסף תמונה"}
             </label>
           </div>
 
@@ -78,8 +75,8 @@ export const CreatePostModal = ({ isOpen, onClose, onSubmit }: CreatePostModalPr
             </div>
           )}
 
-          <button 
-            type="submit" 
+          <button
+            type="submit"
             className={styles.submitButton}
             disabled={!postContent.trim()}
           >
@@ -89,4 +86,4 @@ export const CreatePostModal = ({ isOpen, onClose, onSubmit }: CreatePostModalPr
       </div>
     </div>
   );
-}; 
+};

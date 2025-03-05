@@ -28,16 +28,14 @@ export default function DashboardLayoutBasic(props: any) {
   const { window } = props;
   const router = useDemoRouter("/dashboard");
   const demoWindow = window ? window() : undefined;
-  const { logout } = useAuth(); // ✅ Get logout function
+  const { logout } = useAuth();
 
-  // ✅ Handle logout when navigating to "/logout"
   useEffect(() => {
     if (router.pathname === "/logout") {
       logout();
     }
   }, [router.pathname, logout]);
 
-  // ✅ Updated NAVIGATION with a "Logout" Item
   const NAVIGATION: Navigation = [
     {
       kind: "header",
@@ -113,7 +111,7 @@ export default function DashboardLayoutBasic(props: any) {
       kind: "divider",
     },
     {
-      segment: "logout", // ✅ Special logout segment
+      segment: "logout",
       title: "התנתקות",
       icon: <LogoutIcon />,
     },
