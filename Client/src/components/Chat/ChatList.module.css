@@ -1,0 +1,72 @@
+.chatList {
+  width: 300px;
+  background: white;
+  border-radius: 10px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  direction: rtl;
+}
+
+.header {
+  padding: 15px;
+  background-color: #001D3F;
+  color: white;
+}
+
+.header h2 {
+  margin: 0;
+  font-size: 1.2em;
+}
+
+.userList {
+  max-height: 500px;
+  overflow-y: auto;
+}
+
+.userItem {
+  display: flex;
+  padding: 15px;
+  border-bottom: 1px solid #eee;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.userItem:hover {
+  background-color: #f5f5f5;
+}
+
+.userAvatar {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  margin-left: 15px;
+}
+
+.userInfo {
+  flex: 1;
+}
+
+.userInfo h3 {
+  margin: 0;
+  font-size: 1em;
+  color: #001D3F;
+}
+
+.userRole {
+  font-size: 0.8em;
+  color: #666;
+}
+
+.lastMessage {
+  margin: 5px 0 0;
+  font-size: 0.9em;
+  color: #666;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.messageTime {
+  font-size: 0.8em;
+  color: #999;
+} 

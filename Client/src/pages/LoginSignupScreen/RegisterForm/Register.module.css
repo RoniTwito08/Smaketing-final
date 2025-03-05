@@ -1,0 +1,59 @@
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  justify-content: center;
+  align-items: center;
+}
+
+.inputBox {
+  position: relative;
+  width: 100%;
+}
+
+.inputBox input {
+  width: 100%;
+  padding: 10px 15px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  direction: rtl;
+}
+
+.inputBox i {
+  position: absolute;
+  left: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 20px;
+  color: #888;
+}
+
+form .btn {
+  padding: 10px 20px;
+  background: linear-gradient(90deg, var(--dark-blue), var(--dark-blue));
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  width: 100%;
+}
+
+i {
+  position: absolute;
+  left: -90px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 20px;
+  color: #888;
+}
+
+/* הודעות שגיאה */
+.inputBox .error {
+  position: absolute;
+  bottom: -20px; /* מציב את ההודעה מתחת לשדה */
+  left: 0;
+  font-size: 12px;
+  color: red;
+  margin: 0;
+  padding: 0;
+}

@@ -1,0 +1,119 @@
+###########posts############
+# add a new post
+POST http://localhost:3000/posts
+Content-Type: application/json
+
+{
+  "postData": "This is the content of the new post.",
+  "senderId": "Aviv"
+}
+
+### get all posts
+GET http://localhost:3000/posts
+
+### get a post by id
+GET http://localhost:3000/posts/6761c94f063095ee0a657010
+
+### get a post by senderId
+GET http://localhost:3000/posts/filter?senderId=Aviv
+
+### update a post by id
+PUT http://localhost:3000/posts/6761da32a79d05f9b606a885
+Content-Type: application/json
+
+{
+  "postData": "updated post"
+}
+
+### EXTRA- delete all posts
+DELETE http://localhost:3000/posts
+
+###########comments############
+### create a comment
+POST http://localhost:3000/comments
+Content-Type: application/json
+
+{
+  "userId": "aviv",
+  "commentData": "This is the content of the new post.",
+  "postId": "67509e441b5bcc0c43a8a790"
+}
+
+### read (get) all comments
+GET http://localhost:3000/comments
+
+### read (get) a comment by id
+GET http://localhost:3000/comments/6761c2a58006dcdeb0f63921
+
+### update a comment by id
+PUT http://localhost:3000/comments/6761c2a58006dcdeb0f63921
+Content-Type: application/json
+
+{
+  "commentData": "updated comment"
+}
+
+### delete a comment by id
+DELETE http://localhost:3000/comments/6761c2a58006dcdeb0f63921
+
+###########users############
+### create a user
+POST http://localhost:3000/users
+Content-Type: application/json
+
+{
+  "email": "eliav@gmail",
+  "password": "1234",
+  "favPat": "Crocodile"
+}
+
+### get user by id
+GET http://localhost:3000/users/6777e5ad882ac9320dc35198
+
+### update a password by id
+PUT http://localhost:3000/users/6777e5ad882ac9320dc35198
+Content-Type: application/json
+
+{
+  "password": "5678"
+}
+
+### update a favPat by id
+PUT http://localhost:3000/users/6762f61f8455f1f5ed4c7cc7
+Content-Type: application/json
+
+{
+  "favPat": "Lion"
+}
+
+### delete a user by id
+DELETE http://localhost:3000/users/6762f61f8455f1f5ed4c7cc7
+
+###########auth############
+
+### Register
+POST http://localhost:3000/auth/register
+Content-Type: application/json
+
+{
+  "email": "adam@gmail",
+  "password": "1234",
+  "favPat": "Crocodile"
+}
+
+### Login
+POST http://localhost:3000/auth/login
+Content-Type: application/json
+
+{
+  "email": "adam@gmail",
+  "password": "1234"
+}
+
+### Logout
+POST http://localhost:3000/auth/logout
+Content-Type: application/json
+//Send user 
+{
+  "email": "adam@gmail"
+}
