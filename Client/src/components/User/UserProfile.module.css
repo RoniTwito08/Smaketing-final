@@ -1,0 +1,33 @@
+.postsSection {
+  margin-top: 2rem;
+  padding: 1rem;
+}
+
+.postsList {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.postCard {
+  background: white;
+  padding: 1rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.postDate {
+  display: block;
+  font-size: 0.8rem;
+  color: #666;
+  margin-top: 0.5rem;
+}
+
+.error {
+  color: #dc3545;
+  padding: 1rem;
+  background: #ffe6e6;
+  border-radius: 4px;
+  margin: 1rem 0;
+} 

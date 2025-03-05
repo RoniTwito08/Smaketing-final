@@ -1,0 +1,13 @@
+.comment {
+  display: flex;
+  gap: 0.5rem;
+  align-items: flex-start;
+}
+
+.comment-user {
+  font-weight: bold;
+}
+
+.comment-text {
+  word-break: break-word;
+}
