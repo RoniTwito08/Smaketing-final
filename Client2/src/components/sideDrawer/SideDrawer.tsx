@@ -17,7 +17,6 @@ import LandingPage from "../../pages/landingPageScreen/LandingPage";
 import { ChatList } from "../Chat/ChatList";
 import logo from "../../assets/Smarketing.png";
 import Dashboard from "../../pages/dashboard/dashboard";
-import FeedPage from "../../pages/feedPage/Feed";
 import { mockPosts } from "../../mockData/mockPost";
 import { MyPosts } from "../../pages/userProfileScreen/MyPosts";
 import { AccountSettings } from "../../pages/userProfileScreen/AccountSettings";
@@ -37,23 +36,6 @@ export default function DashboardLayoutBasic(props: any) {
   }, [router.pathname, logout]);
 
   const NAVIGATION: Navigation = [
-    {
-      kind: "header",
-      title: "Blog",
-    },
-    {
-      segment: "feed",
-      title: "תוכן",
-      icon: <HomeOutlinedIcon />,
-    },
-    {
-      segment: "chats",
-      title: "צאטים",
-      icon: <CalendarTodayOutlinedIcon />,
-    },
-    {
-      kind: "divider",
-    },
     {
       kind: "header",
       title: "Smarketing",
@@ -95,11 +77,6 @@ export default function DashboardLayoutBasic(props: any) {
       title: "הגדרות",
       icon: <MenuOutlinedIcon />,
       children: [
-        {
-          segment: "my-posts",
-          title: "הפוסטים שלי",
-          icon: <PersonOutlinedIcon />,
-        },
         {
           segment: "account",
           title: "הגדרות חשבון",
@@ -147,9 +124,7 @@ export default function DashboardLayoutBasic(props: any) {
 
   // Update the route mapping
   const routeComponents: { [key: string]: React.ReactNode } = {
-    "/settings/my-posts": <MyPosts />,
     "/settings/account": <AccountSettings />,
-    "/feed": <FeedPage posts={mockPosts} />,
     "/chats": <ChatList currentUserId="Adam" onSelectUser={() => {}} />,
     "/landingPage": <LandingPage />,
     "/campaign": <div>Campaign Page Content</div>,
