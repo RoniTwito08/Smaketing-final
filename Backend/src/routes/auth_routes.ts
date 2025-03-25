@@ -1,5 +1,7 @@
 import express from "express";
-import authController from "../controllers/auth_controller";
+import authController, { authMiddleware } from "../controllers/auth_controller";
+import upload from "../multer.config";
+import rateLimit from "express-rate-limit";
 
 const router = express.Router();
 
@@ -67,7 +69,72 @@ const router = express.Router();
  */
 
 router.post("/register", authController.register);
+
+// /**
+//  * @swagger
+//  * /auth/google:
+//  *   post:
+//  *     summary: Google Sign-In
+//  *     description: Authenticate user using Google OAuth and return tokens
+//  *     tags:
+//  *       - Auth
+//  *     requestBody:
+//  *       required: true
+//  *       content:
+//  *         application/json:
+//  *           schema:
+//  *             type: object
+//  *             properties:
+//  *               credential:
+//  *                 type: string
+//  *                 description: Google credential token
+//  *                 example: ya29.a0AfH6SM...
+//  *     responses:
+//  *       200:
+//  *         description: Successful login via Google
+//  *         content:
+//  *           application/json:
+//  *             schema:
+//  *               type: object
+//  *               properties:
+//  *                 accessToken:
+//  *                   type: string
+//  *                   example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+//  *                 refreshToken:
+//  *                   type: string
+//  *                   example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+//  *                 user:
+//  *                   type: object
+//  *                   properties:
+//  *                     _id:
+//  *                       type: string
+//  *                       example: 60d0fe4f5311236168a109ca
+//  *                     email:
+//  *                       type: string
+//  *                       example: user@gmail.com
+//  *                     fullName:
+//  *                       type: string
+//  *                       example: John Doe
+//  *                     profilePicture:
+//  *                       type: string
+//  *                       example: https://lh3.googleusercontent.com/a-/AOh14...
+//  *       400:
+//  *         description: Invalid Google credential
+//  *       500:
+//  *         description: Server error
+//  */
 router.post("/google", authController.googleSignin);
+
+//BF
+const loginLimiter = rateLimit({
+  windowMs: 60 * 60 * 1000,
+  max: 40,
+  message: {
+    message: "יותר מדי ניסיונות כושלים. נסה שוב מאוחר יותר.",
+  },
+  standardHeaders: true,
+  legacyHeaders: false,
+});
 
 /**
  * @swagger
@@ -105,7 +172,7 @@ router.post("/google", authController.googleSignin);
  *       500:
  *         description: Server error
  */
-router.post("/login", authController.login);
+router.post("/login", loginLimiter, authController.login);
 
 /**
  * @swagger
@@ -175,4 +242,97 @@ router.post("/refresh", authController.refresh);
  */
 router.post("/logout", authController.logout);
 
+/**
+ * @swagger
+ * /auth/profile/{id}:
+ *   put:
+ *     summary: Update user profile
+ *     tags: [Auth]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The user ID
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         multipart/form-data:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               profilePicture:
+ *                 type: string
+ *                 format: binary
+ *     responses:
+ *       200:
+ *         description: Profile updated successfully
+ */
+router.put(
+  "/profile/:id",
+  authMiddleware,
+  upload.single("profilePicture"),
+  authController.updateProfile
+);
+
+/**
+ * @swagger
+ * /auth/profile/{id}:
+ *   get:
+ *     summary: Get user by ID
+ *     tags: [Auth]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The user ID
+ *     responses:
+ *       200:
+ *         description: Returns user profile
+ */
+router.get("/profile/:id", authMiddleware, authController.getUserById);
+
+/**
+ * @swagger
+ * /auth/user/{id}:
+ *   get:
+ *     summary: Get user by ID
+ *     tags: [Auth]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The user ID
+ *     responses:
+ *       200:
+ *         description: Returns user details
+ */
+router.get("/user/:id", authController.getUserById);
+
+//route to check middleware
+/**
+ * @swagger
+ * /auth/protected-route:
+ *   get:
+ *     summary: Example protected route
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Successfully accessed protected route
+ *       401:
+ *         description: Access Denied
+ */
+router.get("/protected-route", authMiddleware, (req, res) => {
+  res.status(200).send("You have access!");
+});
 export default router;

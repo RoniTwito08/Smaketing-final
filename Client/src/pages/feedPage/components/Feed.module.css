@@ -1,0 +1,23 @@
+.feed {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 20px !important;
+  padding: 20px !important;
+  /* max-width: 1200px !important; Increased width for better layout */
+  margin: 0 auto !important;
+}
+
+.postGrid {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)) !important;
+  gap: 20px !important;
+  width: 100% !important;
+}
+
+.noPostsMessage {
+  text-align: center !important;
+  color: #666 !important;
+  font-family: 'Assistant', sans-serif !important;
+  font-size: 1.2rem !important;
+  padding: 2rem !important;
+} 

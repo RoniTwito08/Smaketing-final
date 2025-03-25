@@ -29,28 +29,28 @@ import { authMiddleware } from "../controllers/auth_controller";
 
 router.get("/", usersController.getAllUsers);
 
-/**
- * @swagger
- * /users:
- *   post:
- *     summary: Create a new user
- *     tags: [Users]
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             $ref: '#/components/schemas/User'
- *     responses:
- *       201:
- *         description: User created successfully
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/User'
- */
+// /**
+//  * @swagger
+//  * /users:
+//  *   post:
+//  *     summary: Create a new user
+//  *     tags: [Users]
+//  *     requestBody:
+//  *       required: true
+//  *       content:
+//  *         application/json:
+//  *           schema:
+//  *             $ref: '#/components/schemas/User'
+//  *     responses:
+//  *       201:
+//  *         description: User created successfully
+//  *         content:
+//  *           application/json:
+//  *             schema:
+//  *               $ref: '#/components/schemas/User'
+//  */
 
-router.post("/", usersController.createUser);
+// router.post("/", usersController.createUser);
 
 /**
  * @swagger
@@ -77,80 +77,6 @@ router.post("/", usersController.createUser);
  */
 
 router.get("/:id", usersController.getUserById);
-
-/**
- * @swagger
- * /users/{id}/:
- *   put:
- *     summary: Update user password by ID
- *     tags: [Users]
- *     security:
- *       - bearerAuth: []
- *     parameters:
- *       - in: path
- *         name: id
- *         schema:
- *           type: string
- *         required: true
- *         description: The user ID
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               password:
- *                 type: string
- *                 example: newpassword123
- *     responses:
- *       200:
- *         description: Password updated successfully
- *       401:
- *         description: Unauthorized
- *       404:
- *         description: User not found
- */
-router.put("/:id", authMiddleware, (req, res) => {
-  usersController.updatePasswordById(req, res);
-});
-
-/**
- * @swagger
- * /users/{id}:
- *   put:
- *     summary: Update user's favorite pattern by ID
- *     tags: [Users]
- *     security:
- *       - bearerAuth: []
- *     parameters:
- *       - in: path
- *         name: id
- *         schema:
- *           type: string
- *         required: true
- *         description: The user ID
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               fullName:
- *                 type: string
- *                 example: adam smith
- *     responses:
- *       200:
- *         description: Favorite pattern updated successfully
- *       401:
- *         description: Unauthorized
- *       404:
- *         description: User not found
- */
-router.put("/:id", authMiddleware, (req, res) => {
-  usersController.updateFullNameById(req, res);
-});
 
 /**
  * @swagger

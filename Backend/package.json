@@ -1,13 +1,21 @@
 {
   "dependencies": {
+    "@google/generative-ai": "^0.24.0",
+    "@types/helmet": "^0.0.48",
+    "axios": "^1.8.2",
     "bcrypt": "^5.1.1",
     "body-parser": "^1.20.3",
     "cors": "^2.8.5",
     "dotenv": "^16.4.7",
-    "express": "^4.21.1",
+    "express": "^4.21.2",
+    "express-rate-limit": "^7.5.0",
     "google-auth-library": "^9.15.1",
+    "helmet": "^8.0.0",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.8.1",
+    "multer": "^1.4.5-lts.1",
+    "sharp": "^0.33.5",
+    "socket.io": "^4.8.1",
     "swagger-jsdoc": "^6.2.8",
     "swagger-ui-express": "^5.0.1"
   },
@@ -18,6 +26,7 @@
     "@types/express": "^5.0.0",
     "@types/jest": "^29.5.14",
     "@types/jsonwebtoken": "^9.0.7",
+    "@types/multer": "^1.4.12",
     "@types/node": "^22.10.2",
     "@types/supertest": "^6.0.2",
     "@types/swagger-jsdoc": "^6.0.4",
@@ -34,9 +43,19 @@
   },
   "scripts": {
     "nodemon": "nodemon server.js",
-    "test": "cp .env_test .env && tsc && jest --detectOpenHandles --forceExit --verbose",
+    "test": "rm -rf dist && cp .env_test .env && tsc && jest --detectOpenHandles --forceExit --verbose",
+    "test:auth": "cp .env_test .env && tsc && jest src/test/auth.test.ts --detectOpenHandles --forceExit --verbose",
+    "test:chat": "cp .env_test .env && tsc && jest src/test/chat.test.ts --detectOpenHandles --forceExit --verbose",
+    "test:posts": "cp .env_test .env && tsc && jest src/test/posts.test.ts --detectOpenHandles --forceExit --verbose",
+    "test:users": "cp .env_test .env && tsc && jest src/test/users.test.ts --detectOpenHandles --forceExit --verbose",
+    "test:comments": "cp .env_test .env && tsc && jest src/test/comments.test.ts --detectOpenHandles --forceExit --verbose",
     "dev": "cp .env_dev .env && nodemon ./src/app.ts",
+    "dev_win": "copy .env_dev .env && nodemon ./src/app.ts",
+    "production": "cp .env_prod .env && nodemon ./src/app.ts",
+    "prod": "cp .env_prod .env &&  NODE_ENV=production && npm run build && npm run start",
     "lint": "eslint . --ext .ts",
-    "test:coverage": "jest --coverage"
+    "test:coverage": "jest --coverage",
+    "build": "tsc",
+    "start": "node dist/app.js"
   }
 }
