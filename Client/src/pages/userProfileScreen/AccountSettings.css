@@ -1,0 +1,88 @@
+.profileContainer {
+  padding: 40px;
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+}
+
+.userInfo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 30px;
+  padding: 30px;
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.profilePicture {
+  width: 250px;
+  height: 250px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 5px solid #4a90e2;
+  transition: transform 0.3s ease-in-out;
+}
+
+.profilePicture:hover {
+  transform: scale(1.05);
+}
+
+.userDetails {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.nameSection {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.nameSection h2 {
+  font-size: 1.8em;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 10px;
+}
+
+.editButton {
+  padding: 10px 20px;
+  background: linear-gradient(to right, #4a90e2, #36d1dc);
+  color: white;
+  border: none;
+  border-radius: 25px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.editButton:hover {
+  background: linear-gradient(to right, #36d1dc, #4a90e2);
+  transform: scale(1.05);
+}
+
+@media (max-width: 768px) {
+  .profileContainer {
+    padding: 20px;
+  }
+
+  .userInfo {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .profilePicture {
+    width: 120px;
+    height: 120px;
+  }
+
+  .editButton {
+    font-size: 14px;
+    padding: 8px 16px;
+  }
+}

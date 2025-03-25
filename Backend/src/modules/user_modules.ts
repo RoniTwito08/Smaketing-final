@@ -1,11 +1,13 @@
 import mongoose from "mongoose";
 
 export interface User {
-  email: string;
-  fullName: string;
-  password: string;
   _id?: string;
+  email: string;
+  password: string;
+  fullName: string;
   refreshToken?: string[];
+  profilePicture?: string | null;
+  role?: string;
 }
 
 const userSchema = new mongoose.Schema<User>({
@@ -16,15 +18,24 @@ const userSchema = new mongoose.Schema<User>({
   },
   password: {
     type: String,
-    required: true,
+    required: true, //GENERATE RANDOM PASSWORD FOR GOOGLE SIGN IN
   },
   fullName: {
     type: String,
     required: false,
   },
+  role: {
+    type: String,
+    default: "user",
+    enum: ["user", "expert", "admin"],
+  },
   refreshToken: {
     type: [String],
     default: [],
+  },
+  profilePicture: {
+    type: String,
+    required: false,
   },
 });
 

@@ -3,38 +3,115 @@ import userModel, { User } from "../modules/user_modules";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { Document } from "mongoose";
-import { log } from "console";
+import { log, profile } from "console";
 import { OAuth2Client } from "google-auth-library";
+import crypto from "crypto";
+import fs from "fs";
+import path from "path";
+import mongoose from "mongoose";
+
+import dotenv from "dotenv";
+import axios from "axios";
+dotenv.config();
 
 const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
-const googleSignin = async (req: Request, res: Response) => {
+const saveGoogleProfileImage = async (
+  googleImageUrl: string,
+  userId: string
+) => {
+  try {
+    const response = await axios.get(googleImageUrl, {
+      responseType: "arraybuffer",
+    });
+    const imagePath = `uploads/profile_pictures/${userId}.jpg`;
+    const fullPath = path.join(__dirname, "../../", imagePath);
+
+    fs.writeFileSync(fullPath, response.data);
+    return imagePath;
+  } catch (error) {
+    return null;
+  }
+};
+
+const googleSignin = async (req: Request, res: Response): Promise<void> => {
   const credential = req.body.credential;
+  if (!credential) {
+    res.status(400).send("Missing Google credential");
+    return;
+  }
+
   try {
     const ticket = await client.verifyIdToken({
       idToken: credential,
       audience: process.env.GOOGLE_CLIENT_ID,
     });
+
     const payload = ticket.getPayload();
-    const email = payload?.email;
-    if (email) {
-      let user = await userModel.findOne({ email: email });
-      if (!user) {
-        user = await userModel.create({
-          email: email,
-          password: "",
-          fullName: payload?.name,
-          imgUrl: payload?.picture,
-        });
-      }
-      const tokens = await generateToken(user);
-      res
-        .status(200)
-        .send({ email: user.email, fullName: user.fullName, ...tokens });
+
+    if (!payload || !payload.email) {
+      res.status(400).send("Invalid Google token");
       return;
     }
+
+    const email = payload.email;
+    let user = await userModel.findOne({ email });
+
+    if (!user) {
+      const randomPassword = crypto.randomBytes(16).toString("hex");
+
+      user = await userModel.create({
+        email: email,
+        password: randomPassword,
+        fullName: payload.name,
+        profilePicture: "",
+      });
+
+      //save image from google
+      if (payload.picture) {
+        const savedImage = await saveGoogleProfileImage(
+          payload.picture,
+          user._id.toString()
+        );
+        if (savedImage) {
+          user.profilePicture = savedImage;
+          await user.save();
+        }
+      }
+    } else {
+      //save image from google
+      if (
+        !user.profilePicture ||
+        user.profilePicture.includes("googleusercontent.com")
+      ) {
+        if (payload.picture) {
+          const savedImage = await saveGoogleProfileImage(
+            payload.picture,
+            user._id.toString()
+          );
+          if (savedImage) {
+            user.profilePicture = savedImage;
+            await user.save();
+          }
+        }
+      }
+    }
+
+    const tokens = await generateToken(user);
+
+    res.status(200).send({
+      user: {
+        _id: user._id,
+        email: user.email,
+        fullName: user.fullName,
+        profilePicture: user.profilePicture
+          ? `${process.env.BASE_URL}/${user.profilePicture}`
+          : null,
+      },
+      accessToken: tokens.accessToken,
+    });
   } catch (err: any) {
-    res.status(400).send(err.message);
+    res.status(400).send({ message: err.message });
   }
 };
 
@@ -54,13 +131,21 @@ const generateToken = async (user: Document & User) => {
 
 const register = async (req: Request, res: Response) => {
   try {
-    const password = req.body.password;
+    const { email, password, fullName } = req.body;
+
+    if (!email || !password || !fullName) {
+      res.status(400).send("Missing required fields");
+      return;
+    }
+
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
+
     const user = await userModel.create({
-      email: req.body.email,
-      fullName: req.body.fullName,
+      email: email,
+      fullName: fullName,
       password: hashedPassword,
+      profilePicture: null,
     });
     res.status(200).send(user);
   } catch (err) {
@@ -104,19 +189,30 @@ const createToken = (userId: string): Tokens | null => {
 
 const login = async (req: Request, res: Response) => {
   try {
-    const user = await userModel.findOne({ email: req.body.email });
-    if (!user) {
-      res.status(400).send("wrong username or password");
+    if (!req.body.email) {
+      res.status(400).send("wrong email or password");
       return;
     }
+    const user = await userModel.findOne({ email: req.body.email });
+    if (!user) {
+      res.status(400).send("wrong email or password");
+      return;
+    }
+
+    if (!req.body.password) {
+      res.status(400).send("wrong email or password");
+      return;
+    }
+
     const validPassword = await bcrypt.compare(
       req.body.password,
       user.password
     );
     if (!validPassword) {
-      res.status(400).send("wrong username or password");
+      res.status(400).send("wrong email or password");
       return;
     }
+
     if (!process.env.TOKEN_SECRET) {
       res.status(500).send("Server Error");
       return;
@@ -124,7 +220,7 @@ const login = async (req: Request, res: Response) => {
     // generate token
     const tokens = createToken(user._id);
     if (!tokens) {
-      res.status(500).send("Server Error");
+      res.status(500).send("Server Error: Failed to generate tokens");
       return;
     }
     if (!user.refreshToken) {
@@ -136,9 +232,13 @@ const login = async (req: Request, res: Response) => {
       accessToken: tokens.accessToken,
       refreshToken: tokens.refreshToken,
       _id: user._id,
+      fullName: user.fullName,
+      profilePicture: user.profilePicture
+        ? `${process.env.BASE_URL}/${user.profilePicture}`
+        : null,
     });
   } catch (err) {
-    res.status(400).send(err);
+    res.status(400).send("Server Error: Unexpected error occurred");
   }
 };
 
@@ -153,17 +253,17 @@ type tUser = Document<unknown, {}, User> &
   };
 
 const verifyRefreshToken = (refreshToken: string | undefined) => {
-  return new Promise<tUser>((resolve, reject) => {
-    //get refresh token from body
+  return new Promise<tUser>(async (resolve, reject) => {
     if (!refreshToken) {
       reject("fail");
       return;
     }
-    //verify token
+
     if (!process.env.TOKEN_SECRET) {
       reject("fail");
       return;
     }
+
     jwt.verify(
       refreshToken,
       process.env.TOKEN_SECRET,
@@ -172,30 +272,29 @@ const verifyRefreshToken = (refreshToken: string | undefined) => {
           reject("fail");
           return;
         }
-        //get the user id fromn token
+
         const userId = payload._id;
+
         try {
-          //get the user form the db
           const user = await userModel.findById(userId);
           if (!user) {
             reject("fail");
             return;
           }
+
           if (!user.refreshToken || !user.refreshToken.includes(refreshToken)) {
-            user.refreshToken = [];
-            await user.save();
-            reject("fail");
+            reject("check fail");
             return;
           }
-          const tokens = user.refreshToken!.filter(
+
+          user.refreshToken = user.refreshToken.filter(
             (token) => token !== refreshToken
           );
-          user.refreshToken = tokens;
+          await user.save();
 
           resolve(user);
         } catch (err) {
           reject("fail");
-          return;
         }
       }
     );
@@ -215,30 +314,37 @@ const logout = async (req: Request, res: Response) => {
 
 const refresh = async (req: Request, res: Response) => {
   try {
-    const user = await verifyRefreshToken(req.body.refreshToken);
-    if (!user) {
-      res.status(400).send("fail");
-      return;
-    }
-    const tokens = createToken(user._id);
+    const user = await verifyRefreshToken(req.body.refreshToken).catch(
+      (err) => {
+        if (err === "check fail") {
+          res.status(400).send("check fail");
+          return null;
+        }
+        throw err;
+      }
+    );
 
+    if (!user) return;
+
+    const tokens = createToken(user._id);
     if (!tokens) {
       res.status(500).send("Server Error");
       return;
     }
+
     if (!user.refreshToken) {
       user.refreshToken = [];
     }
     user.refreshToken.push(tokens.refreshToken);
     await user.save();
+
     res.status(200).send({
       accessToken: tokens.accessToken,
       refreshToken: tokens.refreshToken,
       _id: user._id,
     });
-    //send new token
   } catch (err) {
-    res.status(400).send("fail");
+    res.status(500).send("Internal Server Error");
   }
 };
 
@@ -251,13 +357,10 @@ export const authMiddleware = (
   res: Response,
   next: NextFunction
 ) => {
-  console.log("authMiddleware");
-
   const authorization = req.header("authorization");
   const token = authorization && authorization.split(" ")[1];
 
   if (!token) {
-    console.log("token " + token);
     res.status(401).send("Access Denied");
     return;
   }
@@ -266,15 +369,106 @@ export const authMiddleware = (
     return;
   }
 
-  jwt.verify(token, process.env.TOKEN_SECRET, (err, payload) => {
-    if (err) {
-      res.status(401).send("Access Denied");
+  try {
+    const decoded = jwt.verify(token, process.env.TOKEN_SECRET) as {
+      _id: string;
+      random: string;
+    };
+    req.params.userId = decoded._id;
+    next();
+  } catch (err) {
+    res.status(401).send("Access Denied");
+    return;
+  }
+};
+
+const updateProfile = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const userId = req.params.id;
+
+    if (!mongoose.Types.ObjectId.isValid(userId)) {
+      res.status(400).send({ message: "Invalid user ID" });
       return;
     }
 
-    req.params.userId = (payload as Payload)._id;
-    next();
-  });
+    const user = await userModel.findById(userId);
+
+    if (!user) {
+      res.status(404).send({ message: "User not found" });
+      return;
+    }
+
+    const { fullName } = req.body;
+    const file = req.file;
+
+    //delete previous image from db
+    if (file) {
+      const uploadsDir = path.join(
+        __dirname,
+        "../../uploads/profile_pictures/"
+      );
+      if (user.profilePicture) {
+        const oldImagePath = path.join(
+          __dirname,
+          "../../",
+          user.profilePicture
+        );
+
+        if (oldImagePath && fs.existsSync(oldImagePath)) {
+          try {
+            await fs.promises.unlink(oldImagePath);
+          } catch (err) {
+            res.status(500).send({ message: "Server error" });
+          }
+        }
+      }
+
+      user.profilePicture = `uploads/profile_pictures/${file.filename}`;
+    }
+
+    if (fullName) user.fullName = fullName;
+
+    await user.save();
+
+    res.status(200).send({
+      message: "Profile updated successfully",
+      user: {
+        _id: user._id,
+        fullName: user.fullName,
+        profilePicture: user.profilePicture
+          ? `${process.env.BASE_URL}/${user.profilePicture}`
+          : null,
+      },
+    });
+  } catch (err) {
+    res.status(500).send({ message: "Server error" + err });
+  }
 };
 
-export default { register, login, refresh, logout, googleSignin };
+const getUserById = async (req: Request, res: Response): Promise<void> => {
+  const userId = req.params.id;
+
+  try {
+    const user = await userModel.findById(userId).select("-password");
+    if (!user) {
+      res.status(404).send({ message: "User not found" });
+      return;
+    }
+
+    res.status(200).send(user);
+  } catch (error) {
+    res.status(500).send({ message: "Server error" });
+  }
+};
+
+export default {
+  register,
+  login,
+  refresh,
+  logout,
+  googleSignin,
+  updateProfile,
+  generateToken,
+  getUserById,
+  createToken,
+};

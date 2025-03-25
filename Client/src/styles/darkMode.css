@@ -1,0 +1,77 @@
+/* Card styles */
+[data-theme='dark'] .MuiCard-root {
+  background-color: #1e1e1e;
+  color: #e0e0e0;
+}
+
+[data-theme='dark'] .MuiCardHeader-title {
+  color: #e0e0e0;
+}
+
+[data-theme='dark'] .MuiCardHeader-subheader {
+  color: #a0a0a0;
+}
+
+[data-theme='dark'] .MuiCardContent-root {
+  color: #e0e0e0;
+}
+
+/* Paper styles */
+[data-theme='dark'] .MuiPaper-root {
+  background-color: #1e1e1e;
+  color: #e0e0e0;
+}
+
+/* List styles */
+[data-theme='dark'] .MuiList-root {
+  background-color: #1e1e1e;
+  color: #e0e0e0;
+}
+
+[data-theme='dark'] .MuiListItem-root {
+  color: #e0e0e0;
+}
+
+[data-theme='dark'] .MuiListItemText-primary {
+  color: #e0e0e0;
+}
+
+[data-theme='dark'] .MuiListItemText-secondary {
+  color: #a0a0a0;
+}
+
+/* Comment styles */
+[data-theme='dark'] .comment-section {
+  background-color: #1e1e1e;
+  color: #e0e0e0;
+}
+
+[data-theme='dark'] .comment-text {
+  color: #e0e0e0;
+}
+
+[data-theme='dark'] .comment-metadata {
+  color: #a0a0a0;
+}
+
+/* Input styles */
+[data-theme='dark'] .MuiInputBase-root {
+  color: #e0e0e0;
+}
+
+[data-theme='dark'] .MuiInputLabel-root {
+  color: #a0a0a0;
+}
+
+/* Table styles */
+[data-theme='dark'] .MuiTableCell-root {
+  color: #e0e0e0;
+}
+
+[data-theme='dark'] .MuiTableHead-root {
+  background-color: #2d2d2d;
+}
+
+[data-theme='dark'] .MuiTableRow-root:hover {
+  background-color: #2d2d2d;
+} 
