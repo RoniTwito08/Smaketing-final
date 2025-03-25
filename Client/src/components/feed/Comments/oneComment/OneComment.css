@@ -1,0 +1,56 @@
+.one-comment {
+  display: flex;
+  align-items: center;
+  padding: 8px 0;
+  border-bottom: 1px solid #eee;
+
+  justify-content: flex-end;
+  text-align: right;
+}
+
+.comment-avatar {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  margin-left: 10px;
+  order: 2;
+  margin-right: 10px;
+}
+
+.comment-content {
+  flex-grow: 1;
+  font-size: 14px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.comment-username {
+  font-weight: bold;
+  color: #262626;
+  margin-bottom: 2px;
+}
+
+.comment-text {
+  color: #333;
+  word-break: break-word;
+}
+.comment-container {
+  display: flex;
+  flex-direction: row-reverse;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+  position: relative;
+}
+
+.delete-icon {
+  opacity: 0;
+  transition: opacity 0.2s ease-in-out;
+  position: absolute;
+  right: 0;
+}
+
+.comment-container:hover .delete-icon {
+  opacity: 1;
+}

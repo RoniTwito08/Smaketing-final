@@ -1,0 +1,15 @@
+{
+  "compilerOptions": {
+    "module": "commonjs",
+    "esModuleInterop": true,
+    "target": "es6",
+    "moduleResolution": "node",
+    "sourceMap": true,
+    "outDir": "dist",
+    "rootDir": "src",            // <--- ADD THIS
+    "strict": true,
+    "resolveJsonModule": true,
+    "lib": ["es2015"]            // Make sure lib is inside compilerOptions
+  },
+  "include": ["src/**/*.ts"]     // <--- ADD THIS
+}

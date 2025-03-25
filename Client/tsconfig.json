@@ -1,0 +1,17 @@
+{
+  "compilerOptions": {
+    "noUnusedLocals": false,
+    "noUnusedParameters": false,
+    
+    "baseUrl": ".", // נדרש לניווט קל בפרויקט
+    "typeRoots": ["./src/types", "./node_modules/@types"], // להוסיף טיפוסים מותאמים אישית
+    "paths": {
+      "*": ["./node_modules/*", "./src/*"] // תמיכה בייבוא מ'סקריפט מיקום בסיסי'
+    }
+  },
+  "files": [],
+  "references": [
+    { "path": "./tsconfig.app.json" },
+    { "path": "./tsconfig.node.json" }
+  ]
+}
