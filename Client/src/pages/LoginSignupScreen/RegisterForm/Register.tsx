@@ -5,6 +5,7 @@ import "boxicons/css/boxicons.min.css";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { registerUser } from "../../../services/api";
+import { useNavigate } from "react-router-dom";
 
 type FormInputs = {
   fullName: string;
@@ -20,6 +21,8 @@ const RegisterForm: React.FC = () => {
     formState: { errors },
   } = useForm<FormInputs>();
 
+  const navigate = useNavigate();
+
   const onSubmit: SubmitHandler<FormInputs> = async (data) => {
     if (
       errors.confirmPassword?.type != "required" &&
@@ -28,21 +31,22 @@ const RegisterForm: React.FC = () => {
       toast.error("הסיסמאות אינן תואמות");
     } else {
       try {
-        await registerUser(
-          data.email,
-          data.password,
-          data.fullName
-        );
-        toast.success("נרשמת בהצלחה! כעת תוכל להתחבר.");
+        await registerUser(data.email, data.password, data.fullName);
+        toast.success("נרשמת בהצלחה!");
+        navigate("/stepper");
       } catch (error: any) {
+        console.error("Registration error:", error);
+        const errorData = error.response?.data;
+        const errorMessage = errorData?.errmsg || errorData?.message;
 
-        const errorMessage = error.errorResponse.errmsg;
         if (errorMessage?.includes("duplicate key error")) {
           if (errorMessage?.includes("email")) {
             toast.error("האימייל שהוזן כבר קיים במערכת");
           } else {
             toast.error(errorMessage || "שגיאה בהרשמה, אנא נסה שוב");
           }
+        } else {
+          toast.error(errorMessage || "שגיאה בהרשמה, אנא נסה שוב");
         }
       }
     }

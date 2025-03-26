@@ -1,9 +1,10 @@
 import React from "react";
 import { Routes, Route } from "react-router-dom";
+import { ProtectedRoute } from "../components/ProtectedRoute";
 import DashboardLayoutBasic from "../components/sideDrawer/SideDrawer";
 import LandingPage from "../pages/landingPageScreen/LandingPage";
 import FormsPage from "../pages/LoginSignupScreen/LoginSignupPage/LoginSignupPage";
-import { ProtectedRoute } from "../components/ProtectedRoute";
+import RegisterBase from "../pages/registerNextsScreen/RegisterBase";
 
 const AppRouter: React.FC = () => {
   return (
@@ -18,6 +19,7 @@ const AppRouter: React.FC = () => {
           </ProtectedRoute>
         }
       />
+      <Route path="/stepper" element={<RegisterBase />} />
     </Routes>
   );
 };

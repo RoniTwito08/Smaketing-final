@@ -104,5 +104,4 @@ router.get("/:id", usersController.getUserById);
 router.delete("/:id", authMiddleware, (req, res) => {
   usersController.deleteUserById(req, res);
 });
-
 export default router;
