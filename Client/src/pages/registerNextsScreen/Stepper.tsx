@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useForm, FormProvider } from "react-hook-form";
+import { useForm, FormProvider, SubmitHandler } from "react-hook-form";
 import Box from "@mui/material/Box";
 import Stepper from "@mui/material/Stepper";
 import Step from "@mui/material/Step";
@@ -10,6 +10,9 @@ import Step2 from "./Steps/Step2";
 import Step3 from "./Steps/Step3";
 import Step4 from "./Steps/Step4";
 import Step5 from "./Steps/Step5";
+import { FormValues } from "../../types/register-values";
+import { ToastContainer, toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 
 const steps = [<Step1 />, <Step2 />, <Step3 />, <Step4 />, <Step5 />]; // מערך של קומפוננטות
 const stepsHeader = [
@@ -21,12 +24,17 @@ const stepsHeader = [
 ];
 
 const MultiStepForm: React.FC = () => {
+  const navigate = useNavigate();
+
   const [activeStep, setActiveStep] = useState<number>(0);
-  const methods = useForm();
+  const methods = useForm<FormValues>();
 
   const handleNext = () => setActiveStep((prev) => prev + 1);
   const handleBack = () => setActiveStep((prev) => prev - 1);
-  const onSubmit = () => {
+  const onSubmit: SubmitHandler<FormValues> = (data) => {
+    toast.success("הטופס נשלח בהצלחה! כעת תוכל להתחבר למערכת");
+    //navigate("/forms");
+    console.log("נתוני הטופס הסופיים:", data);
   };
 
   return (
@@ -36,6 +44,7 @@ const MultiStepForm: React.FC = () => {
         onSubmit={methods.handleSubmit(onSubmit)}
         style={{ height: "100%" }}
       >
+        <ToastContainer />
         <Box
           data-testid="multi-step-form"
           sx={{
