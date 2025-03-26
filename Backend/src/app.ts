@@ -8,6 +8,8 @@ import path from 'path';
 import https from 'https';
 import fs from 'fs';
 import { initializeSocket } from "./socket";
+import googleAdsRoutes from './routes/googleAds.routes';
+import cors from 'cors';
 
 initApp()
   .then((app) => {
@@ -30,13 +32,28 @@ initApp()
 
     app.use(express.static(path.join(__dirname, "../../Smarketing-Client/dist")));
     
+    // Add CORS before routes
+    app.use(cors({
+      origin: process.env.NODE_ENV === 'production' 
+        ? 'https://your-production-domain.com' 
+        : 'http://localhost:5173', // Vite's default port
+      credentials: true
+    }));
+
+    app.use('/api/google-ads', googleAdsRoutes);
 
     app.get("*", (req, res) => {
       res.sendFile(path.join(__dirname, "../../Smarketing-Client/dist/index.html"));
     });
 
+    // Error handling middleware
+    app.use((err: any, req: any, res: any, next: any) => {
+      console.error('Global error handler:', err);
+      res.status(500).json({ 
+        error: process.env.NODE_ENV === 'development' ? err.message : 'Internal server error'
+      });
+    });
 
-    
     const port = process.env.PORT || 3000;
     server.listen(port, () => {
       console.log(`✅  Server listening on port ${port}`);
