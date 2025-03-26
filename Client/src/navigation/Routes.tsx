@@ -5,6 +5,7 @@ import DashboardLayoutBasic from "../components/sideDrawer/SideDrawer";
 import LandingPage from "../pages/landingPageScreen/LandingPage";
 import FormsPage from "../pages/LoginSignupScreen/LoginSignupPage/LoginSignupPage";
 import RegisterBase from "../pages/registerNextsScreen/RegisterBase";
+import { GoogleAdsAnalytics } from "../components/GoogleAdsAnalytics/GoogleAdsAnalytics";
 
 const AppRouter: React.FC = () => {
   return (
@@ -20,6 +21,14 @@ const AppRouter: React.FC = () => {
         }
       />
       <Route path="/stepper" element={<RegisterBase />} />
+      <Route
+        path="/google-ads"
+        element={
+          <ProtectedRoute>
+            <GoogleAdsAnalytics />
+          </ProtectedRoute>
+        }
+      />
     </Routes>
   );
 };

@@ -9,6 +9,8 @@ import AppRoutes from "./navigation/Routes";
 import { AuthProvider } from "./context/AuthContext";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { LocalizationProvider } from "@mui/x-date-pickers";
+import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 
 const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
 
@@ -18,27 +20,39 @@ const rtlCache = createCache({
   stylisPlugins: [prefixer, rtlPlugin],
 });
 
+// Create RTL theme
 const rtlTheme = createTheme({
   direction: "rtl",
+  // Add any other theme customizations here
+  components: {
+    MuiTextField: {
+      styleOverrides: {
+        root: {
+          direction: 'rtl',
+        },
+      },
+    },
+  },
 });
 
 const queryClient = new QueryClient();
-
 
 const App: React.FC = () => {
   return (
     <QueryClientProvider client={queryClient}>
       <GoogleOAuthProvider clientId={clientId}>
         <AuthProvider>
-          <CacheProvider value={rtlCache}>
-            <ThemeProvider theme={rtlTheme}>
-              <div dir="rtl">
-                <BrowserRouter>
-                  <AppRoutes />
-                </BrowserRouter>
-              </div>
-            </ThemeProvider>
-          </CacheProvider>
+          <LocalizationProvider dateAdapter={AdapterDateFns}>
+            <CacheProvider value={rtlCache}>
+              <ThemeProvider theme={rtlTheme}>
+                <div dir="rtl">
+                  <BrowserRouter>
+                    <AppRoutes />
+                  </BrowserRouter>
+                </div>
+              </ThemeProvider>
+            </CacheProvider>
+          </LocalizationProvider>
         </AuthProvider>
       </GoogleOAuthProvider>
     </QueryClientProvider>
