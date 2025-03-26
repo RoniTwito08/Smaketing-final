@@ -17,7 +17,9 @@
     "sharp": "^0.33.5",
     "socket.io": "^4.8.1",
     "swagger-jsdoc": "^6.2.8",
-    "swagger-ui-express": "^5.0.1"
+    "swagger-ui-express": "^5.0.1",
+    "gaxios": "^5.0.0",
+    "node-cron": "^3.0.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.17.0",
@@ -56,6 +58,8 @@
     "lint": "eslint . --ext .ts",
     "test:coverage": "jest --coverage",
     "build": "tsc",
-    "start": "node dist/app.js"
+    "start": "node dist/app.js",
+    "test:googleads": "cp .env_test .env && tsc && jest src/test/googleAds.test.ts --detectOpenHandles --forceExit --verbose",
+    "win_test:googleads": "copy .env_test .env && tsc && jest src/test/googleAds.test.ts --detectOpenHandles --forceExit --verbose"
   }
 }
