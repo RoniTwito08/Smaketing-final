@@ -14,8 +14,8 @@
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.0",
     "@fontsource/assistant": "^5.2.5",
-    "@mui/icons-material": "^6.4.6",
-    "@mui/material": "^6.4.0",
+    "@mui/icons-material": "^5.11.0",
+    "@mui/material": "^5.11.0",
     "@nivo/bar": "^0.88.0",
     "@nivo/geo": "^0.88.0",
     "@nivo/line": "^0.88.0",
@@ -41,7 +41,9 @@
     "socket.io-client": "^4.8.1",
     "stylis": "^4.3.5",
     "stylis-plugin-rtl": "^2.1.1",
-    "vite-plugin-svgr": "^4.3.0"
+    "vite-plugin-svgr": "^4.3.0",
+    "@mui/x-date-pickers": "^5.0.20",
+    "date-fns": "^2.29.3"
   },
   "devDependencies": {
     "@eslint/js": "^9.17.0",

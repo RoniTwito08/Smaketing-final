@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { extendTheme } from "@mui/material/styles";
+import { createTheme } from "@mui/material/styles";
 import { AppProvider, Navigation, Router } from "@toolpad/core/AppProvider";
 import { DashboardLayout } from "@toolpad/core/DashboardLayout";
 import { PageContainer } from "@toolpad/core/PageContainer";
@@ -17,6 +17,7 @@ import LogoutIcon from "@mui/icons-material/Logout";
 import { useAuth } from "../../context/AuthContext";
 import MainFeed from "../../pages/feedPage/MainFeed";
 import { User } from "../../types/user";
+import CampaignIcon from '@mui/icons-material/Campaign';
 
 export default function DashboardLayoutBasic(props: any) {
   const { window } = props;
@@ -80,9 +81,14 @@ export default function DashboardLayoutBasic(props: any) {
       title: "התנתקות",
       icon: <LogoutIcon />,
     },
+    {
+      icon: <CampaignIcon />,
+      text: 'Google Ads',
+      path: '/google-ads'
+    },
   ];
 
-  const demoTheme = extendTheme({
+  const demoTheme = createTheme({
     colorSchemes: { light: true, dark: true },
     colorSchemeSelector: "class",
     breakpoints: {
