@@ -6,10 +6,18 @@ export const createBusinessInfo = async (req: Request, res: Response) => {
   try {
     const userId = req.params.id;
     console.log("userID: ", userId);
+    // console.log("req.body:", req.body);
+    // console.log("req.files:", req.files);
+
+    // const uploadedFiles = req.files as Express.Multer.File[];
+    // const logoFilePaths = uploadedFiles?.map((file) => file.path) || [];
+
     const businessInfoData = {
       ...req.body,
       userId,
+      // logoFiles: logoFilePaths,
     };
+
     console.log("businessInfoData: ", businessInfoData);
     const businessInfo = new businessInfoModel(businessInfoData);
     await businessInfo.save();
@@ -59,13 +67,13 @@ export const updateBusinessInfo = async (
   }
 };
 
-export const getBusinessInfo = async (
+export const getBusinessInfoByUserId = async (
   req: Request,
   res: Response
 ): Promise<Response> => {
   try {
     const { id } = req.params;
-    const businessInfo = await businessInfoModel.findById(id);
+    const businessInfo = await businessInfoModel.findOne({ userId: id });
     if (!businessInfo) {
       return res.status(404).json({ message: "Business info not found" });
     }
@@ -76,4 +84,8 @@ export const getBusinessInfo = async (
   }
 };
 
-export default { createBusinessInfo, updateBusinessInfo, getBusinessInfo };
+export default {
+  createBusinessInfo,
+  updateBusinessInfo,
+  getBusinessInfoByUserId,
+};
