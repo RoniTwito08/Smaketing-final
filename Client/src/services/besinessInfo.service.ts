@@ -6,38 +6,58 @@ import { config } from "../config";
 import { FormValues } from "../types/businessInfo";
 
 export const businessInfoService = {
-  async createBusinessInfo(userId: string, data: FormData, token: string) {
+  async createBusinessInfo(data: FormValues, userId: string, token: string) {
     const formData = new FormData();
 
-    // הוספת שדות רגילים
-    for (const [key, value] of Object.entries(data)) {
-      if (key === "logoFiles" && value instanceof FileList) {
-        Array.from(value).forEach((file) => {
-          formData.append("logoFiles", file);
-        });
-      } else if (Array.isArray(value)) {
+    // שדות טקסט רגילים
+    for (const key in data) {
+      if (key === "logoFiles") continue;
+
+      const value = data[key as keyof FormValues];
+      if (value === undefined || value === null) continue;
+
+      if (Array.isArray(value)) {
         value.forEach((item) => {
-          formData.append(`${key}[]`, item); // תואם לשדות כמו socialMediaAccounts
+          formData.append(key, item.toString());
         });
-      } else if (value !== undefined) {
-        formData.append(key, value as string);
+      } else if (typeof value === "object") {
+        continue;
+      } else {
+        formData.append(key, value.toString());
       }
     }
 
-    const response = await fetch(`${config.apiUrl}/business-info/${userId}`, {
+    // קבצים
+    if (data.logoFile) {
+      formData.append("logo", data.logoFile);
+    }
+
+    if (data.businessImageFiles && data.businessImageFiles.length > 0) {
+      Array.from(data.businessImageFiles).forEach((file) => {
+        formData.append("businessImages", file);
+      });
+    }
+
+    console.log("נתוני הטופס הסופיים:", formData);
+    for (let pair of formData.entries()) {
+      console.log(`${pair[0]}:`, pair[1]);
+    }
+
+    const API_URL = config.apiUrl;
+    const response = await fetch(`${API_URL}/business-info/${userId}`, {
       method: "POST",
       headers: {
-        Authorization: `Bearer ${token}`, // שימי לב: לא שמים 'Content-Type' כששולחים FormData
+        Authorization: `Bearer ${token}`,
       },
       body: formData,
     });
 
     if (!response.ok) {
       const errorData = await response.json();
-      throw new Error(errorData.message || "שגיאה באתחול המידע");
+      throw new Error(errorData.message || "שגיאה בשליחת הטופס לשרת");
     }
 
-    return await response.json();
+    return response.json(); // נחזיר את התגובה מהשרת
   },
 
   async getBusinessInfo(userId: string, token: string) {
