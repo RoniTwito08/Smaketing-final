@@ -10,9 +10,10 @@ import Step2 from "./Steps/Step2";
 import Step3 from "./Steps/Step3";
 import Step4 from "./Steps/Step4";
 import Step5 from "./Steps/Step5";
-import { FormValues } from "../../types/register-values";
+import { FormValues } from "../../types/businessInfo";
 import { ToastContainer, toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
+import { config } from "../../config";
 
 const steps = [<Step1 />, <Step2 />, <Step3 />, <Step4 />, <Step5 />]; // מערך של קומפוננטות
 const stepsHeader = [
@@ -31,10 +32,38 @@ const MultiStepForm: React.FC = () => {
 
   const handleNext = () => setActiveStep((prev) => prev + 1);
   const handleBack = () => setActiveStep((prev) => prev - 1);
-  const onSubmit: SubmitHandler<FormValues> = (data) => {
-    toast.success("הטופס נשלח בהצלחה! כעת תוכל להתחבר למערכת");
-    //navigate("/forms");
-    console.log("נתוני הטופס הסופיים:", data);
+
+  const API_URL = config.apiUrl;
+
+  const onSubmit: SubmitHandler<FormValues> = async (data) => {
+    const token = localStorage.getItem("accessToken");
+    const user = localStorage.getItem("user");
+    const userId = JSON.parse(user!)._id;
+    console.log("user: " + userId);
+
+    console.log("token: " + token);
+    try {
+      const response = await fetch(`${API_URL}/business-info/${userId}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(data),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Error updating business info");
+      }
+
+      toast.success("הטופס נשלח בהצלחה!");
+      console.log("נתוני הטופס הסופיים:", data);
+      navigate("/profile");
+    } catch (error: any) {
+      console.error("Error updating business info:", error);
+      toast.error(error.message || "שגיאה בעדכון המידע, אנא נסה שוב");
+    }
   };
 
   return (

@@ -1,8 +1,8 @@
 import request from "supertest";
 import initApp from "../server";
 import mongoose from "mongoose";
-import chatMessageModel from "../modules/chat_modules";
-import userModel from "../modules/user_modules";
+import chatMessageModel from "../models/chat_models";
+import userModel from "../models/user_models";
 import { Express } from "express";
 import jwt from "jsonwebtoken";
 

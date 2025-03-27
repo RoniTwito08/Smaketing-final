@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from "express";
-import userModel, { User } from "../modules/user_modules";
+import userModel, { User } from "../models/user_models";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { Document } from "mongoose";
@@ -27,7 +27,7 @@ const saveGoogleProfileImage = async (
     const imagePath = `uploads/profile_pictures/${userId}.jpg`;
     const fullPath = path.join(__dirname, "../../", imagePath);
 
-    fs.writeFileSync(fullPath, response.data);
+    fs.writeFileSync(fullPath, response.data as Buffer);
     return imagePath;
   } catch (error) {
     return null;
@@ -359,7 +359,7 @@ export const authMiddleware = (
 ) => {
   const authorization = req.header("authorization");
   const token = authorization && authorization.split(" ")[1];
-
+  console.log("middleware token: ", token);
   if (!token) {
     res.status(401).send("Access Denied");
     return;
