@@ -63,8 +63,8 @@ const Step4: React.FC = () => {
         };
         reader.readAsDataURL(file);
       });
+      onChange(files);
     }
-    onChange(files);
   };
 
   return (
