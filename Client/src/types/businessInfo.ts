@@ -1,4 +1,5 @@
 export type FormValues = {
+  _id?: string;
   /* שם העסק (שדה חובה)  */
   businessName: string;
 
