@@ -12,6 +12,7 @@ import usersRoutes from "./routes/users_routes";
 import authRoutes from "./routes/auth_routes";
 import chatRoutes from "./routes/chat_routes";
 import geminiRoutes from "./routes/gemini_routes";
+import businessInfoRoutes from "./routes/businessInfo_routes";
 import swaggerJsDoc from "swagger-jsdoc";
 import swaggerUI from "swagger-ui-express";
 import cors from "cors";
@@ -19,20 +20,24 @@ import path from "path";
 import helmet from "helmet";
 import { initializeSocket } from "./socket";
 
-
 const app = express();
 const httpServer = http.createServer(app);
 
 const initApp = (): Promise<Express> => {
-  const isProduction = process.env.NODE_ENV?.trim().toLowerCase() === 'production';
+  const isProduction =
+    process.env.NODE_ENV?.trim().toLowerCase() === "production";
 
   // CORS configuration
-  app.use(cors({
-    origin: isProduction ? 'https://node10.cs.colman.ac.il' : ['http://localhost:5173', 'http://localhost:3000'],
-    credentials: true,
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization']
-  }));
+  app.use(
+    cors({
+      origin: isProduction
+        ? "https://node10.cs.colman.ac.il"
+        : ["http://localhost:5173", "http://localhost:3000"],
+      credentials: true,
+      methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+      allowedHeaders: ["Content-Type", "Authorization"],
+    })
+  );
 
   //הגדלת הגודל שאפשר להעביר בבקשות (עשינו בשביל העברת התמונות לגימיני)
   app.use(express.json({ limit: "10mb" }));
@@ -45,6 +50,7 @@ const initApp = (): Promise<Express> => {
   app.use("/users", usersRoutes);
   app.use("/auth", authRoutes);
   app.use("/gemini", geminiRoutes);
+  app.use("/business-info", businessInfoRoutes);
 
   app.use(
     "/uploads/profile_pictures",
@@ -72,11 +78,13 @@ const initApp = (): Promise<Express> => {
       },
       servers: [
         {
-          url: isProduction 
-            ? 'https://node10.cs.colman.ac.il' 
-            : 'http://localhost:3000',
-          description: isProduction ? 'Production server' : 'Development server'
-        }
+          url: isProduction
+            ? "https://node10.cs.colman.ac.il"
+            : "http://localhost:3000",
+          description: isProduction
+            ? "Production server"
+            : "Development server",
+        },
       ],
     },
     apis: ["./src/routes/*.ts"],
@@ -85,8 +93,8 @@ const initApp = (): Promise<Express> => {
   app.use("/api-docs", swaggerUI.serve, swaggerUI.setup(specs));
 
   // Add a redirect from root to api-docs
-  app.get('/', (req, res) => {
-    res.redirect('/api-docs');
+  app.get("/", (req, res) => {
+    res.redirect("/api-docs");
   });
 
   return new Promise<Express>((resolve, reject) => {

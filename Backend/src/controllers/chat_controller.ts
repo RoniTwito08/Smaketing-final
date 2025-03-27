@@ -1,13 +1,12 @@
-import chatMessageModel, { ChatMessage } from "../modules/chat_modules";
+import chatMessageModel, { ChatMessage } from "../models/chat_models";
 import { Request, Response } from "express";
-import userModel from "../modules/user_modules";
+import userModel from "../models/user_models";
 import mongoose from "mongoose";
 
 // Send a new message
 const sendMessage = async (req: Request, res: Response) => {
   try {
     const { senderId, recipientId, content } = req.body;
-
 
     if (!mongoose.Types.ObjectId.isValid(recipientId)) {
       return res.status(400).json({ error: "Invalid recipient ID" });

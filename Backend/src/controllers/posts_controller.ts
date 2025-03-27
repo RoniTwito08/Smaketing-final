@@ -1,10 +1,10 @@
-import postModel, { Post } from "../modules/post_modules";
-import userModel from "../modules/user_modules";
+import postModel, { Post } from "../models/post_models";
+import userModel from "../models/user_models";
 import multer from "multer";
 
 ("../modules/user_modules");
 import { Request, Response } from "express";
-import commentsModel from "../modules/comments_modules";
+import commentsModel from "../models/comments_models";
 import mongoose from "mongoose";
 import path from "path";
 import fs from "fs";

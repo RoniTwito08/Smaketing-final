@@ -1,5 +1,5 @@
 import mongoose, { Schema } from "mongoose";
-import { User } from "./user_modules";
+import { User } from "./user_models";
 
 export interface Post {
   senderId: String;
