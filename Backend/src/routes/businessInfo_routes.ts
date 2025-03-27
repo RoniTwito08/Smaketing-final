@@ -1,6 +1,8 @@
 import express from "express";
 import businessInfo_controller from "../controllers/businessInfo_controller";
 import { authMiddleware } from "../controllers/auth_controller";
+import upload from "../multer.config";
+
 // import multer from "multer";
 // import path from "path";
 
@@ -48,9 +50,17 @@ const router = express.Router();
  *       500:
  *         description: Server error
  */
-router.post("/:id", authMiddleware, (req, res) => {
-  businessInfo_controller.createBusinessInfo(req, res);
-});
+router.post(
+  "/:id",
+  authMiddleware,
+  upload.fields([
+    { name: "logo", maxCount: 1 },
+    { name: "businessImages", maxCount: 10 },
+  ]),
+  (req, res) => {
+    businessInfo_controller.createBusinessInfo(req, res);
+  }
+);
 
 // router.post("/:id", authMiddleware, upload.any(), (req, res) => {
 //   businessInfo_controller.createBusinessInfo(req, res);

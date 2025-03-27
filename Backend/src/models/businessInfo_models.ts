@@ -5,7 +5,7 @@ export interface BusinessInfo {
   // שלב 1
   businessName: String;
   businessType: String;
-  businessAddress: String;
+  businessAddress?: String;
   businessField: String;
   businessFieldDetails?: String;
   serviceAreas: String;
@@ -23,7 +23,8 @@ export interface BusinessInfo {
   incentives: String;
 
   // שלב 4
-  logoFiles?: [String];
+  logo: String;
+  businessImages: [String];
   designPreferences?: String;
   socialMediaAccounts?: [String];
 
@@ -35,7 +36,7 @@ const BusinessInfoModel = new mongoose.Schema<BusinessInfo>({
   // שלב 1
   businessName: { type: String, required: true },
   businessType: { type: String, required: true },
-  businessAddress: { type: String, required: true },
+  businessAddress: { type: String },
   businessField: { type: String, required: true },
   businessFieldDetails: { type: String },
   serviceAreas: { type: String, required: true },
@@ -53,10 +54,16 @@ const BusinessInfoModel = new mongoose.Schema<BusinessInfo>({
   incentives: { type: String, required: true },
 
   // שלב 4
-  logoFiles: {
+  // logoFiles: {
+  //   type: [String],
+  //   default: [],
+  // },
+  logo: { type: String },
+  businessImages: {
     type: [String],
     default: [],
   },
+
   designPreferences: { type: String },
   socialMediaAccounts: {
     type: [String],

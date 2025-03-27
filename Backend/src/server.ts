@@ -60,6 +60,10 @@ const initApp = (): Promise<Express> => {
     "/uploads/post_images",
     express.static(path.join(__dirname, "../uploads/post_images"))
   );
+  app.use(
+    "/uploads/business_pictures",
+    express.static(path.join(__dirname, "../uploads/business_pictures"))
+  );
 
   app.use("/images", express.static(path.join(__dirname, "../images")));
 

@@ -7,7 +7,7 @@ export type FormValues = {
   businessType: string;
 
   /* כתובת העסק (חובה אם businessType הוא "פיזי") */
-  businessAddress: string;
+  businessAddress?: string;
 
   /* תחום הפעילות של העסק (שדה חובה) */
   businessField: string;
@@ -42,14 +42,23 @@ export type FormValues = {
   /* תמריצים מיוחדים ללקוחות חדשים (לדוגמה חודש חינם) (שדה חובה) */
   incentives: string;
 
-  /* קבצים (לוגו/חומרים גרפיים) להעלאה (אופציונלי) */
-  logoFiles?: FileList;
+  /* קובץ לוגו יחיד (אופציונלי) */
+  logoFile?: File;
+
+  /* תמונות נוספות של העסק (אופציונלי) */
+  businessImageFiles?: FileList;
 
   /* העדפות עיצוב (למשל סגנון מודרני, מינימליסטי וכו') (אופציונלי) */
   designPreferences?: string;
 
   /* רשימת רשתות חברתיות שבהן יש חשבון עסקי (אופציונלי) */
   socialMediaAccounts?: string[];
+
+  /* לוגו שנשמר בשרת (נתיב תמונה) */
+  logo?: string;
+
+  /* נתיבי תמונות נוספות של העסק שנשמרו בשרת */
+  businessImages?: string[];
 
   /**
    * מטרה לקמפיין. האפשרויות הן:
