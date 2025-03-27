@@ -24,7 +24,6 @@ const rtlTheme = createTheme({
 
 const queryClient = new QueryClient();
 
-
 const App: React.FC = () => {
   return (
     <QueryClientProvider client={queryClient}>

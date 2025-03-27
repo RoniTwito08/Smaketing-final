@@ -1,9 +1,9 @@
 import request from "supertest";
 import initApp from "../server";
 import mongoose from "mongoose";
-import postModel from "../modules/post_modules";
+import postModel from "../models/post_models";
 import { Express } from "express";
-import userModel, { User } from "../modules/user_modules";
+import userModel, { User } from "../models/user_models";
 // import { send } from "process";
 // import { OAuth2Client } from "google-auth-library";
 import authController from "../controllers/auth_controller";

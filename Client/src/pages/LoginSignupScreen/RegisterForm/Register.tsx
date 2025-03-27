@@ -4,8 +4,9 @@ import { useForm, SubmitHandler } from "react-hook-form";
 import "boxicons/css/boxicons.min.css";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { registerUser } from "../../../services/api";
+import { registerUser, loginUser } from "../../../services/api";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../../context/AuthContext";
 
 type FormInputs = {
   fullName: string;
@@ -21,6 +22,7 @@ const RegisterForm: React.FC = () => {
     formState: { errors },
   } = useForm<FormInputs>();
 
+  const { login } = useAuth();
   const navigate = useNavigate();
 
   const onSubmit: SubmitHandler<FormInputs> = async (data) => {
@@ -33,6 +35,25 @@ const RegisterForm: React.FC = () => {
       try {
         await registerUser(data.email, data.password, data.fullName);
         toast.success("נרשמת בהצלחה!");
+
+        const userData = await loginUser(data.email, data.password);
+        if (!userData || !userData.accessToken) {
+          throw new Error("Invalid login response");
+        }
+
+        login(
+          {
+            _id: userData._id,
+            email: data.email,
+            fullName: userData.fullName,
+            profilePicture: userData.profilePicture,
+            role: "user",
+            expertise: [],
+          },
+          userData.accessToken
+        );
+
+        console.log("userData.accessToken: " + userData.accessToken);
         navigate("/stepper");
       } catch (error: any) {
         console.error("Registration error:", error);
