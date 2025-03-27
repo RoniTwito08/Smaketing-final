@@ -1,7 +1,7 @@
-import commentsModel, { Comment } from "../modules/comments_modules";
+import commentsModel, { Comment } from "../models/comments_models";
 import { Request, Response } from "express";
-import postModel from "../modules/post_modules";
-import userModel from "../modules/user_modules";
+import postModel from "../models/post_models";
+import userModel from "../models/user_models";
 import mongoose from "mongoose";
 
 const addComment = async (req: Request, res: Response) => {
