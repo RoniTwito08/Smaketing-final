@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { createTheme } from "@mui/material/styles";
+import { extendTheme } from "@mui/material/styles";
 import { AppProvider, Navigation, Router } from "@toolpad/core/AppProvider";
 import { DashboardLayout } from "@toolpad/core/DashboardLayout";
 import { PageContainer } from "@toolpad/core/PageContainer";
@@ -13,12 +13,10 @@ import { ChatModal } from "../Chat/ChatModal";
 import logo from "../../assets/Smarketing.png";
 import { MyPosts } from "../../pages/userProfileScreen/MyPosts";
 import { AccountSettings } from "../../pages/userProfileScreen/AccountSettings";
-import { BusinessSetting } from "../../pages/userProfileScreen/BusinessSetting";
 import LogoutIcon from "@mui/icons-material/Logout";
 import { useAuth } from "../../context/AuthContext";
 import MainFeed from "../../pages/feedPage/MainFeed";
 import { User } from "../../types/user";
-import CampaignIcon from '@mui/icons-material/Campaign';
 
 export default function DashboardLayoutBasic(props: any) {
   const { window } = props;
@@ -72,11 +70,6 @@ export default function DashboardLayoutBasic(props: any) {
           title: "הגדרות חשבון",
           icon: <ContactsOutlinedIcon />,
         },
-        {
-          segment: "business",
-          title: "הגדרות עסק",
-          icon: <ContactsOutlinedIcon />,
-        },
       ],
     },
     {
@@ -87,14 +80,9 @@ export default function DashboardLayoutBasic(props: any) {
       title: "התנתקות",
       icon: <LogoutIcon />,
     },
-    {
-      icon: <CampaignIcon />,
-      text: 'Google Ads',
-      path: '/google-ads'
-    },
   ];
 
-  const demoTheme = createTheme({
+  const demoTheme = extendTheme({
     colorSchemes: { light: true, dark: true },
     colorSchemeSelector: "class",
     breakpoints: {
@@ -124,12 +112,13 @@ export default function DashboardLayoutBasic(props: any) {
 
   // Update the chat handling
   const handleSelectUser = (user: User) => {
+    
     // If selecting same user, just show chat
     if (selectedChatUser?._id === user._id) {
       setIsChatVisible(true);
       return;
     }
-
+    
     // If selecting new user, update state and show chat
     setSelectedChatUser(user);
     setIsChatVisible(true);
@@ -143,7 +132,6 @@ export default function DashboardLayoutBasic(props: any) {
   const routeComponents: { [key: string]: React.ReactNode } = {
     "/settings/my-posts": <MyPosts />,
     "/settings/account": <AccountSettings />,
-    "/settings/business": <BusinessSetting />,
     "/feed": <MainFeed />,
     "/chats":
       user && accessToken ? (
