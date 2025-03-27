@@ -1,10 +1,28 @@
-import React from "react";
+import React, { useState } from "react";
 import { useFormContext, Controller } from "react-hook-form";
 
 const Step4: React.FC = () => {
   const { control, watch } = useFormContext();
-
   const watchedFiles = watch("logoFiles");
+
+  // const [imagePreview, setImagePreview] = useState<string | null>(null);
+
+  // const handleImageChange = (
+  //   e: React.ChangeEvent<HTMLInputElement>,
+  //   onChange: (...event: any[]) => void
+  // ) => {
+  //   const file = e.target.files?.[0];
+  //   if (file) {
+  //     onChange(e.target.files);
+  //     const reader = new FileReader();
+  //     reader.onloadend = () => {
+  //       setImagePreview(reader.result as string);
+  //     };
+  //     reader.readAsDataURL(file);
+  //   } else {
+  //     setImagePreview(null);
+  //   }
+  // };
 
   return (
     <div style={styles.container}>
@@ -16,6 +34,7 @@ const Step4: React.FC = () => {
         <Controller
           name="logoFiles"
           control={control}
+          defaultValue={null}
           render={({ field }) => (
             <label
               style={styles.fileUploadLabel}
@@ -29,15 +48,11 @@ const Step4: React.FC = () => {
               }
             >
               <input
-                {...field}
                 type="file"
                 accept="image/*,.pdf"
                 multiple
                 style={styles.hiddenInput}
-                onChange={(e) => {
-                  const files = e.target.files as FileList; // הגדרת טיפוס הקובץ
-                  field.onChange(files);
-                }}
+                // onChange={(e) => handleImageChange(e, field.onChange)}
               />
               בחר קבצים
             </label>
@@ -51,6 +66,15 @@ const Step4: React.FC = () => {
               .join(", ")}
           </p>
         )}
+        {/* {imagePreview && (
+          <div style={{ marginTop: "10px" }}>
+            <img
+              src={imagePreview}
+              alt="Preview"
+              style={{ maxWidth: "100px", borderRadius: "4px" }}
+            />
+          </div>
+        )} */}
       </div>
 
       {/* שורה 2 */}
@@ -62,6 +86,7 @@ const Step4: React.FC = () => {
         <Controller
           name="designPreferences"
           control={control}
+          defaultValue=""
           render={({ field }) => (
             <textarea
               {...field}
@@ -79,88 +104,31 @@ const Step4: React.FC = () => {
           <Controller
             name="socialMediaAccounts"
             control={control}
+            defaultValue={[]}
             render={({ field }) => (
               <>
-                <label>
-                  <input
-                    type="checkbox"
-                    value="Facebook"
-                    onChange={(e) => {
-                      const value = e.target.value;
-                      const isChecked = e.target.checked;
-                      field.onChange(
-                        isChecked
-                          ? [...field.value, value]
-                          : field.value.filter((item: string) => item !== value)
-                      );
-                    }}
-                  />{" "}
-                  Facebook
-                </label>
-                <label>
-                  <input
-                    type="checkbox"
-                    value="Instagram"
-                    onChange={(e) => {
-                      const value = e.target.value;
-                      const isChecked = e.target.checked;
-                      field.onChange(
-                        isChecked
-                          ? [...field.value, value]
-                          : field.value.filter((item: string) => item !== value)
-                      );
-                    }}
-                  />{" "}
-                  Instagram
-                </label>
-                <label>
-                  <input
-                    type="checkbox"
-                    value="TikTok"
-                    onChange={(e) => {
-                      const value = e.target.value;
-                      const isChecked = e.target.checked;
-                      field.onChange(
-                        isChecked
-                          ? [...field.value, value]
-                          : field.value.filter((item: string) => item !== value)
-                      );
-                    }}
-                  />{" "}
-                  TikTok
-                </label>
-                <label>
-                  <input
-                    type="checkbox"
-                    value="Twitter"
-                    onChange={(e) => {
-                      const value = e.target.value;
-                      const isChecked = e.target.checked;
-                      field.onChange(
-                        isChecked
-                          ? [...field.value, value]
-                          : field.value.filter((item: string) => item !== value)
-                      );
-                    }}
-                  />{" "}
-                  Twitter
-                </label>
-                <label>
-                  <input
-                    type="checkbox"
-                    value="Other"
-                    onChange={(e) => {
-                      const value = e.target.value;
-                      const isChecked = e.target.checked;
-                      field.onChange(
-                        isChecked
-                          ? [...field.value, value]
-                          : field.value.filter((item: string) => item !== value)
-                      );
-                    }}
-                  />{" "}
-                  אחר
-                </label>
+                {["Facebook", "Instagram", "TikTok", "Twitter", "Other"].map(
+                  (platform) => (
+                    <label key={platform}>
+                      <input
+                        type="checkbox"
+                        value={platform}
+                        checked={field.value.includes(platform)}
+                        onChange={(e) => {
+                          const isChecked = e.target.checked;
+                          field.onChange(
+                            isChecked
+                              ? [...field.value, platform]
+                              : field.value.filter(
+                                  (item: string) => item !== platform
+                                )
+                          );
+                        }}
+                      />
+                      {platform}
+                    </label>
+                  )
+                )}
               </>
             )}
           />
@@ -172,8 +140,14 @@ const Step4: React.FC = () => {
 
 const styles = {
   container: {
-    fontFamily: "Arial, sans-serif",
-    margin: "20px",
+    fontFamily: "Assistant, sans-serif",
+    maxWidth: "800px",
+    margin: "0 auto",
+    padding: "10px",
+    backgroundColor: "transparent",
+    display: "inline-block",
+    maxHeight: "400px",
+    overflowY: "auto",
   },
   header: {
     fontSize: "20px",
@@ -188,7 +162,7 @@ const styles = {
     display: "inline-block",
     padding: "10px 20px",
     color: "#fff",
-    backgroundColor: "#808080", // אפור
+    backgroundColor: "#808080",
     border: "none",
     borderRadius: "5px",
     cursor: "pointer",
@@ -196,7 +170,7 @@ const styles = {
     fontSize: "14px",
   } as const,
   fileUploadLabelHover: {
-    backgroundColor: "#6c6c6c", // אפור כהה
+    backgroundColor: "#6c6c6c",
   } as const,
   hiddenInput: {
     display: "none",
@@ -212,6 +186,9 @@ const styles = {
   checkboxGroup: {
     marginBottom: "10px",
     fontSize: "14px",
+    display: "flex",
+    flexDirection: "column",
+    gap: "5px",
   } as const,
 } as const;
 

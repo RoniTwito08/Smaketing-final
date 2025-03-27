@@ -1,0 +1,81 @@
+.profileContainer {
+  padding: 40px;
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+  direction: rtl;
+  text-align: right;
+}
+
+.userInfo {
+  display: flex;
+  justify-content: center;
+  padding: 30px;
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.userDetails {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 600px;
+  gap: 16px;
+}
+
+.nameSection {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.businessFieldRow {
+  display: flex;
+  flex-direction: column;
+}
+
+.businessFieldRow label {
+  margin-bottom: 8px;
+  font-weight: bold;
+  text-align: right;
+}
+
+.businessFieldRow input,
+.businessFieldRow textarea {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 16px;
+  resize: vertical;
+  direction: rtl;
+  text-align: right;
+}
+
+textarea {
+  min-height: 60px;
+}
+
+.saveButton {
+  align-self: center;
+  padding: 12px 24px;
+  background: linear-gradient(to right, #4a90e2, #36d1dc);
+  color: white;
+  border: none;
+  border-radius: 25px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  margin-top: 20px;
+}
+
+.saveButton:hover {
+  background: linear-gradient(to right, #36d1dc, #4a90e2);
+  transform: scale(1.05);
+}
+
+@media (max-width: 768px) {
+  .userDetails {
+    padding: 0 20px;
+  }
+}
