@@ -148,8 +148,13 @@ const register = async (req: Request, res: Response) => {
       profilePicture: null,
     });
     res.status(200).send(user);
-  } catch (err) {
-    res.status(400).send(err);
+  } catch (err: any) {
+    if (err.code === 11000 && err.keyPattern?.email) {
+      res.status(400).send("email already exists");
+      return;
+    } else {
+      res.status(500).send("Server Error");
+    }
   }
 };
 

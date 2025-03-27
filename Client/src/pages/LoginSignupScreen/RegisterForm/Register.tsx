@@ -57,17 +57,13 @@ const RegisterForm: React.FC = () => {
         navigate("/stepper");
       } catch (error: any) {
         console.error("Registration error:", error);
-        const errorData = error.response?.data;
-        const errorMessage = errorData?.errmsg || errorData?.message;
 
-        if (errorMessage?.includes("duplicate key error")) {
-          if (errorMessage?.includes("email")) {
-            toast.error("האימייל שהוזן כבר קיים במערכת");
-          } else {
-            toast.error(errorMessage || "שגיאה בהרשמה, אנא נסה שוב");
-          }
+        const errorMessage = error?.message || "שגיאה בהרשמה, אנא נסה שוב";
+
+        if (errorMessage.includes("email")) {
+          toast.error("האימייל שהוזן כבר קיים במערכת");
         } else {
-          toast.error(errorMessage || "שגיאה בהרשמה, אנא נסה שוב");
+          toast.error(errorMessage);
         }
       }
     }
