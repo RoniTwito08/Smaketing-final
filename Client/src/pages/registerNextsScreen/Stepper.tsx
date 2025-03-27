@@ -14,6 +14,7 @@ import { FormValues } from "../../types/businessInfo";
 import { ToastContainer, toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import { config } from "../../config";
+import { businessInfoService } from "../../services/besinessInfo.service";
 
 const steps = [<Step1 />, <Step2 />, <Step3 />, <Step4 />, <Step5 />]; // מערך של קומפוננטות
 const stepsHeader = [
@@ -40,25 +41,15 @@ const MultiStepForm: React.FC = () => {
     const user = localStorage.getItem("user");
     const userId = JSON.parse(user!)._id;
     console.log("user: " + userId);
-
     console.log("token: " + token);
+    if (!token || !userId) {
+      toast.error("שגיאה בהתחברות, אנא התחבר שוב");
+      return;
+    }
+
     try {
-      const response = await fetch(`${API_URL}/business-info/${userId}`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify(data),
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || "Error updating business info");
-      }
-
+      await businessInfoService.createBusinessInfo(data, userId, token);
       toast.success("הטופס נשלח בהצלחה!");
-      console.log("נתוני הטופס הסופיים:", data);
       navigate("/profile");
     } catch (error: any) {
       console.error("Error updating business info:", error);

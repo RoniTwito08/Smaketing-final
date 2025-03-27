@@ -5,6 +5,7 @@ import { useAuth } from "../../context/AuthContext";
 import { businessInfoService } from "../../services/besinessInfo.service";
 import { FormValues } from "../../types/businessInfo";
 import { toast } from "react-toastify";
+import { config } from "../../config";
 
 export const BusinessSetting = () => {
   const { user, accessToken } = useAuth();
@@ -134,15 +135,49 @@ export const BusinessSetting = () => {
           </div>
 
           <div className="businessFieldRow">
-            <label htmlFor="logoFiles">קבצים (לוגו):</label>
+            <label htmlFor="logoFile">לוגו:</label>
             <input
               type="file"
-              id="logoFiles"
-              name="logoFiles"
-              multiple
-              onChange={(e) => handleChange("logoFiles", e.target.files)}
+              id="logoFile"
+              name="logoFile"
+              accept="image/*"
+              onChange={(e) =>
+                handleChange("logoFile", e.target.files?.[0] || null)
+              }
             />
           </div>
+          {formData.logo && (
+            <img
+              src={`${config.apiUrl}/${formData.logo}`}
+              alt="לוגו"
+              style={{ maxWidth: "100px", marginTop: "10px" }}
+            />
+          )}
+          <div className="businessFieldRow">
+            <label htmlFor="businessImageFiles">תמונות נוספות של העסק:</label>
+            <input
+              type="file"
+              id="businessImageFiles"
+              name="businessImageFiles"
+              accept="image/*"
+              multiple
+              onChange={(e) =>
+                handleChange("businessImageFiles", e.target.files)
+              }
+            />
+          </div>
+          {formData.businessImages && formData.businessImages.length > 0 && (
+            <div style={{ display: "flex", gap: "10px", flexWrap: "wrap" }}>
+              {formData.businessImages.map((imgPath, i) => (
+                <img
+                  key={i}
+                  src={`${config.apiUrl}/${imgPath}`}
+                  alt={`business-img-${i}`}
+                  style={{ maxWidth: "100px", marginTop: "10px" }}
+                />
+              ))}
+            </div>
+          )}
 
           <div className="businessFieldRow">
             <label htmlFor="objective">מטרה לקמפיין:</label>

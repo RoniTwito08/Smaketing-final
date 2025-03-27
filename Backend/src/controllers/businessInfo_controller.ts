@@ -6,20 +6,38 @@ export const createBusinessInfo = async (req: Request, res: Response) => {
   try {
     const userId = req.params.id;
     console.log("userID: ", userId);
-    // console.log("req.body:", req.body);
-    // console.log("req.files:", req.files);
 
-    // const uploadedFiles = req.files as Express.Multer.File[];
-    // const logoFilePaths = uploadedFiles?.map((file) => file.path) || [];
-
-    const businessInfoData = {
-      ...req.body,
-      userId,
-      // logoFiles: logoFilePaths,
+    const files = req.files as {
+      [fieldname: string]: Express.Multer.File[];
     };
 
-    console.log("businessInfoData: ", businessInfoData);
-    const businessInfo = new businessInfoModel(businessInfoData);
+    const formFields = req.body;
+
+    const logo = files?.logo?.[0]?.path || null;
+
+    // נתיבים של תמונות נוספות (מרובות)
+    const businessImages =
+      files?.businessImages?.map((file) => file.path) || [];
+
+    // בניית האובייקט לשמירה
+    const businessInfo = new businessInfoModel({
+      ...formFields,
+      userId,
+      logo,
+      businessImages,
+    });
+
+    // // const uploadedFiles = req.files as Express.Multer.File[];
+    // // const logoFilePaths = uploadedFiles?.map((file) => file.path) || [];
+
+    // const businessInfoData = {
+    //   ...req.body,
+    //   userId,
+    //   // logoFiles: logoFilePaths,
+    // };
+
+    // console.log("businessInfoData: ", businessInfoData);
+    // const businessInfo = new businessInfoModel(businessInfoData);
     await businessInfo.save();
 
     return res.status(201).json({
@@ -31,6 +49,7 @@ export const createBusinessInfo = async (req: Request, res: Response) => {
       const messages = Object.values(error.errors).map(
         (err: any) => err.message
       );
+      console.log("Validation error messages:", messages);
       return res
         .status(400)
         .json({ message: "יש למלא את כל השדות", details: messages });

@@ -10,11 +10,14 @@ const ensureUploadsDir = (dir: string) => {
 
 ensureUploadsDir("uploads/profile_pictures");
 ensureUploadsDir("uploads/post_images");
+ensureUploadsDir("uploads/business_pictures");
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     if (req.originalUrl.includes("/posts")) {
       cb(null, "uploads/post_images/");
+    } else if (req.originalUrl.includes("/business-info")) {
+      cb(null, "uploads/business_pictures/");
     } else {
       cb(null, "uploads/profile_pictures/");
     }
