@@ -13,6 +13,7 @@ import { ChatModal } from "../Chat/ChatModal";
 import logo from "../../assets/Smarketing.png";
 import { MyPosts } from "../../pages/userProfileScreen/MyPosts";
 import { AccountSettings } from "../../pages/userProfileScreen/AccountSettings";
+import { BusinessSetting } from "../../pages/userProfileScreen/BusinessSetting";
 import LogoutIcon from "@mui/icons-material/Logout";
 import { useAuth } from "../../context/AuthContext";
 import MainFeed from "../../pages/feedPage/MainFeed";
@@ -70,6 +71,11 @@ export default function DashboardLayoutBasic(props: any) {
           title: "הגדרות חשבון",
           icon: <ContactsOutlinedIcon />,
         },
+        {
+          segment: "business",
+          title: "הגדרות עסק",
+          icon: <ContactsOutlinedIcon />,
+        },
       ],
     },
     {
@@ -112,13 +118,12 @@ export default function DashboardLayoutBasic(props: any) {
 
   // Update the chat handling
   const handleSelectUser = (user: User) => {
-    
     // If selecting same user, just show chat
     if (selectedChatUser?._id === user._id) {
       setIsChatVisible(true);
       return;
     }
-    
+
     // If selecting new user, update state and show chat
     setSelectedChatUser(user);
     setIsChatVisible(true);
@@ -132,6 +137,7 @@ export default function DashboardLayoutBasic(props: any) {
   const routeComponents: { [key: string]: React.ReactNode } = {
     "/settings/my-posts": <MyPosts />,
     "/settings/account": <AccountSettings />,
+    "/settings/business": <BusinessSetting />,
     "/feed": <MainFeed />,
     "/chats":
       user && accessToken ? (

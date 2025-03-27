@@ -8,9 +8,7 @@ const Step3: React.FC = () => {
     formState: { errors },
   } = useFormContext();
 
-  const onSubmit = () => {
-  };
-
+  const onSubmit = () => {};
 
   return (
     <div style={styles.container}>
@@ -25,6 +23,7 @@ const Step3: React.FC = () => {
             <Controller
               name="serviceDescription"
               control={control}
+              defaultValue=""
               rules={{ required: "שדה חובה" }}
               render={({ field }) => (
                 <textarea
@@ -49,6 +48,7 @@ const Step3: React.FC = () => {
             <Controller
               name="uniqueService"
               control={control}
+              defaultValue=""
               rules={{ required: "שדה חובה" }}
               render={({ field }) => (
                 <textarea
@@ -76,6 +76,7 @@ const Step3: React.FC = () => {
           <Controller
             name="specialPackages"
             control={control}
+            defaultValue=""
             rules={{ required: "שדה חובה" }}
             render={({ field }) => (
               <textarea
@@ -103,6 +104,7 @@ const Step3: React.FC = () => {
           <Controller
             name="incentives"
             control={control}
+            defaultValue=""
             rules={{ required: "שדה חובה" }}
             render={({ field }) => (
               <textarea {...field} id="incentives" style={styles.textarea} />

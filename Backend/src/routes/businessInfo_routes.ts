@@ -1,8 +1,24 @@
 import express from "express";
 import businessInfo_controller from "../controllers/businessInfo_controller";
 import { authMiddleware } from "../controllers/auth_controller";
+// import multer from "multer";
+// import path from "path";
 
 const router = express.Router();
+
+// הגדרת אחסון עם multer
+// const storage = multer.diskStorage({
+//   destination: function (req, file, cb) {
+//     cb(null, "uploads/business-logos");
+//   },
+//   filename: function (req, file, cb) {
+//     const uniqueName = `${Date.now()}-${file.originalname}`;
+//     cb(null, uniqueName);
+//   },
+// });
+
+// const upload = multer({ storage });
+
 /**
  * @swagger
  * tags:
@@ -36,6 +52,15 @@ router.post("/:id", authMiddleware, (req, res) => {
   businessInfo_controller.createBusinessInfo(req, res);
 });
 
+// router.post("/:id", authMiddleware, upload.any(), (req, res) => {
+//   businessInfo_controller.createBusinessInfo(req, res);
+// });
+// router.post("/:id", upload.any(), (req, res) => {
+//   console.log("BODY:", req.body);
+//   console.log("FILES:", req.files);
+//   res.send("OK");
+// });
+
 /**
  * @swagger
  * /business-info/{id}:
@@ -62,7 +87,7 @@ router.post("/:id", authMiddleware, (req, res) => {
  *         description: Server error
  */
 router.get("/:id", (req, res) => {
-  businessInfo_controller.getBusinessInfo(req, res);
+  businessInfo_controller.getBusinessInfoByUserId(req, res);
 });
 
 /**

@@ -34,6 +34,7 @@ const Step1: React.FC = () => {
         <Controller
           control={control}
           name="businessName"
+          defaultValue=""
           rules={{ required: "שדה חובה" }}
           render={({ field }) => (
             <input
@@ -62,6 +63,7 @@ const Step1: React.FC = () => {
           <Controller
             name="businessType"
             control={control}
+            defaultValue=""
             rules={{ required: "יש לבחור סוג עסק" }}
             render={({ field }) => (
               <select {...field} id="businessType" style={styles.select}>
@@ -88,6 +90,7 @@ const Step1: React.FC = () => {
             <Controller
               name="businessAddress"
               control={control}
+              defaultValue=""
               rules={{ required: "יש למלא כתובת" }}
               render={({ field }) => (
                 <input
@@ -118,6 +121,7 @@ const Step1: React.FC = () => {
           <Controller
             name="businessField"
             control={control}
+            defaultValue=""
             rules={{ required: "יש לבחור תחום פעילות" }}
             render={({ field }) => (
               <select {...field} id="businessField" style={styles.select}>
@@ -145,6 +149,7 @@ const Step1: React.FC = () => {
           <Controller
             name="businessFieldDetails"
             control={control}
+            defaultValue=""
             render={({ field }) => (
               <input
                 {...field}
@@ -166,6 +171,7 @@ const Step1: React.FC = () => {
         <Controller
           name="serviceAreas"
           control={control}
+          defaultValue=""
           rules={{ required: "יש למלא את שדה השירותים" }}
           render={({ field }) => (
             <textarea {...field} id="serviceAreas" style={styles.textarea} />
