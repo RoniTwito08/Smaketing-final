@@ -1,48 +1,52 @@
 import { useEffect, useState } from "react";
 import { Typography } from "@mui/material";
-import "./AccountSettings.css";
 import { useAuth } from "../../context/AuthContext";
 import { businessInfoService } from "../../services/besinessInfo.service";
 import { FormValues } from "../../types/businessInfo";
 import { toast } from "react-toastify";
 import { config } from "../../config";
+import { Controller, useForm } from "react-hook-form";
+import "./BusinessSetting.css";
+// import { useWatch } from "react-hook-form";
 
 export const BusinessSetting = () => {
   const { user, accessToken } = useAuth();
-  const [formData, setFormData] = useState<Partial<FormValues>>({});
   const [isLoading, setIsLoading] = useState(true);
+  const [logoPreview, setLogoPreview] = useState<string | null>(null);
+  const [imagePreviews, setImagePreviews] = useState<string[]>([]);
 
-  useEffect(() => {
-    const fetchBusinessInfo = async () => {
-      if (!user?._id || !accessToken) return;
-      try {
-        const data = await businessInfoService.getBusinessInfo(
-          user._id,
-          accessToken
-        );
-        setFormData(data);
-        setIsLoading(false);
-      } catch (err) {
-        console.error("Error fetching business info", err);
-        toast.error("שגיאה בשליפת מידע עסקי");
-      }
-    };
+  const {
+    control,
+    handleSubmit,
+    setValue,
+    getValues,
+    formState: { errors },
+  } = useForm<FormValues>();
 
-    fetchBusinessInfo();
-  }, [user, accessToken]);
+  const socialPlatforms = [
+    "Facebook",
+    "Instagram",
+    "TikTok",
+    "Twitter",
+    "Other",
+  ];
 
-  const handleChange = (field: keyof FormValues, value: any) => {
-    setFormData((prev) => ({ ...prev, [field]: value }));
-  };
+  const professions = [
+    "מעצב גרפי",
+    "מתכנת",
+    "אדריכל",
+    "יועץ שיווק",
+    "מאמן אישי",
+    "רואה חשבון",
+    "עורך דין",
+    "מטפל הוליסטי",
+    "מורה פרטי",
+  ];
 
-  const handleSave = async () => {
-    if (!formData._id || !accessToken) return;
+  const onSubmit = async (data: Partial<FormValues>) => {
+    if (!data._id || !accessToken) return;
     try {
-      await businessInfoService.updateBusinessInfo(
-        formData._id,
-        formData,
-        accessToken
-      );
+      await businessInfoService.updateBusinessInfo(data._id, data, accessToken);
       toast.success("פרטי העסק עודכנו בהצלחה");
     } catch (err) {
       console.error("Error updating business info", err);
@@ -50,158 +54,306 @@ export const BusinessSetting = () => {
     }
   };
 
+  useEffect(() => {
+    const fetchBusinessInfo = async () => {
+      if (!user?._id || !accessToken) return;
+      try {
+        const response = await businessInfoService.getBusinessInfo(
+          user._id,
+          accessToken
+        );
+        const data = response.data;
+        Object.entries(data).forEach(([key, value]) => {
+          setValue(
+            key as keyof FormValues,
+            value as FormValues[keyof FormValues]
+          );
+        });
+
+        if (data.logo) setLogoPreview(`${config.apiUrl}/${data.logo}`);
+        if (data.businessImages?.length) {
+          setImagePreviews(
+            data.businessImages.map((img: string) => `${config.apiUrl}/${img}`)
+          );
+        }
+        setIsLoading(false);
+      } catch (err) {
+        console.error("Error fetching business info", err);
+        toast.error("שגיאה בשליפת מידע עסקי");
+      }
+    };
+    fetchBusinessInfo();
+  }, [user, accessToken, setValue]);
+
   if (isLoading) return <Typography>טוען פרטי עסק...</Typography>;
 
+  const businessType = getValues("businessType");
+
   return (
-    <div className="profileContainer">
+    <form className="profileContainer" onSubmit={handleSubmit(onSubmit)}>
       <div className="userInfo">
         <div className="userDetails">
-          <div className="nameSection">
-            <h2>{formData.businessName}</h2>
-          </div>
-
-          {[
-            ["כתובת:", "businessAddress"],
-            ["סוג עסק:", "businessType"],
-            ["תחום פעילות:", "businessField"],
-            ["פרטים נוספים:", "businessFieldDetails"],
-            ["איזור שירות:", "serviceAreas"],
-            ["פלח שוק:", "specificMarketSegment"],
-            ["לקוחות טיפוסיים:", "typicalCustomers"],
-            ["העדפות עיצוב:", "designPreferences"],
-          ].map(([label, key]) => (
-            <div className="businessFieldRow" key={key}>
-              <label htmlFor={key}>{label}</label>
-              <input
-                id={key as string}
-                name={key as string}
-                value={(formData as any)[key] || ""}
-                onChange={(e) =>
-                  handleChange(key as keyof FormValues, e.target.value)
-                }
-              />
-            </div>
-          ))}
-
           <div className="businessFieldRow">
-            <label htmlFor="targetAudience">קהל יעד:</label>
-            <input
-              id="targetAudience"
-              name="targetAudience"
-              value={`${formData.ageGroup || ""}, ${formData.gender || ""}`}
-              onChange={(e) => {
-                const [ageGroup, gender] = e.target.value.split(",");
-                setFormData((prev) => ({
-                  ...prev,
-                  ageGroup: ageGroup?.trim(),
-                  gender: gender?.trim(),
-                }));
-              }}
+            <label htmlFor="businessName">שם העסק:</label>
+            <Controller
+              name="businessName"
+              control={control}
+              defaultValue=""
+              render={({ field }) => <input {...field} />}
             />
           </div>
 
-          {[
-            "serviceDescription",
-            "uniqueService",
-            "specialPackages",
-            "incentives",
-          ].map((key) => (
-            <div className="businessFieldRow" key={key}>
-              <label htmlFor={key}>{key}:</label>
-              <textarea
-                id={key}
-                name={key}
-                value={(formData as any)[key] || ""}
-                onChange={(e) =>
-                  handleChange(key as keyof FormValues, e.target.value)
-                }
+          <div className="businessFieldRow">
+            <label htmlFor="businessType">סוג עסק:</label>
+            <Controller
+              name="businessType"
+              control={control}
+              defaultValue=""
+              render={({ field }) => (
+                <select {...field}>
+                  <option value="">בחר סוג עסק</option>
+                  <option value="פיזי">עסק פיזי</option>
+                  <option value="דיגיטלי">עסק דיגיטלי</option>
+                </select>
+              )}
+            />
+          </div>
+
+          {businessType === "פיזי" && (
+            <div className="businessFieldRow">
+              <label htmlFor="businessAddress">כתובת:</label>
+              <Controller
+                name="businessAddress"
+                control={control}
+                defaultValue=""
+                render={({ field }) => <input {...field} />}
               />
             </div>
-          ))}
+          )}
 
           <div className="businessFieldRow">
-            <label htmlFor="socialMediaAccounts">רשתות חברתיות:</label>
-            <input
-              id="socialMediaAccounts"
+            <label htmlFor="businessField">תחום פעילות:</label>
+            <Controller
+              name="businessField"
+              control={control}
+              defaultValue=""
+              render={({ field }) => (
+                <select {...field}>
+                  <option value="">בחר תחום</option>
+                  {professions.map((p) => (
+                    <option key={p} value={p}>
+                      {p}
+                    </option>
+                  ))}
+                </select>
+              )}
+            />
+          </div>
+
+          <div className="businessFieldRow">
+            <label htmlFor="businessFieldDetails">פרטים נוספים:</label>
+            <Controller
+              name="businessFieldDetails"
+              control={control}
+              defaultValue=""
+              render={({ field }) => <input {...field} />}
+            />
+          </div>
+
+          <div className="businessFieldRow">
+            <label htmlFor="serviceAreas">איזור שירות:</label>
+            <Controller
+              name="serviceAreas"
+              control={control}
+              defaultValue=""
+              render={({ field }) => <textarea {...field} />}
+            />
+          </div>
+
+          <div className="businessFieldRow">
+            <label htmlFor="serviceDescription">מה השירות שאתה מספק?</label>
+            <Controller
+              name="serviceDescription"
+              control={control}
+              defaultValue=""
+              render={({ field }) => <textarea {...field} />}
+            />
+          </div>
+
+          <div className="businessFieldRow">
+            <label htmlFor="uniqueService">שירות חדש או ייחודי:</label>
+            <Controller
+              name="uniqueService"
+              control={control}
+              defaultValue=""
+              render={({ field }) => <textarea {...field} />}
+            />
+          </div>
+
+          <div className="businessFieldRow">
+            <label htmlFor="specialPackages">חבילות שירות מיוחדות:</label>
+            <Controller
+              name="specialPackages"
+              control={control}
+              defaultValue=""
+              render={({ field }) => <textarea {...field} />}
+            />
+          </div>
+
+          <div className="businessFieldRow">
+            <label htmlFor="incentives">תמריצים ללקוחות חדשים:</label>
+            <Controller
+              name="incentives"
+              control={control}
+              defaultValue=""
+              render={({ field }) => <textarea {...field} />}
+            />
+          </div>
+
+          <div className="businessFieldRow">
+            <label htmlFor="designPreferences">העדפות עיצוב:</label>
+            <Controller
+              name="designPreferences"
+              control={control}
+              defaultValue=""
+              render={({ field }) => <input {...field} />}
+            />
+          </div>
+
+          <div className="businessFieldRow">
+            <label>רשתות חברתיות:</label>
+            <Controller
               name="socialMediaAccounts"
-              value={(formData.socialMediaAccounts || []).join(", ")}
-              onChange={(e) =>
-                handleChange(
-                  "socialMediaAccounts",
-                  e.target.value.split(",").map((s) => s.trim())
-                )
-              }
+              control={control}
+              defaultValue={[]}
+              render={({ field }) => (
+                <div className="checkboxGroup">
+                  {socialPlatforms.map((platform) => (
+                    <label key={platform} className="checkboxItem">
+                      <input
+                        type="checkbox"
+                        className="customCheckbox"
+                        value={platform}
+                        checked={(field.value ?? []).includes(platform)}
+                        onChange={(e) => {
+                          const isChecked = e.target.checked;
+                          const currentValue = field.value ?? [];
+                          field.onChange(
+                            isChecked
+                              ? [...currentValue, platform]
+                              : currentValue.filter((item) => item !== platform)
+                          );
+                        }}
+                      />
+                      <span>{platform}</span>
+                    </label>
+                  ))}
+                </div>
+              )}
             />
           </div>
-
           <div className="businessFieldRow">
             <label htmlFor="logoFile">לוגו:</label>
-            <input
-              type="file"
-              id="logoFile"
-              name="logoFile"
-              accept="image/*"
-              onChange={(e) =>
-                handleChange("logoFile", e.target.files?.[0] || null)
-              }
-            />
+            <div style={{ flex: 1 }}>
+              <input
+                type="file"
+                accept="image/*"
+                onChange={(e) => {
+                  const file = e.target.files?.[0];
+                  if (file) {
+                    const reader = new FileReader();
+                    reader.onloadend = () =>
+                      setLogoPreview(reader.result as string);
+                    reader.readAsDataURL(file);
+                    setValue("logoFile", file);
+                  }
+                }}
+              />
+              {logoPreview && (
+                <div className="imagePreviewContainer">
+                  <img
+                    src={logoPreview}
+                    alt="Preview"
+                    className="imagePreview"
+                  />
+                </div>
+              )}
+            </div>
           </div>
-          {formData.logo && (
-            <img
-              src={`${config.apiUrl}/${formData.logo}`}
-              alt="לוגו"
-              style={{ maxWidth: "100px", marginTop: "10px" }}
-            />
-          )}
+
           <div className="businessFieldRow">
             <label htmlFor="businessImageFiles">תמונות נוספות של העסק:</label>
-            <input
-              type="file"
-              id="businessImageFiles"
-              name="businessImageFiles"
-              accept="image/*"
-              multiple
-              onChange={(e) =>
-                handleChange("businessImageFiles", e.target.files)
-              }
-            />
-          </div>
-          {formData.businessImages && formData.businessImages.length > 0 && (
-            <div style={{ display: "flex", gap: "10px", flexWrap: "wrap" }}>
-              {formData.businessImages.map((imgPath, i) => (
-                <img
-                  key={i}
-                  src={`${config.apiUrl}/${imgPath}`}
-                  alt={`business-img-${i}`}
-                  style={{ maxWidth: "100px", marginTop: "10px" }}
-                />
-              ))}
+            <div style={{ flex: 1 }}>
+              <input
+                type="file"
+                accept="image/*"
+                multiple
+                onChange={(e) => {
+                  const files = e.target.files;
+                  if (files && files.length > 0) {
+                    const previews: string[] = [];
+                    Array.from(files).forEach((file) => {
+                      const reader = new FileReader();
+                      reader.onloadend = () => {
+                        previews.push(reader.result as string);
+                        if (previews.length === files.length) {
+                          setImagePreviews(previews);
+                        }
+                      };
+                      reader.readAsDataURL(file);
+                    });
+                    setValue("businessImageFiles", files);
+                  }
+                }}
+              />
+              {imagePreviews.length > 0 && (
+                <div className="imagePreviewContainer">
+                  {imagePreviews.map((src, i) => (
+                    <img
+                      key={i}
+                      src={src}
+                      alt={`business-img-${i}`}
+                      className="imagePreview"
+                    />
+                  ))}
+                </div>
+              )}
             </div>
-          )}
+          </div>
 
           <div className="businessFieldRow">
             <label htmlFor="objective">מטרה לקמפיין:</label>
-            <select
-              id="objective"
+            <Controller
               name="objective"
-              value={formData.objective || ""}
-              onChange={(e) => handleChange("objective", e.target.value)}
-            >
-              <option value="">בחר מטרה</option>
-              <option value="brandAwareness">הגדלת מודעות למותג</option>
-              <option value="reach">הגעה לאנשים רבים</option>
-              <option value="siteVisit">ביקור באתר</option>
-              <option value="engagement">מעורבות</option>
-              <option value="videoViews">צפיות בווידאו</option>
-              <option value="sales">הגדלת מכירות</option>
-            </select>
+              control={control}
+              defaultValue={undefined}
+              render={({ field }) => (
+                <select {...field}>
+                  <option value="">בחר מטרה</option>
+                  <option value="brandAwareness">
+                    הגדלת המודעות למותג שלך
+                  </option>
+                  <option value="reach">הגעה למספר גדול של אנשים</option>
+                  <option value="siteVisit">
+                    ביקור באתר / אפליקציה / חנות פיזית
+                  </option>
+                  <option value="engagement">
+                    מעורבות - לייקים, תגובות או שיתופים
+                  </option>
+                  <option value="videoViews">צפיות בווידאו</option>
+                  <option value="sales">הגדלת המכירות</option>
+                </select>
+              )}
+            />
           </div>
 
-          <button className="saveButton" onClick={handleSave}>
-            שמור שינויים
-          </button>
+          <div className="buttonContainer">
+            <button type="submit" className="saveButton">
+              שמור שינויים
+            </button>
+          </div>
         </div>
       </div>
-    </div>
+    </form>
   );
 };
