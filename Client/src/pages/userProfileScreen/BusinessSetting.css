@@ -1,81 +1,212 @@
+/* AccountSettings.css - Updated Styling */
+
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+.MuiBox-root {
+  width: 100% !important;
+}
+
 .profileContainer {
-  padding: 40px;
-  background: white;
-  border-radius: 16px;
-  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+  background-color: rgba(255, 255, 255, 0.95);
+  padding: 2rem;
+  width: 80%;
+  margin: 3rem auto;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   direction: rtl;
-  text-align: right;
+  font-family: "Assistant", sans-serif;
 }
 
 .userInfo {
   display: flex;
-  justify-content: center;
-  padding: 30px;
-  background: white;
-  border-radius: 16px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.nameSection h2 {
+  text-align: center;
+  font-size: 1.8rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  color: #333;
 }
 
 .userDetails {
   display: flex;
   flex-direction: column;
-  width: 100%;
-  max-width: 600px;
-  gap: 16px;
-}
-
-.nameSection {
-  text-align: center;
-  margin-bottom: 20px;
+  gap: 1.5rem;
 }
 
 .businessFieldRow {
   display: flex;
-  flex-direction: column;
+  align-items: flex-start; /* במקום center */
+  /* justify-content: flex-end; */
+  gap: 1rem;
+  margin-bottom: 1rem;
+  width: 50%;
 }
 
 .businessFieldRow label {
-  margin-bottom: 8px;
-  font-weight: bold;
+  width: 180px;
   text-align: right;
+  font-weight: 500;
+  color: #333;
+  padding-top: 10px; /* מיישר אנכית עם טקסטאריאה ושדות אחרים */
 }
 
 .businessFieldRow input,
+.businessFieldRow select,
 .businessFieldRow textarea {
-  padding: 10px;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  font-size: 16px;
-  resize: vertical;
-  direction: rtl;
-  text-align: right;
+  flex: 1;
+  padding: 0.8rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 1rem;
+  background-color: #fff;
+  box-sizing: border-box;
+  transition: border-color 0.2s;
 }
 
-textarea {
-  min-height: 60px;
+.businessFieldRow input:focus,
+.businessFieldRow select:focus,
+.businessFieldRow textarea:focus {
+  border-color: #3a86ff;
+  outline: none;
+}
+
+.businessFieldRow textarea {
+  resize: vertical;
+  min-height: 80px;
+}
+
+.businessFieldRow input[type="file"] {
+  padding: 0.5rem 0;
+}
+
+.imagePreview {
+  max-width: 150px;
+  margin-top: 1rem;
+  border-radius: 4px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
 }
 
 .saveButton {
-  align-self: center;
-  padding: 12px 24px;
-  background: linear-gradient(to right, #4a90e2, #36d1dc);
+  background-color: #00264d !important;
   color: white;
   border: none;
-  border-radius: 25px;
+  padding: 0.8rem 2rem;
+  border-radius: 4px;
   cursor: pointer;
-  font-size: 16px;
-  font-weight: 600;
-  transition: all 0.3s ease;
-  margin-top: 20px;
+  font-size: 1rem;
+  font-weight: 500;
+  transition: background-color 0.3s ease;
+  margin: 0 auto;
+  display: block;
 }
 
 .saveButton:hover {
-  background: linear-gradient(to right, #36d1dc, #4a90e2);
-  transform: scale(1.05);
+  background-color: #00264d;
 }
 
-@media (max-width: 768px) {
-  .userDetails {
-    padding: 0 20px;
+.buttonGroup {
+  display: flex;
+  gap: 1rem;
+  margin-top: 2rem;
+  justify-content: center;
+  direction: rtl;
+}
+
+.businessFieldRow input[type="file"]::file-selector-button {
+  background-color: #888;
+  color: white;
+  border: none;
+  padding: 0.4rem 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 500;
+  margin-left: 0.5rem;
+}
+
+.businessFieldRow input[type="file"]::file-selector-button:hover {
+  background-color: #666;
+}
+
+.checkboxGroup input[type="checkbox"]:checked::before {
+  content: "✔";
+  font-size: 12px;
+  color: white;
+  position: absolute;
+  top: -1px;
+  left: 2px;
+}
+
+.checkboxGroup input[type="checkbox"]:checked {
+  background-color: #0d47a1;
+  border-color: #0d47a1;
+}
+
+.checkboxGroup label {
+  margin: 10px;
+  gap: 8px; /* מרווח בין הטקסט לצ'קבוקס */
+}
+
+.checkboxGroup {
+  /* display: flex; */
+  flex-direction: column;
+  /* gap: 10px; */
+}
+
+.checkboxGroup label {
+  display: flex;
+  /* flex-direction: row-reverse; */
+  align-items: center;
+  justify-content: flex-start;
+  gap: 10px;
+  width: 10px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+@media screen and (max-width: 768px) {
+  .profileContainer {
+    width: 95%;
+    padding: 1rem;
   }
+
+  .businessFieldRow {
+    flex-direction: column;
+    align-items: stretch;
+    width: 100%;
+  }
+
+  .businessFieldRow label {
+    width: 100%;
+    text-align: right;
+    padding-top: 0;
+  }
+
+  .businessFieldRow input,
+  .businessFieldRow select,
+  .businessFieldRow textarea {
+    width: 100%;
+  }
+}
+.imagePreviewContainer {
+  width: 100%;
+  margin-top: 0.5rem;
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.imagePreview {
+  max-width: 150px;
+  border-radius: 4px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
 }
