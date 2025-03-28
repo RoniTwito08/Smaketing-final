@@ -17,6 +17,8 @@ import LogoutIcon from "@mui/icons-material/Logout";
 import { useAuth } from "../../context/AuthContext";
 import MainFeed from "../../pages/feedPage/MainFeed";
 import { User } from "../../types/user";
+import PieChartOutlineOutlinedIcon from "@mui/icons-material/PieChartOutlineOutlined";
+import DashboardIcon from "@mui/icons-material/Dashboard";
 
 export default function DashboardLayoutBasic(props: any) {
   const { window } = props;
@@ -36,17 +38,17 @@ export default function DashboardLayoutBasic(props: any) {
   const NAVIGATION: Navigation = [
     {
       kind: "header",
-      title: "Blog",
+      title: "Smarketing",
     },
     {
-      segment: "feed",
-      title: "תוכן",
+      segment: "Campaigns",
+      title: "קמפיינים",
       icon: <HomeOutlinedIcon />,
     },
     {
-      segment: "chats",
-      title: "צאטים",
-      icon: <CalendarTodayOutlinedIcon />,
+      segment: "Data",
+      title: "נתונים וניתוחים",
+      icon: <PieChartOutlineOutlinedIcon />,
     },
     {
       kind: "divider",
@@ -62,8 +64,8 @@ export default function DashboardLayoutBasic(props: any) {
       children: [
         {
           segment: "my-posts",
-          title: "הפוסטים שלי",
-          icon: <PersonOutlinedIcon />,
+          title: "פרטי העסק",
+          icon: <DashboardIcon />,
         },
         {
           segment: "account",
@@ -112,13 +114,12 @@ export default function DashboardLayoutBasic(props: any) {
 
   // Update the chat handling
   const handleSelectUser = (user: User) => {
-    
     // If selecting same user, just show chat
     if (selectedChatUser?._id === user._id) {
       setIsChatVisible(true);
       return;
     }
-    
+
     // If selecting new user, update state and show chat
     setSelectedChatUser(user);
     setIsChatVisible(true);
@@ -130,29 +131,9 @@ export default function DashboardLayoutBasic(props: any) {
 
   // Update the route mapping
   const routeComponents: { [key: string]: React.ReactNode } = {
-    "/settings/my-posts": <MyPosts />,
+    "/settings/my-posts": <></>,
     "/settings/account": <AccountSettings />,
-    "/feed": <MainFeed />,
-    "/chats":
-      user && accessToken ? (
-        <div style={{ position: "relative", height: "100%" }}>
-          <ChatList
-            currentUser={user}
-            token={accessToken}
-            onSelectUser={handleSelectUser}
-          />
-          {selectedChatUser && isChatVisible && (
-            <ChatModal
-              token={accessToken}
-              currentUser={user}
-              selectedUser={selectedChatUser}
-              onClose={handleCloseChat}
-            />
-          )}
-        </div>
-      ) : (
-        <div>Please log in to access chat</div>
-      ),
+    "/feed": <></>,
   };
 
   const CurrentComponent = routeComponents[router.pathname];
