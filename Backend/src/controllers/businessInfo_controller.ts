@@ -47,33 +47,6 @@ export const createBusinessInfo = async (req: Request, res: Response) => {
   }
 };
 
-// export const updateBusinessInfo = async (
-//   req: Request,
-//   res: Response
-// ): Promise<Response> => {
-//   try {
-//     const { id } = req.params;
-//     const updatedData = req.body;
-//     const businessInfo = await businessInfoModel.findByIdAndUpdate(
-//       id,
-//       updatedData,
-//       {
-//         new: true,
-//       }
-//     );
-//     if (!businessInfo) {
-//       return res.status(404).json({ message: "Business info not found" });
-//     }
-//     return res.json({
-//       message: "Business info updated successfully",
-//       data: businessInfo,
-//     });
-//   } catch (error) {
-//     console.error("Error updating business info:", error);
-//     return res.status(500).json({ message: "Server error", error });
-//   }
-// };
-
 export const updateBusinessInfo = async (req: Request, res: Response) => {
   try {
     const { userId } = req.params;
