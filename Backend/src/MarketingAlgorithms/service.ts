@@ -1,0 +1,48 @@
+interface GeminiCandidatePart {
+  text: string;
+}
+
+interface GeminiCandidateContent {
+  parts: GeminiCandidatePart[];
+}
+
+interface GeminiCandidate {
+  content: GeminiCandidateContent;
+}
+
+interface GeminiResponse {
+  candidates?: GeminiCandidate[];
+}
+
+export async function callLLM(prompt: string): Promise<any> {
+  const response = await fetch(
+    "https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=YOUR_API_KEY",
+    {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        contents: [{ parts: [{ text: prompt }] }],
+      }),
+    }
+  );
+
+  if (!response.ok) {
+    throw new Error(`Gemini API request failed: ${response.statusText}`);
+  }
+
+  const data = (await response.json()) as GeminiResponse;
+
+  const resultText = data?.candidates?.[0]?.content?.parts?.[0]?.text;
+
+  if (!resultText) {
+    throw new Error("Gemini API returned no text result.");
+  }
+
+  try {
+    const parsed = JSON.parse(resultText);
+    return parsed; // 👈 This will match your CampaignUpdatePayload structure
+  } catch {
+    console.warn("⚠️ Gemini response is not valid JSON. Returning raw text.");
+    return { suggestions: resultText };
+  }
+}
