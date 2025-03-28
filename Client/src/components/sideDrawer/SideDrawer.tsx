@@ -137,8 +137,9 @@ export default function DashboardLayoutBasic(props: any) {
 
   // Update the route mapping
   const routeComponents: { [key: string]: React.ReactNode } = {
-    "/my-posts": <MyPosts />, // matan- to edit
-    "/settings/account": <AccountSettings />, // roni- to edit
+    "/my-campign": <MyPosts />, // matan- to edit
+    "/analytics": <MyPosts />, // roni and omer- to edit
+    "/settings/account": <AccountSettings />,
     "/settings/business-settings": <BusinessSetting />,
     "/feed": <MainFeed />,
     "/chats":
