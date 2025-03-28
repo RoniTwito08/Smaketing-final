@@ -5,9 +5,9 @@ import MultiStepForm from "./Stepper";
 const RegisterBase: React.FC = () => {
   return (
     <div className={styles.formsPageWrapper}>
-      <button className={styles.backButton} onClick={() => {}}>
+      {/* <button className={styles.backButton} onClick={() => {}}>
         &larr; המשך מאוחר יותר
-      </button>
+      </button> */}
 
       <div className={`${styles.container}`}>
         <MultiStepForm />
