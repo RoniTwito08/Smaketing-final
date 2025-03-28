@@ -19,16 +19,16 @@ export type FormValues = {
   serviceAreas: string;
 
   /* טווח הגיל של קהל היעד (שדה חובה) */
-  ageGroup: string;
+  // ageGroup: string;
 
   /* מין קהל היעד (שדה חובה, למשל "זכר"/"נקבה"/"שני המינים") */
-  gender: string;
+  // gender: string;
 
   /* פלח שוק ספציפי שאליו רוצים למקד קמפיינים (שדה חובה) */
-  specificMarketSegment: string;
+  // specificMarketSegment: string;
 
   /* תיאור הלקוחות הטיפוסיים המשתמשים בשירות (שדה חובה) */
-  typicalCustomers: string;
+  // typicalCustomers: string;
 
   /* תיאור השירות המסופק (שדה חובה) */
   serviceDescription: string;
