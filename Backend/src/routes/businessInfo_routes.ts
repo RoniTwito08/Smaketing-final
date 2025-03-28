@@ -55,7 +55,7 @@ router.post(
   authMiddleware,
   upload.fields([
     { name: "logo", maxCount: 1 },
-    { name: "businessImages", maxCount: 10 },
+    { name: "businessImages", maxCount: 4 },
   ]),
   (req, res) => {
     businessInfo_controller.createBusinessInfo(req, res);

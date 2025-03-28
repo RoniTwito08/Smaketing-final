@@ -42,10 +42,10 @@ const BusinessInfoModel = new mongoose.Schema<BusinessInfo>({
   serviceAreas: { type: String, required: true },
 
   // שלב 2
-  ageGroup: { type: String, required: true },
-  gender: { type: String, required: true },
-  specificMarketSegment: { type: String, required: true },
-  typicalCustomers: { type: String, required: true },
+  // ageGroup: { type: String, required: true },
+  // gender: { type: String, required: true },
+  // specificMarketSegment: { type: String, required: true },
+  // typicalCustomers: { type: String, required: true },
 
   // שלב 3
   serviceDescription: { type: String, required: true },
@@ -54,10 +54,6 @@ const BusinessInfoModel = new mongoose.Schema<BusinessInfo>({
   incentives: { type: String, required: true },
 
   // שלב 4
-  // logoFiles: {
-  //   type: [String],
-  //   default: [],
-  // },
   logo: { type: String },
   businessImages: {
     type: [String],

@@ -16,10 +16,10 @@ import { useNavigate } from "react-router-dom";
 import { config } from "../../config";
 import { businessInfoService } from "../../services/besinessInfo.service";
 
-const steps = [<Step1 />, <Step2 />, <Step3 />, <Step4 />, <Step5 />]; // מערך של קומפוננטות
+const steps = [<Step1 />, <Step3 />, <Step4 />, <Step5 />]; // מערך של קומפוננטות
 const stepsHeader = [
   "מידע כללי",
-  "קהל יעד",
+  // "קהל יעד",
   "מוצרים ושירותים",
   "מותג וזיהוי ויזואלי",
   "מטרות עסקיות",
@@ -33,8 +33,6 @@ const MultiStepForm: React.FC = () => {
 
   const handleNext = () => setActiveStep((prev) => prev + 1);
   const handleBack = () => setActiveStep((prev) => prev - 1);
-
-  const API_URL = config.apiUrl;
 
   const onSubmit: SubmitHandler<FormValues> = async (data) => {
     const token = localStorage.getItem("accessToken");
