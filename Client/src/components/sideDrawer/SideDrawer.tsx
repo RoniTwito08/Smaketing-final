@@ -7,12 +7,15 @@ import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
 import PersonOutlinedIcon from "@mui/icons-material/PersonOutlined";
 import CalendarTodayOutlinedIcon from "@mui/icons-material/CalendarTodayOutlined";
 import ContactsOutlinedIcon from "@mui/icons-material/ContactsOutlined";
+import SettingsIcon from "@mui/icons-material/Settings";
+import AnalysisIcon from "@mui/icons-material/Analytics";
 import MenuOutlinedIcon from "@mui/icons-material/MenuOutlined";
 import { ChatList } from "../Chat/ChatList";
 import { ChatModal } from "../Chat/ChatModal";
 import logo from "../../assets/Smarketing.png";
 import { MyPosts } from "../../pages/userProfileScreen/MyPosts";
 import { AccountSettings } from "../../pages/userProfileScreen/AccountSettings";
+import { BusinessSetting } from "../../pages/userProfileScreen/BusinessSetting";
 import LogoutIcon from "@mui/icons-material/Logout";
 import { useAuth } from "../../context/AuthContext";
 import MainFeed from "../../pages/feedPage/MainFeed";
@@ -36,12 +39,17 @@ export default function DashboardLayoutBasic(props: any) {
   const NAVIGATION: Navigation = [
     {
       kind: "header",
-      title: "Blog",
+      title: "Menu",
     },
     {
       segment: "feed",
-      title: "תוכן",
-      icon: <HomeOutlinedIcon />,
+      title: "הקמפיינים שלי",
+      icon: <ContactsOutlinedIcon />,
+    },
+    {
+      segment: "Analysis",
+      title: "ניתוחים ונתונים",
+      icon: <AnalysisIcon />,
     },
     {
       segment: "chats",
@@ -61,14 +69,14 @@ export default function DashboardLayoutBasic(props: any) {
       icon: <MenuOutlinedIcon />,
       children: [
         {
-          segment: "my-posts",
-          title: "הפוסטים שלי",
-          icon: <PersonOutlinedIcon />,
+          segment: "account",
+          title: "הגדרות משתמש",
+          icon: <SettingsIcon />,
         },
         {
-          segment: "account",
-          title: "הגדרות חשבון",
-          icon: <ContactsOutlinedIcon />,
+          segment: "business-settings",
+          title: "הגדרות עסק",
+          icon: <SettingsIcon />,
         },
       ],
     },
@@ -112,13 +120,12 @@ export default function DashboardLayoutBasic(props: any) {
 
   // Update the chat handling
   const handleSelectUser = (user: User) => {
-    
     // If selecting same user, just show chat
     if (selectedChatUser?._id === user._id) {
       setIsChatVisible(true);
       return;
     }
-    
+
     // If selecting new user, update state and show chat
     setSelectedChatUser(user);
     setIsChatVisible(true);
@@ -130,8 +137,9 @@ export default function DashboardLayoutBasic(props: any) {
 
   // Update the route mapping
   const routeComponents: { [key: string]: React.ReactNode } = {
-    "/settings/my-posts": <MyPosts />,
-    "/settings/account": <AccountSettings />,
+    "/my-posts": <MyPosts />, // matan- to edit
+    "/settings/account": <AccountSettings />, // roni- to edit
+    "/settings/business-settings": <BusinessSetting />,
     "/feed": <MainFeed />,
     "/chats":
       user && accessToken ? (
