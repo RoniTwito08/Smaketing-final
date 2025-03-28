@@ -62,15 +62,6 @@ router.post(
   }
 );
 
-// router.post("/:id", authMiddleware, upload.any(), (req, res) => {
-//   businessInfo_controller.createBusinessInfo(req, res);
-// });
-// router.post("/:id", upload.any(), (req, res) => {
-//   console.log("BODY:", req.body);
-//   console.log("FILES:", req.files);
-//   res.send("OK");
-// });
-
 /**
  * @swagger
  * /business-info/{id}:
@@ -131,8 +122,16 @@ router.get("/:id", (req, res) => {
  *       500:
  *         description: Server error
  */
-router.put("/:id", authMiddleware, (req, res) => {
-  businessInfo_controller.updateBusinessInfo(req, res);
-});
+router.put(
+  "/:id",
+  authMiddleware,
+  upload.fields([
+    { name: "logoFile", maxCount: 1 },
+    { name: "businessImageFiles", maxCount: 4 },
+  ]),
+  (req, res) => {
+    businessInfo_controller.updateBusinessInfo(req, res);
+  }
+);
 
 export default router;
