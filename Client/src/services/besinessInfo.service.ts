@@ -38,13 +38,11 @@ export const businessInfoService = {
       });
     }
 
-    console.log("נתוני הטופס הסופיים:", formData);
-    for (let pair of formData.entries()) {
-      console.log(`${pair[0]}:`, pair[1]);
-    }
+    // for (let pair of formData.entries()) {
+    //   console.log(`${pair[0]}:`, pair[1]);
+    // }
 
-    const API_URL = config.apiUrl;
-    const response = await fetch(`${API_URL}/business-info/${userId}`, {
+    const response = await fetch(`${config.apiUrl}/business-info/${userId}`, {
       method: "POST",
       headers: {
         Authorization: `Bearer ${token}`,
@@ -70,7 +68,10 @@ export const businessInfoService = {
 
     if (!response.ok) {
       const errorData = await response.json();
-      throw new Error(errorData.message || "שגיאה בקבלת המידע");
+      throw {
+        message: errorData.message || "שגיאה בקבלת המידע",
+        status: response.status,
+      };
     }
 
     return await response.json();
@@ -81,18 +82,54 @@ export const businessInfoService = {
     data: Partial<FormValues>,
     token: string
   ) {
+    const formData = new FormData();
+
+    // אם המשתמש העלה לוגו חדש
+    if (data.logoFile instanceof File) {
+      formData.append("logoFile", data.logoFile);
+    } else if (data.logo) {
+      formData.append("logo", data.logo); // שמור את הנתיב הקיים
+    }
+
+    // אם המשתמש העלה תמונות חדשות
+    if (data.businessImageFiles instanceof FileList) {
+      Array.from(data.businessImageFiles).forEach((file) =>
+        formData.append("businessImageFiles", file)
+      );
+    } else if (data.businessImages?.length) {
+      data.businessImages.forEach((imgPath) =>
+        formData.append("businessImages", imgPath)
+      );
+    }
+
+    // כל שאר השדות
+    const exclude = [
+      "logoFile",
+      "logo",
+      "businessImageFiles",
+      "businessImages",
+    ];
+    Object.entries(data).forEach(([key, value]) => {
+      if (value !== undefined && value !== null && !exclude.includes(key)) {
+        if (Array.isArray(value)) {
+          value.forEach((item) => formData.append(key, item));
+        } else {
+          formData.append(key, value as string);
+        }
+      }
+    });
+
     const response = await fetch(`${config.apiUrl}/business-info/${userId}`, {
       method: "PUT",
       headers: {
-        "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
       },
-      body: JSON.stringify(data),
+      body: formData,
     });
 
     if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.message || "שגיאה בעדכון המידע");
+      const text = await response.text();
+      throw new Error(text || "שגיאה בעדכון המידע");
     }
 
     return await response.json();

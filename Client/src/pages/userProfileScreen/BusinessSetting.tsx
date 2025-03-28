@@ -5,7 +5,7 @@ import { businessInfoService } from "../../services/besinessInfo.service";
 import { FormValues } from "../../types/businessInfo";
 import { toast } from "react-toastify";
 import { config } from "../../config";
-import { Controller, useForm } from "react-hook-form";
+import { Controller, useForm, useWatch } from "react-hook-form";
 import "./BusinessSetting.css";
 // import { useWatch } from "react-hook-form";
 
@@ -44,13 +44,29 @@ export const BusinessSetting = () => {
   ];
 
   const onSubmit = async (data: Partial<FormValues>) => {
-    if (!data._id || !accessToken) return;
+    if (!accessToken) return;
+    if (!user || !user._id) return;
     try {
-      await businessInfoService.updateBusinessInfo(data._id, data, accessToken);
-      toast.success("פרטי העסק עודכנו בהצלחה");
+      if (data._id) {
+        await businessInfoService.updateBusinessInfo(
+          data._id,
+          data,
+          accessToken
+        );
+        toast.success("פרטי העסק עודכנו בהצלחה");
+      } else {
+        // טופס ריק
+        const created = await businessInfoService.createBusinessInfo(
+          data as FormValues,
+          user._id,
+          accessToken
+        );
+        setValue("_id", created._id); // כדי שהטופס יידע שיש כבר _id להבא
+        toast.success("פרטי העסק נשמרו בהצלחה");
+      }
     } catch (err) {
-      console.error("Error updating business info", err);
-      toast.error("שגיאה בעדכון פרטי העסק");
+      console.error("Error saving business info", err);
+      toast.error("שגיאה בשמירת פרטי העסק");
     }
   };
 
@@ -77,17 +93,24 @@ export const BusinessSetting = () => {
           );
         }
         setIsLoading(false);
-      } catch (err) {
-        console.error("Error fetching business info", err);
-        toast.error("שגיאה בשליפת מידע עסקי");
+      } catch (err: any) {
+        if (err.status === 404) {
+          setIsLoading(false);
+        } else {
+          console.error("Error fetching business info", err);
+          toast.error("שגיאה בשליפת מידע עסקי");
+        }
       }
     };
     fetchBusinessInfo();
   }, [user, accessToken, setValue]);
 
-  if (isLoading) return <Typography>טוען פרטי עסק...</Typography>;
+  const businessType = useWatch({
+    control,
+    name: "businessType",
+  });
 
-  const businessType = getValues("businessType");
+  if (isLoading) return <Typography>טוען פרטי עסק...</Typography>;
 
   return (
     <form className="profileContainer" onSubmit={handleSubmit(onSubmit)}>
@@ -99,6 +122,10 @@ export const BusinessSetting = () => {
               name="businessName"
               control={control}
               defaultValue=""
+              rules={{
+                required: "יש להזין שם לעסק",
+                minLength: { value: 2, message: "לפחות 2 תווים" },
+              }}
               render={({ field }) => <input {...field} />}
             />
           </div>
@@ -109,6 +136,7 @@ export const BusinessSetting = () => {
               name="businessType"
               control={control}
               defaultValue=""
+              rules={{ required: "יש לבחור סוג עסק" }}
               render={({ field }) => (
                 <select {...field}>
                   <option value="">בחר סוג עסק</option>
@@ -126,6 +154,7 @@ export const BusinessSetting = () => {
                 name="businessAddress"
                 control={control}
                 defaultValue=""
+                rules={{ required: "יש להזין כתובת" }}
                 render={({ field }) => <input {...field} />}
               />
             </div>
@@ -137,6 +166,7 @@ export const BusinessSetting = () => {
               name="businessField"
               control={control}
               defaultValue=""
+              rules={{ required: "יש להזין תחום פעילות" }}
               render={({ field }) => (
                 <select {...field}>
                   <option value="">בחר תחום</option>
@@ -166,6 +196,7 @@ export const BusinessSetting = () => {
               name="serviceAreas"
               control={control}
               defaultValue=""
+              rules={{ required: "יש להזין איזור שירות" }}
               render={({ field }) => <textarea {...field} />}
             />
           </div>
@@ -176,6 +207,7 @@ export const BusinessSetting = () => {
               name="serviceDescription"
               control={control}
               defaultValue=""
+              rules={{ required: "יש להזין תיאור שירות" }}
               render={({ field }) => <textarea {...field} />}
             />
           </div>
@@ -186,6 +218,7 @@ export const BusinessSetting = () => {
               name="uniqueService"
               control={control}
               defaultValue=""
+              rules={{ required: "יש להזין תיאור שירות" }}
               render={({ field }) => <textarea {...field} />}
             />
           </div>
@@ -196,6 +229,7 @@ export const BusinessSetting = () => {
               name="specialPackages"
               control={control}
               defaultValue=""
+              rules={{ required: "יש להזין תיאור חבילות שירות" }}
               render={({ field }) => <textarea {...field} />}
             />
           </div>
@@ -206,6 +240,7 @@ export const BusinessSetting = () => {
               name="incentives"
               control={control}
               defaultValue=""
+              rules={{ required: "יש להזין תמריצים ללקוחות חדשים" }}
               render={({ field }) => <textarea {...field} />}
             />
           </div>
