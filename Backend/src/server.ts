@@ -52,6 +52,7 @@ const initApp = (): Promise<Express> => {
   app.use("/gemini", geminiRoutes);
   app.use("/business-info", businessInfoRoutes);
 
+  app.use("/uploads", express.static(path.join(__dirname, "../uploads")));
   app.use(
     "/uploads/profile_pictures",
     express.static(path.join(__dirname, "../uploads/profile_pictures"))

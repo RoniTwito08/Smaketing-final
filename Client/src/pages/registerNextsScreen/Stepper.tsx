@@ -38,8 +38,7 @@ const MultiStepForm: React.FC = () => {
     const token = localStorage.getItem("accessToken");
     const user = localStorage.getItem("user");
     const userId = JSON.parse(user!)._id;
-    console.log("user: " + userId);
-    console.log("token: " + token);
+
     if (!token || !userId) {
       toast.error("שגיאה בהתחברות, אנא התחבר שוב");
       return;
