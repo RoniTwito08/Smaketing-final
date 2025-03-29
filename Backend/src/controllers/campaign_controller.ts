@@ -10,9 +10,7 @@ const googleAdsService = new GoogleAdsService(googleAdsConfig);
 
 export const createCampaign = async (req: Request, res: Response) => {
   try {
-    const campaignImage = req.file ? `uploads/campaign_images/${req.file.filename}` : undefined;
-
-    const newCampaign = new campaignModel({ ...req.body, campaignImage });
+    const newCampaign = new campaignModel({ ...req.body });
     await newCampaign.save();
 
     res.status(201).json(newCampaign);
@@ -52,6 +50,7 @@ export const updateCampaign = async (req: Request, res: Response): Promise<void>
       return;
     }
 
+<<<<<<< HEAD
     let campaignImage = campaign.campaignImage;
 
     if (req.file) {
@@ -71,6 +70,12 @@ export const updateCampaign = async (req: Request, res: Response): Promise<void>
       },
       { new: true }
     );
+=======
+    // עדכון הקמפיין ללא טיפול בתמונה
+    const updated = await campaignModel.findByIdAndUpdate(req.params.id, {
+      ...req.body,
+    }, { new: true });
+>>>>>>> a7bb6312e14bbbea35b86fd9adb1a748bb5c90ed
 
     res.status(200).json(updated);
   } catch (error) {
@@ -86,11 +91,7 @@ export const deleteCampaign = async (req: Request, res: Response): Promise<void>
       return;
     }
 
-    if (campaign.campaignImage) {
-      const imagePath = path.join(__dirname, "../../", campaign.campaignImage);
-      if (fs.existsSync(imagePath)) await fs.promises.unlink(imagePath);
-    }
-
+    // מחיקה ללא טיפול בתמונה
     await campaignModel.findByIdAndDelete(req.params.id);
     res.status(200).json({ message: "Campaign deleted successfully" });
   } catch (error) {
@@ -140,6 +141,7 @@ export const removeInterest = async (req: Request, res: Response): Promise<void>
   }
 };
 
+<<<<<<< HEAD
 export const fetchGoogleCampaigns = async (req: Request, res: Response): Promise<void> => {
   try {
     const { customerId } = req.query;
@@ -226,3 +228,15 @@ export const launchGoogleAdsCampaign = async (req: Request, res: Response) => {
     res.status(500).json({ error: "Failed to launch campaign" });
   }
 };
+=======
+export const getAllCampaignsByUserId = async (req: Request, res: Response): Promise<void> => {
+  const { userId } = req.params;
+  try {
+    const campaigns = await campaignModel.find({ creatorId: userId });
+    res.status(200).json(campaigns);
+  } catch (error) {
+    res.status(500).json({ error: "Internal server error" });
+  }
+}
+
+>>>>>>> a7bb6312e14bbbea35b86fd9adb1a748bb5c90ed

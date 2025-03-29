@@ -36,7 +36,6 @@ const SectionRenderer = ({ section, onDeleteSection }: SectionRendererProps) => 
         return (
           <Header 
             businessName={section.businessName || ""}
-            logo={section.logo || ""}
             title={section.title || ""}
             buttonText={section.buttonText || ""}
           />

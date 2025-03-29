@@ -4,7 +4,7 @@ import SectionRenderer from "./sectionRendering";
 import Sidebar from "../SideBar/sideBar"; 
 import MobileView from "../SideBar/MobileView/MobileView"; 
 import TabletView from "../SideBar/TabletView/TabletView"; 
-import DesktopView from "../SideBar/DesktopView/DesktopView"; 
+import DesktopView from "../SideBar/DesktopView/DesktopView";
 import styles from "./landingPageStyles.module.css";
 import "./CampaignForm.css";
 import { useAuth } from "../../../context/AuthContext";
@@ -36,7 +36,7 @@ interface CampaignPopupProps {
   onSubmit: (form: CampaignForm) => void;
 }
 
-const CampaignPopup: React.FC<CampaignPopupProps> = ({ open, onClose, onSubmit }) => {
+const CampaignPopup: React.FC<CampaignPopupProps> = ({ open, onClose /*, onSubmit*/ }) => {
   const { user } = useAuth();
   if (!user || !user._id) {
     throw new Error("User is not authenticated or userId is missing");
@@ -54,7 +54,7 @@ const CampaignPopup: React.FC<CampaignPopupProps> = ({ open, onClose, onSubmit }
     language: "עברית",
     targetLocation: "ישראל",
     targetAge: "25-45",
-    campaignImage: null, 
+    campaignImage: null,
   });
 
   const [loading, setLoading] = useState(false);
@@ -67,7 +67,6 @@ const CampaignPopup: React.FC<CampaignPopupProps> = ({ open, onClose, onSubmit }
     tertiaryColor: "#ffffff",
     textColor: "#000000",
   });
-
   const [userFont, setUserFont] = useState("sans-serif");
   const [removedSections, setRemovedSections] = useState<RemovedSection[]>([]);
   const [responsiveView, setResponsiveView] = useState<"desktop" | "tablet" | "mobile" | "">("");
@@ -76,7 +75,13 @@ const CampaignPopup: React.FC<CampaignPopupProps> = ({ open, onClose, onSubmit }
   const [showTabletPopup, setShowTabletPopup] = useState(false);
   const [showDesktopPopup, setShowDesktopPopup] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  
+
+  useEffect(() => {
+    if (landingPageRef.current) {
+      landingPageRef.current.style.fontFamily = userFont;
+    }
+  }, [userFont]);
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setForm((prev) => ({ ...prev, [name]: value }));
@@ -86,7 +91,7 @@ const CampaignPopup: React.FC<CampaignPopupProps> = ({ open, onClose, onSubmit }
     e.preventDefault();
     setLoading(true);
     setError("");
-    const businessInfo = await fetch(`http://localhost:3000/business-info/${user._id}`,{
+    const businessInfo = await fetch(`http://localhost:3000/business-info/${user._id}`, {
       method: "GET",
       headers: { "Content-Type": "application/json" },
     });
@@ -113,7 +118,7 @@ const CampaignPopup: React.FC<CampaignPopupProps> = ({ open, onClose, onSubmit }
       setError("שגיאה בהבאת מידע עסקי");
       return;
     }
-    document.body.style.overflow = "auto"; // מחזיר את הגלילה
+    document.body.style.overflow = "auto";
     console.log("User Email Data:", userEmailData.email);
     try {
       const response = await fetch("http://localhost:3000/landing-page-generator/generateLandingPageContext", {
@@ -124,7 +129,6 @@ const CampaignPopup: React.FC<CampaignPopupProps> = ({ open, onClose, onSubmit }
           BusinessData: BusinessData,
           UserEmailData: userEmailData.email,
         }),
-        
       });
       if (!response.ok) throw new Error("שגיאה ביצירת דף הנחיתה");
       const data = await response.json();
@@ -198,6 +202,9 @@ const CampaignPopup: React.FC<CampaignPopupProps> = ({ open, onClose, onSubmit }
                 --text-color: ${colors.textColor};
                 --font: ${userFont};
               }
+              body {
+                font-family: ${userFont} !important;
+              }
             </style>
           </head>
           <body>
@@ -206,7 +213,8 @@ const CampaignPopup: React.FC<CampaignPopupProps> = ({ open, onClose, onSubmit }
         </html>
       `;
       try {
-        const response = await fetch("http://localhost:3000/api/saveLandingPage", {
+        // שמירת דף הנחיתה
+        const saveResponse = await fetch("http://localhost:3000/api/saveLandingPage", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
@@ -218,11 +226,33 @@ const CampaignPopup: React.FC<CampaignPopupProps> = ({ open, onClose, onSubmit }
             userFont: userFont,
           }),
         });
-        if (response.ok) alert("Landing page saved successfully!");
-        else alert("Error saving landing page");
+        if (!saveResponse.ok) {
+          alert("Error saving landing page");
+          return;
+        }
+        const savedLandingPage = await saveResponse.json();
+  
+        const campaignData = {
+          ...form,
+          creatorId: user._id,
+          landingPage: savedLandingPage.file,
+        };
+  
+        const campaignResponse = await fetch("http://localhost:3000/campaigns", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(campaignData),
+        });
+        if (!campaignResponse.ok) {
+          alert("Error saving campaign in DB");
+          return;
+        }
+        const campaignResult = await campaignResponse.json();
+        console.log("Campaign created:", campaignResult);
+        alert("Landing page and campaign saved successfully!");
       } catch (error) {
-        console.error("Error saving landing page:", error);
-        alert("Error saving landing page");
+        console.error("Error saving landing page and campaign:", error);
+        alert("Error saving landing page and campaign");
       }
     }, 500);
   };
@@ -245,6 +275,16 @@ const CampaignPopup: React.FC<CampaignPopupProps> = ({ open, onClose, onSubmit }
     setResponsiveView(view);
   };
 
+  // פונקציה לסגירת כל הפופאפים ואיפוס המצבים
+  const handleClose = () => {
+    setLandingPageData(null);
+    setSubmitted(false);
+    setShowMobilePopup(false);
+    setShowTabletPopup(false);
+    setShowDesktopPopup(false);
+    onClose();
+  };
+
   if (!open) return null;
 
   return (
@@ -263,9 +303,11 @@ const CampaignPopup: React.FC<CampaignPopupProps> = ({ open, onClose, onSubmit }
               width: "95%",
             }}
           >
-            <div className="popup-header"
-            style={{ display: "flex", justifyContent: "space-between", padding: "10px" }}>
-              <button className="cancel-btn" onClick={onClose}>
+            <div
+              className="popup-header"
+              style={{ display: "flex", justifyContent: "space-between", padding: "10px" }}
+            >
+              <button className="cancel-btn" onClick={handleClose}>
                 ❌ סגור
               </button>
               <button className="cancel-btn" onClick={handleSaveLandingPage}>
@@ -384,7 +426,7 @@ const CampaignPopup: React.FC<CampaignPopupProps> = ({ open, onClose, onSubmit }
               </div>
   
               <div className="popup-actions">
-                <button className="cancel-btn" type="button" onClick={onClose}>
+                <button className="cancel-btn" type="button" onClick={handleClose}>
                   ביטול
                 </button>
                 <button className="submit-btn" type="submit">
@@ -397,7 +439,6 @@ const CampaignPopup: React.FC<CampaignPopupProps> = ({ open, onClose, onSubmit }
       )}
     </div>
   );
-  
 };
 
 export default CampaignPopup;

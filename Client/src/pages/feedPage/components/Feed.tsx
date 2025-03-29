@@ -3,6 +3,7 @@ import { Post } from "../../../components/feed/types";
 import PostCard from "../../../components/feed/Posts/postCard/PostCard";
 import CampaignPopup from "../../LandingPageGenerator/CampaignForm/CampaignForm"; // נתיב לקובץ שיצרנו קודם
 import "./Feed.css";
+import MyCampaigns from "../../Campaigns/MyCampaigns";
 
 const Feed: React.FC<{ posts: Post[]; className?: string }> = ({
   posts,
@@ -30,9 +31,12 @@ const Feed: React.FC<{ posts: Post[]; className?: string }> = ({
           <PostCard key={post._id} post={post} onDelete={handleDeletePost} />
         ))
       ) : (
+        <div>
         <button className="noPostsButton" onClick={() => setShowPopup(true)}>
           צור קמפיין
         </button>
+        <MyCampaigns />
+        </div>
       )}
 
       <CampaignPopup

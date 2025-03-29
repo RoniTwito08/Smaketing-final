@@ -1,9 +1,28 @@
+
 .feed {
-  display: flex !important;
-  flex-direction: column !important;
+  display: grid !important;
+  grid-template-columns: repeat(3, 1fr) !important;
   gap: 20px !important;
   padding: 20px !important;
   margin: 0 auto !important;
+}
+
+.feed h1 {
+  grid-column: 1 / -1 !important;
+  text-align: center !important;
+  color: #333 !important;
+}
+
+@media (max-width: 900px) {
+  .feed {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+}
+
+@media (max-width: 600px) {
+  .feed {
+    grid-template-columns: 1fr !important;
+  }
 }
 
 .postGrid {
@@ -19,4 +38,4 @@
   font-family: 'Assistant', sans-serif !important;
   font-size: 1.2rem !important;
   padding: 2rem !important;
-} 
+}
