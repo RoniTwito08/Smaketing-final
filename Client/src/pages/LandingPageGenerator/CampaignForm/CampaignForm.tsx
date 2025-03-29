@@ -206,7 +206,8 @@ const CampaignPopup: React.FC<CampaignPopupProps> = ({ open, onClose, /*onSubmit
         </html>
       `;
       try {
-        const response = await fetch("http://localhost:3000/api/saveLandingPage", {
+        // שמירת דף הנחיתה
+        const saveResponse = await fetch("http://localhost:3000/api/saveLandingPage", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
@@ -218,14 +219,39 @@ const CampaignPopup: React.FC<CampaignPopupProps> = ({ open, onClose, /*onSubmit
             userFont: userFont,
           }),
         });
-        if (response.ok) alert("Landing page saved successfully!");
-        else alert("Error saving landing page");
+        if (!saveResponse.ok) {
+          alert("Error saving landing page");
+          return;
+        }
+        const landingPageData = await saveResponse.json();
+        console.log("Landing page saved:", landingPageData);
+  
+        // יצירת הקמפיין בבסיס הנתונים, תוך עדכון creatorId למשתמש המחובר
+        const campaignData = {
+          ...form,
+          creatorId: user._id, // עדכון לשמירת הקמפיין תחת המשתמש המחובר
+          landingPageFile: landingPageData.file, // נניח שהשרת מחזיר את שם הקובץ ששמור
+        };
+  
+        const campaignResponse = await fetch("http://localhost:3000/api/campaigns", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(campaignData),
+        });
+        if (!campaignResponse.ok) {
+          alert("Error saving campaign in DB");
+          return;
+        }
+        const campaignResult = await campaignResponse.json();
+        console.log("Campaign created:", campaignResult);
+        alert("Landing page and campaign saved successfully!");
       } catch (error) {
-        console.error("Error saving landing page:", error);
-        alert("Error saving landing page");
+        console.error("Error saving landing page and campaign:", error);
+        alert("Error saving landing page and campaign");
       }
     }, 500);
   };
+  
 
   const handleDelete = (index: number, section: any) => {
     setRemovedSections((prev) => [...prev, { section, index }]);
