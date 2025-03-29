@@ -8,12 +8,9 @@ import {
   deleteCampaign,
   markInterest,
   removeInterest,
-<<<<<<< HEAD
   fetchCampaignStatistics,
   launchGoogleAdsCampaign,
-=======
   getAllCampaignsByUserId,
->>>>>>> a7bb6312e14bbbea35b86fd9adb1a748bb5c90ed
 } from "../controllers/campaign_controller";
 
 const router = express.Router();
@@ -26,13 +23,8 @@ router.put("/:id", upload.single("campaignImage"), updateCampaign);
 router.delete("/:id", deleteCampaign);
 router.put("/interest/:campaignId", markInterest);
 router.put("/uninterest/:campaignId", removeInterest);
-<<<<<<< HEAD
 router.get('/campaigns/:id/statistics', fetchCampaignStatistics);
 router.post("/google-launch", launchGoogleAdsCampaign);
-
-
-=======
 router.get("/user/:userId", getAllCampaignsByUserId);
->>>>>>> a7bb6312e14bbbea35b86fd9adb1a748bb5c90ed
 
 export default router;
