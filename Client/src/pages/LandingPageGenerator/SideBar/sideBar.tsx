@@ -93,7 +93,7 @@ const Sidebar = ({
       <motion.div
         className={`${styles.sidebar} ${isOpen ? styles.open : styles.closed}`}
         initial={{ width: "3%" }}
-        animate={{ width: isOpen ? "20%" : "3%" }}
+        animate={{ width: isOpen ? "20%" : "5%" }}
         transition={{ duration: 0.9 }}
       >
         <div className={styles.sidebarHeader}>

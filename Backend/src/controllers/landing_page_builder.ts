@@ -14,10 +14,16 @@ export const generateLandingPageContext = async (req: Request, res: Response): P
         const campaignInfo: CampaignInfo = req.body.campaignInfo;
         const userInfo: UserEmailData = req.body.UserEmailData;
 
+        const business = inputDetails.data;
+
+        console.log("Input Details:", business);
+        console.log("Campaign Info:", campaignInfo);
+        console.log("User Info:", userInfo);
+
         const businessFieldKeyword = await generateContent(
             `Translate the following business field into a single, precise English keyword that best represents its core concept for image search.
             For example, if the field is "בתי קפה", return "coffee".
-            Business field: ${inputDetails.businessField}.
+            Business field: ${business.businessField}.
             Write in Hebrew language.`
         );
 
@@ -26,7 +32,7 @@ export const generateLandingPageContext = async (req: Request, res: Response): P
 
         const headerSection = {
             sectionName: "header",
-            businessName: inputDetails.businessName,
+            businessName: business.businessName,
             buttonText: await generateContent(
                 `Create a short and compelling call to action for a marketing campaign with the following objective: "${campaignInfo.campaginPurpose}".
                 Example actions: "Contact Us", "Buy Now", "Get a Quote".
@@ -38,18 +44,18 @@ export const generateLandingPageContext = async (req: Request, res: Response): P
         const heroSection = {
             sectionName: "hero",
             title: await generateContent(
-                `Write an engaging and professional landing page title for the business "${inputDetails.businessName}" operating in the field of "${inputDetails.businessField}".
+                `Write an engaging and professional landing page title for the business "${business.businessName}" operating in the field of "${business.businessField}".
                 The title should be clear, attractive, and deliver the business's main value in one sentence.
                 Avoid unnecessary punctuation.
                 Write in Hebrew language.`
             ),
             content: await generateContent(
-                `Write a short paragraph (max 3 lines) describing the business "${inputDetails.businessName}" clearly and professionally.
+                `Write a short paragraph (max 3 lines) describing the business "${business.businessName}" clearly and professionally.
                 Include the following information:
-                - Business type: ${inputDetails.businessType}
-                - Field description: ${inputDetails.businessFieldDetails}
-                - Service areas: ${inputDetails.serviceAreas}
-                - Services: ${inputDetails.serviceDescription}
+                - Business type: ${business.businessType}
+                - Field description: ${business.businessFieldDetails}
+                - Service areas: ${business.serviceAreas}
+                - Services: ${business.serviceDescription}
                 - Target audience: ${campaignInfo.targetAudience}, Age group: ${campaignInfo.targetAge}, Gender: ${campaignInfo.targetGender}
                 Avoid unnecessary punctuation.
                 Write in Hebrew language.`
@@ -60,7 +66,7 @@ export const generateLandingPageContext = async (req: Request, res: Response): P
         const featuresSection = {
             sectionName: "features",
             content: await generateContent(
-                `Create a JSON array of 4 strong service offerings for the business "${inputDetails.businessName}".
+                `Create a JSON array of 4 strong service offerings for the business "${business.businessName}".
                 Each service must start with ✔️, use persuasive marketing language, and contain 5–6 words max.
                 Do NOT copy from user input. Example format:
                 [
@@ -75,7 +81,7 @@ export const generateLandingPageContext = async (req: Request, res: Response): P
         const reviewsSection = {
             sectionName: "reviews",
             content: await generateContent(
-                `Write 4 positive and professional customer reviews about the business "${inputDetails.businessName}".
+                `Write 4 positive and professional customer reviews about the business "${business.businessName}".
                 Each review should have 2 sentences and use present tense (e.g., "Professional", "Reliable", "Kind").
                 Avoid names, personal references, and excessive punctuation.
                 Format:
@@ -91,28 +97,22 @@ export const generateLandingPageContext = async (req: Request, res: Response): P
         const aboutUsSection = {
             sectionName: "aboutUs",
             content: await generateContent(
-                `Write a professional "About Us" section for the business "${inputDetails.businessName}" in 5 lines.
+                `Write a professional "About Us" section for the business "${business.businessName}" in 5 lines.
                 Include:
-                - Unique value or offering: ${inputDetails.uniqueService}
-                - Years of experience: (if available)
+                - Unique value or offering: ${business.uniqueService}
                 - Target age group: ${campaignInfo.targetAge}
-                - Design preference or brand tone: ${inputDetails.designPreferences}
+                - Design preference or brand tone: ${business.designPreferences}
                 Avoid punctuation at the end of lines.
                 Write in Hebrew language.`
             )
         };
 
-        const gallerySection = {
-            sectionName: "gallery"
-        };
-
-        const contactUsSection = {
-            sectionName: "contactUs"
-        };
+        const gallerySection = { sectionName: "gallery" };
+        const contactUsSection = { sectionName: "contactUs" };
 
         const footerSection = {
             sectionName: "footer",
-            socialMediaIcons: inputDetails.socialMediaAccounts,
+            socialMediaIcons: business.socialMediaAccounts,
             contactInfo: userInfo.email,
             copyRights: "©2025 כל הזכויות שמורות לצוות Smarketing"
         };
@@ -134,8 +134,6 @@ export const generateLandingPageContext = async (req: Request, res: Response): P
         res.status(500).json({ error: "Internal server error" });
     }
 };
-
-
 
 
 export const getTextSuggestions = async (req: Request, res: Response): Promise<void> => {
