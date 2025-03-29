@@ -139,7 +139,7 @@ export const generateLandingPageContext = async (req: Request, res: Response): P
 export const getTextSuggestions = async (req: Request, res: Response): Promise<void> => {
     const { text, tone } = req.body;
     try {
-        const prompt = `Please provide an improved version of the following text in Hebrew. The revised text should be more concise, precise, and reflect the following tone instructions: "${tone}". Original text: ${text}`;
+        const prompt = `Please improve the following text by making it more concise and precise, while reflecting the following tone instructions: "${tone}". Please provide your answer exclusively in Hebrew. Original text: ${text}`;
         const suggestion = await generateContent(prompt);
         res.status(200).json({ suggestion });
     } catch (error) {
