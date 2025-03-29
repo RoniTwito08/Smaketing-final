@@ -1,0 +1,33 @@
+.fontContainer {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    color: black;
+    font-size: 22px;
+    border-radius: 8px;
+    transition: all 0.3s ease-in-out;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.fontButton {
+    width: 100%;
+    padding: 10px 15px;
+    border: none;
+    color: #000;
+    background: linear-gradient(135deg, #bbb8be, #ffffff);
+    font-size: 14px;
+    font-weight: bold;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-transform: capitalize;
+}
+
+.fontButton:hover {
+    transform: translateY(-3px);
+    filter: brightness(1.2);
+}
