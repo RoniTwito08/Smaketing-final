@@ -1,7 +1,3 @@
-import axios from "axios";
-import { User } from "../types/user";
-import { CredentialResponse } from "@react-oauth/google";
-import { AuthResponse } from "../types/user";
 import { config } from "../config";
 import { FormValues } from "../types/businessInfo";
 

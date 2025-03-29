@@ -198,7 +198,8 @@ export const GoogleAdsAnalytics: React.FC = () => {
               label="Start Date"
               value={startDate}
               onChange={(date) => setStartDate(date)}
-              renderInput={(params) => <TextField {...params} fullWidth />}
+              slots={{ textField: TextField }}
+              slotProps={{ textField: { fullWidth: true } }}
             />
           </Grid>
 
@@ -207,7 +208,8 @@ export const GoogleAdsAnalytics: React.FC = () => {
               label="End Date"
               value={endDate}
               onChange={(date) => setEndDate(date)}
-              renderInput={(params) => <TextField {...params} fullWidth />}
+              slots={{ textField: TextField }}
+              slotProps={{ textField: { fullWidth: true } }}
             />
           </Grid>
 
