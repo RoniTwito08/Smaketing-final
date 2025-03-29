@@ -88,8 +88,44 @@ export const colorComboData = [
     textColor: "#2F4F4F",
     secondaryColor: "#89A18F",
     tertiaryColor: "#D4ECDD"
+  },
+  // 6 אפשרויות צבע נוספות
+  {
+    primaryColor: "#FFCCBC",
+    textColor: "#3E2723",
+    secondaryColor: "#FFAB91",
+    tertiaryColor: "#D7CCC8"
+  },
+  {
+    primaryColor: "#D1C4E9",
+    textColor: "#311B92",
+    secondaryColor: "#B39DDB",
+    tertiaryColor: "#9575CD"
+  },
+  {
+    primaryColor: "#C5CAE9",
+    textColor: "#1A237E",
+    secondaryColor: "#9FA8DA",
+    tertiaryColor: "#7986CB"
+  },
+  {
+    primaryColor: "#B2EBF2",
+    textColor: "#006064",
+    secondaryColor: "#80DEEA",
+    tertiaryColor: "#4DD0E1"
+  },
+  {
+    primaryColor: "#DCEDC8",
+    textColor: "#33691E",
+    secondaryColor: "#C5E1A5",
+    tertiaryColor: "#AED581"
+  },
+  {
+    primaryColor: "#F0F4C3",
+    textColor: "#827717",
+    secondaryColor: "#E6EE9C",
+    tertiaryColor: "#DCE775"
   }
-  
 ];
 
 export const FontData = [
@@ -113,5 +149,9 @@ export const FontData = [
   { font: "Georgia" },
   { font: "Courier New" },
   { font: "Trebuchet MS" },
+  // 8 פונטים נוספים
+  { font: "Verdana" },
+  { font: "Cambria" },
+  { font: "Comic Sans MS" },
+  { font: "Impact" },
 ];
-
