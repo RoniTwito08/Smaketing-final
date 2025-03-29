@@ -111,4 +111,5 @@ export interface GoogleAdsConfig {
   developerToken: string;
   refreshToken: string;
   customerId: string;
+  redirectUri: string;
 } 
