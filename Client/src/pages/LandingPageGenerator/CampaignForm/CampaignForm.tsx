@@ -226,14 +226,13 @@ const CampaignPopup: React.FC<CampaignPopupProps> = ({ open, onClose, /*onSubmit
         const landingPageData = await saveResponse.json();
         console.log("Landing page saved:", landingPageData);
   
-        // יצירת הקמפיין בבסיס הנתונים, תוך עדכון creatorId למשתמש המחובר
         const campaignData = {
           ...form,
-          creatorId: user._id, // עדכון לשמירת הקמפיין תחת המשתמש המחובר
-          landingPageFile: landingPageData.file, // נניח שהשרת מחזיר את שם הקובץ ששמור
+          creatorId: user._id, 
+          landingPageFile: landingPageData.file,
         };
   
-        const campaignResponse = await fetch("http://localhost:3000/api/campaigns", {
+        const campaignResponse = await fetch("http://localhost:3000/campaigns", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(campaignData),
