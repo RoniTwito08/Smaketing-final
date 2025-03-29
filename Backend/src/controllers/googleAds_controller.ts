@@ -8,7 +8,9 @@ class GoogleAdsController {
       clientSecret: process.env.GOOGLE_ADS_CLIENT_SECRET!,
       developerToken: process.env.GOOGLE_ADS_DEVELOPER_TOKEN!,
       refreshToken,
-      customerId
+      customerId,
+      redirectUri: process.env.GOOGLE_ADS_REDIRECT_URI!,
+
     });
   }
 
