@@ -50,32 +50,10 @@ export const updateCampaign = async (req: Request, res: Response): Promise<void>
       return;
     }
 
-<<<<<<< HEAD
-    let campaignImage = campaign.campaignImage;
-
-    if (req.file) {
-      const newImage = `uploads/campaign_images/${req.file.filename}`;
-      const oldImage = campaign.campaignImage ? path.join(__dirname, "../../", campaign.campaignImage) : null;
-
-      if (oldImage && fs.existsSync(oldImage)) await fs.promises.unlink(oldImage);
-
-      campaignImage = newImage;
-    }
-
-    const updated = await campaignModel.findByIdAndUpdate(
-      req.params.id,
-      {
-        ...req.body,
-        campaignImage,
-      },
-      { new: true }
-    );
-=======
     // עדכון הקמפיין ללא טיפול בתמונה
     const updated = await campaignModel.findByIdAndUpdate(req.params.id, {
       ...req.body,
     }, { new: true });
->>>>>>> a7bb6312e14bbbea35b86fd9adb1a748bb5c90ed
 
     res.status(200).json(updated);
   } catch (error) {
@@ -141,7 +119,6 @@ export const removeInterest = async (req: Request, res: Response): Promise<void>
   }
 };
 
-<<<<<<< HEAD
 export const fetchGoogleCampaigns = async (req: Request, res: Response): Promise<void> => {
   try {
     const { customerId } = req.query;
@@ -228,7 +205,6 @@ export const launchGoogleAdsCampaign = async (req: Request, res: Response) => {
     res.status(500).json({ error: "Failed to launch campaign" });
   }
 };
-=======
 export const getAllCampaignsByUserId = async (req: Request, res: Response): Promise<void> => {
   const { userId } = req.params;
   try {
@@ -239,4 +215,3 @@ export const getAllCampaignsByUserId = async (req: Request, res: Response): Prom
   }
 }
 
->>>>>>> a7bb6312e14bbbea35b86fd9adb1a748bb5c90ed
