@@ -4,7 +4,7 @@ export interface Campaign {
   creatorId: string;
   campaignName: string;
   campaignContent: string;
-  campaignImage?: string;
+  //campaignImage?: string;
   feedbacks?: mongoose.Types.ObjectId[];
   interestedUsers?: string[];
   budget: number;
@@ -22,9 +22,9 @@ const campaignSchema = new mongoose.Schema<Campaign>({
   creatorId: { type: String, required: true },
   campaignName: { type: String, required: true },
   campaignContent: { type: String, required: true },
-  campaignImage: { type: String },
+  //campaignImage: { type: String },
   feedbacks: [{ type: Schema.Types.ObjectId, ref: "Feedback" }],
-  interestedUsers: [{ type: String }],
+  interestedUsers: [{ type: String , default: []}],
   budget: { type: Number, required: true },
   marketingLevel: { type: String, required: true },
   campaginPurpose: { type: String, required: true },

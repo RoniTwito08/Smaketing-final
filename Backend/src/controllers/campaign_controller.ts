@@ -5,9 +5,7 @@ import fs from "fs";
 
 export const createCampaign = async (req: Request, res: Response) => {
   try {
-    const campaignImage = req.file ? `uploads/campaign_images/${req.file.filename}` : undefined;
-
-    const newCampaign = new campaignModel({ ...req.body, campaignImage });
+    const newCampaign = new campaignModel({ ...req.body });
     await newCampaign.save();
 
     res.status(201).json(newCampaign);
@@ -25,7 +23,7 @@ export const getAllCampaigns = async (req: Request, res: Response) => {
   }
 };
 
-export const getCampaignById = async (req: Request, res: Response) : Promise<void> => {
+export const getCampaignById = async (req: Request, res: Response): Promise<void> => {
   try {
     const campaign = await campaignModel.findById(req.params.id).populate("feedbacks");
     if (!campaign) { 
@@ -39,7 +37,7 @@ export const getCampaignById = async (req: Request, res: Response) : Promise<voi
   }
 };
 
-export const updateCampaign = async (req: Request, res: Response) : Promise<void> => {
+export const updateCampaign = async (req: Request, res: Response): Promise<void> => {
   try {
     const campaign = await campaignModel.findById(req.params.id);
     if (!campaign) {
@@ -47,20 +45,9 @@ export const updateCampaign = async (req: Request, res: Response) : Promise<void
         return;
     }
 
-    let campaignImage = campaign.campaignImage;
-
-    if (req.file) {
-      const newImage = `uploads/campaign_images/${req.file.filename}`;
-      const oldImage = campaign.campaignImage ? path.join(__dirname, "../../", campaign.campaignImage) : null;
-
-      if (oldImage && fs.existsSync(oldImage)) await fs.promises.unlink(oldImage);
-
-      campaignImage = newImage;
-    }
-
+    // עדכון הקמפיין ללא טיפול בתמונה
     const updated = await campaignModel.findByIdAndUpdate(req.params.id, {
       ...req.body,
-      campaignImage,
     }, { new: true });
 
     res.status(200).json(updated);
@@ -69,7 +56,7 @@ export const updateCampaign = async (req: Request, res: Response) : Promise<void
   }
 };
 
-export const deleteCampaign = async (req: Request, res: Response) : Promise<void> => {
+export const deleteCampaign = async (req: Request, res: Response): Promise<void> => {
   try {
     const campaign = await campaignModel.findById(req.params.id);
     if (!campaign) {
@@ -77,11 +64,7 @@ export const deleteCampaign = async (req: Request, res: Response) : Promise<void
         return;
     }
 
-    if (campaign.campaignImage) {
-      const imagePath = path.join(__dirname, "../../", campaign.campaignImage);
-      if (fs.existsSync(imagePath)) await fs.promises.unlink(imagePath);
-    }
-
+    // מחיקה ללא טיפול בתמונה
     await campaignModel.findByIdAndDelete(req.params.id);
     res.status(200).json({ message: "Campaign deleted successfully" });
   } catch (error) {
@@ -89,7 +72,7 @@ export const deleteCampaign = async (req: Request, res: Response) : Promise<void
   }
 };
 
-export const markInterest = async (req: Request, res: Response) : Promise<void> => {
+export const markInterest = async (req: Request, res: Response): Promise<void> => {
   const { campaignId } = req.params;
   const { userId } = req.body;
 
@@ -111,7 +94,7 @@ export const markInterest = async (req: Request, res: Response) : Promise<void> 
   }
 };
 
-export const removeInterest = async (req: Request, res: Response) : Promise<void> => {
+export const removeInterest = async (req: Request, res: Response): Promise<void> => {
   const { campaignId } = req.params;
   const { userId } = req.body;
 
@@ -130,3 +113,13 @@ export const removeInterest = async (req: Request, res: Response) : Promise<void
     res.status(500).json({ error: "Internal server error" });
   }
 };
+
+export const getAllCampaignsByUserId = async (req: Request, res: Response): Promise<void> => {
+  const { userId } = req.params;
+  try {
+    const campaigns = await campaignModel.find({ userId }).populate("feedbacks");
+    res.status(200).json(campaigns);
+  } catch (error) {
+    res.status(500).json({ error: "Internal server error" });
+  }
+}
