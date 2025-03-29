@@ -182,6 +182,7 @@ const CampaignPopup: React.FC<CampaignPopupProps> = ({ open, onClose, onSubmit }
       const resizeHandles = clone.querySelectorAll("[data-resize-handle]");
       resizeHandles.forEach((el) => el.remove());
       const landingPageHTML = clone.innerHTML;
+      console.log("Landing Page HTML:", landingPageHTML);
       const completeHTML = `
         <!DOCTYPE html>
         <html>
@@ -267,7 +268,7 @@ const CampaignPopup: React.FC<CampaignPopupProps> = ({ open, onClose, onSubmit }
               <button className="cancel-btn" onClick={onClose}>
                 ❌ סגור
               </button>
-              <button className="cancel-btn" onClick={onClose}>
+              <button className="cancel-btn" onClick={handleSaveLandingPage}>
                 אישור ✅
               </button>
             </div>
