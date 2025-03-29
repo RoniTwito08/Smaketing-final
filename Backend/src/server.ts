@@ -129,7 +129,6 @@ const initApp = (): Promise<Express> => {
   });
 };
 
-
 app.use('/dist', express.static(path.join(__dirname, '../frontend/dist')));
 app.use('/src', express.static(path.join(__dirname, '../../Client/src')));
 app.use('/static', express.static(path.join(__dirname, 'public')));
@@ -142,27 +141,27 @@ app.post("/api/saveLandingPage", (req: any, res: any) => {
   }
 
   const completeHTML = `
-<!DOCTYPE html>
-<html>
-  <head>
-    <meta charset="UTF-8">
-    <title>Landing Page</title>
-    <link rel="stylesheet" href="http://localhost:3000/dist/assets/index-uoALyoE3.css">
-    <style>
-      :root {
-        --primary-color: ${userPrimaryColor};
-        --secondary-color: ${userSecondaryColor};
-        --tertiary-color: ${userTertiaryColor};
-        --text-color: ${userTextColor};
-        --font: ${userFont};
-      }
-    </style>
-  </head>
-  <body>
-    ${html}
-  </body>
-</html>
-  `;
+              <!DOCTYPE html>
+              <html>
+                <head>
+                  <meta charset="UTF-8">
+                  <title>Landing Page</title>
+                  <link rel="stylesheet" href="http://localhost:3000/dist/assets/index-uoALyoE3.css">
+                  <style>
+                    :root {
+                      --primary-color: ${userPrimaryColor};
+                      --secondary-color: ${userSecondaryColor};
+                      --tertiary-color: ${userTertiaryColor};
+                      --text-color: ${userTextColor};
+                      --font: ${userFont};
+                    }
+                  </style>
+                </head>
+                <body>
+                  ${html}
+                </body>
+              </html>
+          `;
 
   const fileName = `landingPage-${Date.now()}.html`;
   const folderPath = path.join(__dirname, "landingPages");
