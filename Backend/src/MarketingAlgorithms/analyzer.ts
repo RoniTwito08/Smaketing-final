@@ -23,15 +23,9 @@ export function analyzePerformance(data: GooglePerformanceData) {
   };
 }
 
-// קצת הסברים מהצאט להבנה עמוקה של מה זה מחזיר
-
-// 🎯 What It Returns:
+// What It Returns:
 // An object with key performance metrics that:
-
 // Give insights into how the campaign is performing
-
 // Are used later for:
-
-// 📊 Issue detection
-
-// 🤖 Prompt generation for Gemini
+// Issue detection
+// Prompt generation for Gemini
