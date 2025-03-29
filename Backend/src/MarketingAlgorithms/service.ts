@@ -45,8 +45,13 @@ export async function callLLM(prompt: string): Promise<any> {
   }
 
   try {
-    const parsed = JSON.parse(resultText);
-    return parsed; // 👈 This will match your CampaignUpdatePayload structure
+    const cleaned = resultText
+      .replace(/```json\s*/i, "")
+      .replace(/```$/, "")
+      .trim();
+
+    const parsed = JSON.parse(cleaned);
+    return parsed;
   } catch {
     console.warn("⚠️ Gemini response is not valid JSON. Returning raw text.");
     return { suggestions: resultText };
