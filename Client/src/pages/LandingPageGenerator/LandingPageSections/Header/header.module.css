@@ -1,0 +1,142 @@
+.headerWrapper {
+  container-type: inline-size;
+  width: 100%;
+}
+
+.headerSectionContainer {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #ddd;
+  min-height: 80px;
+  width: 100%;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  color: #333;
+  padding: 0 20px;
+  gap: 10px;
+}
+
+.logoContainer {
+  display: flex;
+  align-items: center;
+}
+
+.logo {
+  height: 70px;
+  width: auto;
+  border-radius: 10px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+.uploadInput {
+  display: none;
+}
+
+.uploadLabel {
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.uploadText {
+  font-size: 16px;
+  color: #333;
+}
+
+.businessName {
+  font-size: 40px;
+  font-weight: 700;
+  text-align: center;
+  flex-grow: 1;
+  word-break: break-word;
+}
+
+.sectionTitle {
+  font-size: 22px;
+  font-weight: 600;
+  text-align: center;
+  opacity: 0.9;
+}
+
+.headerButtonContainer {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.headerSectionButton {
+  font-size: 16px;
+  font-weight: bold;
+  padding: 10px 20px;
+  border-radius: 8px;
+  border: 1px solid #333;
+  cursor: pointer;
+  background: var(--tertiary-color);
+  transition: all 0.3s ease-in-out;
+}
+
+.headerSectionButton:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+@container (max-width: 768px) and (min-width: 577px) {
+  .headerSectionContainer {
+    flex-direction: row;
+    align-items: center;
+    padding: 15px 20px;
+    text-align: center;
+  }
+
+  .logo {
+    height: 60px;
+  }
+
+  .businessName {
+    font-size: 28px;
+    margin-top: 10px;
+  }
+
+  .headerButtonContainer {
+    justify-content: center;
+    margin-top: 10px;
+  }
+
+  .headerSectionButton {
+    font-size: 14px;
+    padding: 8px 16px;
+  }
+}
+
+@container (max-width: 350px) {
+  .headerSectionContainer {
+    flex-direction: column;
+    align-items: center;
+    padding: 10px;
+    gap: 10px;
+    max-height: 30px;
+  }
+
+  .logo {
+    height: 50px;
+  }
+
+  .businessName {
+    font-size: 20px;
+    margin: 5px 0;
+  }
+
+  .headerButtonContainer {
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+  }
+
+  .headerSectionButton {
+    display:none;
+  }
+}

@@ -30,11 +30,6 @@
   padding: 16px;
 }
 
-@media (max-width: 1200px) {
-  .post-card {
-    flex: 0 1 calc(50% - 13px); /* 2 columns */
-  }
-}
 
 @media (max-width: 768px) {
   .post-card {

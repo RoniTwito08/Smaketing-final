@@ -1,0 +1,221 @@
+.featuresSection {
+    position: relative;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    overflow: hidden;
+    transition: all 0.3s ease-in-out;
+    margin-bottom: 10%;
+    padding: 20px;
+  }
+  .featuresContentContainer{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    margin-right: 10%;
+  }
+  .featuresContent {
+    flex: 1;
+    max-width: 50%;
+    text-align: right; 
+    padding: 20px;
+    margin-right: 10%;
+  }
+  
+  .featuresList {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  
+  .featureItem {
+    font-size: 18px;
+    color: #333;
+    margin-bottom: 10px;
+    margin-right: 40px;
+    text-align: right;
+  }
+  
+  .featuresImageContainer {
+    flex: 1;
+    max-width: 40%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+  }
+  
+  .featuresImage {
+    max-width: 100%;
+    height: auto;
+    border-radius: 12px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+  }
+  
+  .editContainer {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    justify-content: center;
+  }
+  
+  .editInput {
+    font-size: inherit;
+    font-family: inherit;
+    color: inherit;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    padding: 6px 10px;
+    background: #fff;
+    width: auto;
+    min-width: 100%;
+    max-width: 100%;
+    resize: vertical;
+    overflow-wrap: break-word;
+    word-break: break-word;
+  }
+  
+  .saveButton {
+    background-color: #27ae60;
+    color: #fff;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+  }
+  
+  .saveButton:hover {
+    background-color: #1e8449;
+    transform: translateY(-2px);
+  }
+
+
+  @media (max-width: 768px)  {
+    .featuresSection {
+      flex-direction: column;
+      padding: 30px 20px;
+    }
+    .featuresContent, 
+    .featuresImageContainer {
+      max-width: 100%;
+      padding: 10px;
+    }
+    .featuresContent {
+      text-align: center;
+      margin-top: 20px;
+    }
+    .featureItem {
+      font-size: 16px;
+      margin: 5px 0;
+      margin-right: 0;
+      text-align: center;
+    }
+    .featuresImage {
+      max-width: 80%;
+    }
+  }
+  
+  @media (max-width: 576px) {
+    .featuresSection {
+      padding: 20px 10px;
+    }
+    .featuresContent {
+      padding: 10px;
+    }
+    .featureItem {
+      font-size: 14px;
+      margin-bottom: 8px;
+    }
+    .featuresImage {
+      max-width: 90%;
+    }
+  }
+
+  @container (max-width: 768px) and (min-width: 577px) {
+    .featuresSection {
+      flex-direction: row; 
+      padding: 40px 20px;
+      gap: 40px;
+    }
+  
+    .featuresContentContainer {
+      flex-direction: row;
+      flex-wrap: wrap;
+      justify-content: center;
+      align-items: center;
+      margin-right: 0;
+    }
+  
+    .featuresContent {
+      max-width: 50%;
+      margin: 0;
+      padding: 20px;
+      text-align: right;
+    }
+  
+    .featuresImageContainer {
+      max-width: 50%;
+      padding: 20px;
+      margin: 0;
+    }
+  
+    .featureItem {
+      font-size: 18px;
+      margin-bottom: 10px;
+      margin-right: 30px;
+      text-align: right;
+    }
+  
+    .featuresImage {
+      max-width: 100%;
+      height: auto;
+      border-radius: 12px;
+      box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    }
+  }
+  
+  @container (max-width: 350px) {
+    .featuresSection {
+      flex-direction: column;
+      padding: 20px 10px;
+      gap: 20px;
+    }
+  
+    .featuresContentContainer {
+      flex-direction: column;
+      align-items: center;
+      margin: 0;
+    }
+  
+    .featuresContent {
+      max-width: 100%;
+      text-align: center;
+      padding: 10px;
+      margin: 0;
+    }
+  
+    .featuresImageContainer {
+      max-width: 100%;
+      padding: 10px;
+      margin: 0;
+      justify-content: center;
+    }
+  
+    .featureItem {
+      font-size: 14px;
+      text-align: center;
+      margin: 5px 0;
+    }
+  
+    .featuresImage {
+      max-width: 90%;
+      height: auto;
+      border-radius: 8px;
+    }
+  }
+  

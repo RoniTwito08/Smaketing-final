@@ -1,3 +1,4 @@
+import { get } from "axios";
 import userModel, { User } from "../models/user_models";
 import { Request, Response } from "express";
 
@@ -49,8 +50,21 @@ const getAllUsers = async (req: Request, res: Response) => {
   }
 };
 
+const getEmailById = async (req: Request, res: Response) => {
+  const userId = req.params.id; 
+  try {
+    const user = await userModel.findById(userId).select("email");
+    if (user != null) res.send(user);
+    else res.status(400).send("user not found");
+  }
+  catch (error) {
+    res.status(400).send(error);
+  }
+};
+
 export default {
   getUserById,
   deleteUserById,
   getAllUsers,
+  getEmailById
 };
