@@ -1,31 +1,40 @@
-import { convertGoogleCampaign } from "./converter";
+import {
+  convertGoogleCampaign,
+  convertBusinessInfoToSlim,
+  convertCampaignToSetup,
+} from "./converter";
 import { analyzePerformance } from "./analyzer";
 import { detectIssues } from "./issueDetector";
 import { generatePrompt } from "./promptGenerator";
 import { callLLM } from "./service";
-import type {
+import { Campaign } from "../services/googleAds/types";
+import {
   SmartCampaignData,
+  GooglePerformanceData,
   SlimBusinessInfo,
   CampaignSetup,
   CampaignUpdatePayload,
 } from "./types/marketingTypes";
 
 export async function runMarketingAlgo(
-  rawGoogleData: any,
-  campaignInfo: CampaignSetup,
-  businessInfo: SlimBusinessInfo
+  // rawGoogleData: any,
+  rawcampaign: Campaign,
+  rawBusiness: any
 ): Promise<{
   analysis: ReturnType<typeof analyzePerformance>;
   issues: string[];
   prompt: string;
   suggestions: CampaignUpdatePayload;
 }> {
-  const googleData = convertGoogleCampaign(rawGoogleData);
+  const googleData = convertGoogleCampaign(rawcampaign); // Convert the raw Google data to a structured format
+  const campaignSetup = convertCampaignToSetup(rawcampaign); // Convert the raw campaign data to a structured format
+  const businessInfo = convertBusinessInfoToSlim(rawBusiness); // Convert the raw business data to a structured format
 
+  // add type
   const smartCampaign: SmartCampaignData = {
     googleData,
     businessInfo,
-    campaignSetup: campaignInfo,
+    campaignSetup,
   };
 
   const analysis = analyzePerformance(smartCampaign.googleData);
