@@ -117,9 +117,10 @@ export const removeInterest = async (req: Request, res: Response): Promise<void>
 export const getAllCampaignsByUserId = async (req: Request, res: Response): Promise<void> => {
   const { userId } = req.params;
   try {
-    const campaigns = await campaignModel.find({ userId }).populate("feedbacks");
+    const campaigns = await campaignModel.find({ creatorId: userId });
     res.status(200).json(campaigns);
   } catch (error) {
     res.status(500).json({ error: "Internal server error" });
   }
 }
+
