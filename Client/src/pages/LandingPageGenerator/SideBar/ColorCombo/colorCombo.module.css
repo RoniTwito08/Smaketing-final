@@ -1,0 +1,43 @@
+.colorCombo {
+    position: relative;
+    width: 100px; 
+    height: 100px; 
+}
+
+.colorButton {
+    position: absolute;
+    width: 60%;
+    height: 40%;
+    border: none;
+    color: white;
+    font-size: 16px;
+    font-weight: bold;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: transform 0.2s ease-in-out, filter 0.2s ease-in-out;
+}
+
+.primaryColor {
+    top: 60px;
+    z-index: 1;
+}
+
+.secondaryColor {
+    top: 40px; 
+    z-index: 2;
+}
+
+.tertiaryColor{
+    top:20px;
+    z-index: 3;
+}
+
+.textColor {
+    top: 0; 
+    z-index: 4;
+}
+
+.colorCombo:hover {
+    transition: 0.3s ease-in-out;
+    transform: scale(1.05);
+}
