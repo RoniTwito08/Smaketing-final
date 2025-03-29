@@ -55,6 +55,7 @@ const initApp = (): Promise<Express> => {
   app.use("/auth", authRoutes);
   app.use("/gemini", geminiRoutes);
   app.use("/business-info", businessInfoRoutes);
+  app.use("/uploads", express.static(path.join(__dirname, "../uploads")));
   app.use("/landing-page-generator",LandingPageGeneratorRoutes);
   app.use('/api/pexels_images', express.static(path.join(__dirname, 'pexels_images')));
   app.use('/api/campaigns', CampaignRoutes);

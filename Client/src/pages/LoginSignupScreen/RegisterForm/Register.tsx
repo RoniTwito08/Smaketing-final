@@ -53,7 +53,6 @@ const RegisterForm: React.FC = () => {
           userData.accessToken
         );
 
-        console.log("userData.accessToken: " + userData.accessToken);
         navigate("/stepper");
       } catch (error: any) {
         console.error("Registration error:", error);
