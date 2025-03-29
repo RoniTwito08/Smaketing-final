@@ -15,8 +15,14 @@ interface GeminiResponse {
 }
 
 export async function callLLM(prompt: string): Promise<any> {
+  console.log("Calling Gemini API with prompt:", prompt);
+  const MARKETING_GEMINI_API_KEY = process.env.GEMINI_API_KEY;
+
+  if (!MARKETING_GEMINI_API_KEY) {
+    throw new Error("Gemini API key is missing. Please check your .env file.");
+  }
   const response = await fetch(
-    "https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=YOUR_API_KEY",
+    `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${MARKETING_GEMINI_API_KEY}`,
     {
       method: "POST",
       headers: { "Content-Type": "application/json" },
