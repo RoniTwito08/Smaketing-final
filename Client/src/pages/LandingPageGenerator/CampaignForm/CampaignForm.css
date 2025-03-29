@@ -1,0 +1,135 @@
+.popup-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(39, 39, 44, 0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 999;
+  }
+
+  .popup-overlay-form{
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(39, 39, 44, 0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 999;
+  }
+  
+  .landingPage-container{
+    display: flex;
+    position: absolute;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 80, 0.2);
+    margin: 20px auto;
+    width: 100%;
+    max-width: 800px;
+  }
+  
+  .popup {
+    background-color: white;
+    color: #003366;
+    border-radius: 12px;
+    padding: 24px;
+    width: 100%;
+    max-width: 1400px; 
+    max-height: 85vh;
+    overflow-y: auto;
+    box-shadow: 0 4px 12px rgba(0, 0, 80, 0.2);
+    margin-top: 40px; 
+  }
+
+  .popup-form{
+    background-color: white;
+    color: #003366;
+    border-radius: 12px;
+    padding: 24px;
+    width: 50%;
+    max-width: 1400px; 
+    max-height: 85vh;
+    overflow-y: auto;
+    box-shadow: 0 4px 12px rgba(0, 0, 80, 0.2);
+    margin-top: 40px;
+  }
+  
+  .popup-landing {
+    width: 100%;
+    max-width: 1600px;      
+    height: 90vh;            
+    margin-top: 60px;        
+    overflow-y: auto;
+    padding: 30px;
+    border-radius: 16px;
+    background-color: white;
+    box-shadow: 0 4px 12px rgba(0, 0, 80, 0.25);
+  }
+  
+  .popup h2 {
+    margin-bottom: 16px;
+    font-size: 1.5rem;
+    color: #0055aa;
+    text-align: center;
+  }
+  
+  .form-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+  
+  .form-grid input,
+  .form-grid textarea {
+    padding: 10px;
+    border: 1px solid #cce0ff;
+    border-radius: 8px;
+    font-size: 0.95rem;
+  }
+  
+  .form-grid textarea {
+    grid-column: span 2;
+    resize: vertical;
+    min-height: 80px;
+  }
+  
+  .popup-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+  }
+  
+  .cancel-btn {
+    background-color: transparent;
+    border: 1px solid #0055aa;
+    color: #0055aa;
+    padding: 8px 14px;
+    border-radius: 6px;
+    cursor: pointer;
+  }
+  
+  .submit-btn {
+    background-color: transparent;
+    border: 1px solid #0055aa;
+    color: #0055aa;
+    padding: 8px 14px;
+    border-radius: 6px;
+    cursor: pointer;
+  }
+  
+  .cancel-btn:hover,
+  .submit-btn:hover {
+    opacity: 0.9;
+  }
+  

@@ -1,0 +1,82 @@
+.footerSection {
+    position: relative;
+    width: 100%;
+    text-align: center;
+    border-top: 1px solid #ddd;
+    padding: 40px 0;
+    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.05);
+    margin-top: 20px;
+  }
+  
+  .footerContainer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 1200px;
+    margin: 0 auto;
+    flex-wrap: wrap;
+  }
+  
+  .footerLogoContainer {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+  
+  .footerLogo {
+    height: 60px;
+    width: auto;
+    transition: transform 0.3s ease;
+  }
+  
+  .footerLogo:hover {
+    transform: scale(1.05);
+  }
+  
+  .footerInfo {
+    flex: 2;
+    text-align: center;
+    font-size: 16px;
+    font-weight: 500;
+    color: #333;
+    margin-bottom: 10px;
+  }
+  
+  .socialMediaContainer {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+  
+  .socialMediaIcon {
+    height: 30px;
+    width: 30px;
+    opacity: 0.8;
+    transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
+  }
+  
+  .socialMediaIcon:hover {
+    opacity: 1;
+    transform: scale(1.1);
+  }
+  
+  .copyRight {
+    font-size: 14px;
+    font-weight: 500;
+    color: #999;
+    margin-top: 10px;
+  }
+  
+  @media (max-width: 768px) {
+    .footerContainer {
+      flex-direction: column;
+    }
+    .footerLogoContainer {
+      margin-bottom: 20px;
+    }
+  }
+  

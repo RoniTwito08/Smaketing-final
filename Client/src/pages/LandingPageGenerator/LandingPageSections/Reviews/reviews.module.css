@@ -1,0 +1,98 @@
+/* reviews.module.css */
+.reviewsSection {
+    position: relative;
+    padding: 40px 20px;
+    margin: auto;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    transition: all 0.3s ease-in-out;
+    max-width: 100vw;
+  }
+  
+  .reviewsTitle {
+    font-size: 32px;
+    font-weight: bold;
+    margin-bottom: 20px;
+  }
+  
+  .reviewsContainer {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+    justify-content: center;
+  }
+  
+  .reviewCard {
+    background-color: var(--secondary-color);
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+  }
+  
+  .reviewText {
+    font-size: 18px;
+    color: #333;
+    font-style: italic;
+    cursor: pointer;
+  }
+  
+  .pic {
+    height: 150px;
+    object-fit: cover;
+    margin-bottom: 10px;
+  }
+  
+  .stars {
+    margin-top: 10px;
+  }
+  
+  .editContainer {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    justify-content: center;
+  }
+  
+  .editInput {
+    font-size: inherit;
+    font-family: inherit;
+    color: inherit;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    padding: 6px 10px;
+    background: #fff;
+    width: auto;
+    min-width: 70%;
+    max-width: 70%;
+    resize: vertical;
+    overflow-wrap: break-word;
+    word-break: break-word;
+  }
+  
+  .saveButton {
+    background-color: #27ae60;
+    color: #fff;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+  }
+  
+  .saveButton:hover {
+    background-color: #1e8449;
+    transform: translateY(-2px);
+  }
+  
+  @media (max-width: 768px) {
+    .reviewsTitle {
+      font-size: 28px;
+    }
+    .reviewText {
+      font-size: 16px;
+    }
+  }
+  

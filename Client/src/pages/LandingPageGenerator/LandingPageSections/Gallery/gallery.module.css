@@ -1,0 +1,76 @@
+.galleryContainer {
+    max-width: 1200px;
+    margin: 5% auto 0 auto;
+    padding: 20px;
+    border-radius: 12px;
+  }
+  
+  .title {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 20px;
+  }
+  
+  .imageGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 10px;
+    justify-items: center; 
+  }
+  
+  .imageBox {
+    position: relative;
+    width: 100%; 
+    max-width: 300px; 
+    aspect-ratio: 1 / 1; 
+    border: 2px dashed black;
+    border-radius: 8px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    transition: 0.3s;
+  }
+  
+  .imageBox:hover {
+    background: rgba(0, 123, 255, 0.1);
+  }
+  
+  .uploadInput {
+    display: none;
+  }
+  
+  .uploadLabel {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+  }
+  
+  .uploadText {
+    font-size: 30px;
+    color: black;
+  }
+  
+  .image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 8px;
+  }
+  
+  @media (max-width: 768px) {
+    .imageGrid {
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .imageGrid {
+      grid-template-columns: 1fr;
+    }
+  }
+  
