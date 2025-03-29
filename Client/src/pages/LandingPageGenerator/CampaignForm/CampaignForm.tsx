@@ -36,7 +36,7 @@ interface CampaignPopupProps {
   onSubmit: (form: CampaignForm) => void;
 }
 
-const CampaignPopup: React.FC<CampaignPopupProps> = ({ open, onClose, /*onSubmit*/ }) => {
+const CampaignPopup: React.FC<CampaignPopupProps> = ({ open, onClose /*, onSubmit*/ }) => {
   const { user } = useAuth();
   if (!user || !user._id) {
     throw new Error("User is not authenticated or userId is missing");
@@ -54,7 +54,7 @@ const CampaignPopup: React.FC<CampaignPopupProps> = ({ open, onClose, /*onSubmit
     language: "עברית",
     targetLocation: "ישראל",
     targetAge: "25-45",
-    campaignImage: null, 
+    campaignImage: null,
   });
 
   const [loading, setLoading] = useState(false);
@@ -67,7 +67,6 @@ const CampaignPopup: React.FC<CampaignPopupProps> = ({ open, onClose, /*onSubmit
     tertiaryColor: "#ffffff",
     textColor: "#000000",
   });
-
   const [userFont, setUserFont] = useState("sans-serif");
   const [removedSections, setRemovedSections] = useState<RemovedSection[]>([]);
   const [responsiveView, setResponsiveView] = useState<"desktop" | "tablet" | "mobile" | "">("");
@@ -76,7 +75,13 @@ const CampaignPopup: React.FC<CampaignPopupProps> = ({ open, onClose, /*onSubmit
   const [showTabletPopup, setShowTabletPopup] = useState(false);
   const [showDesktopPopup, setShowDesktopPopup] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  
+
+  useEffect(() => {
+    if (landingPageRef.current) {
+      landingPageRef.current.style.fontFamily = userFont;
+    }
+  }, [userFont]);
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setForm((prev) => ({ ...prev, [name]: value }));
@@ -86,7 +91,7 @@ const CampaignPopup: React.FC<CampaignPopupProps> = ({ open, onClose, /*onSubmit
     e.preventDefault();
     setLoading(true);
     setError("");
-    const businessInfo = await fetch(`http://localhost:3000/business-info/${user._id}`,{
+    const businessInfo = await fetch(`http://localhost:3000/business-info/${user._id}`, {
       method: "GET",
       headers: { "Content-Type": "application/json" },
     });
@@ -113,7 +118,7 @@ const CampaignPopup: React.FC<CampaignPopupProps> = ({ open, onClose, /*onSubmit
       setError("שגיאה בהבאת מידע עסקי");
       return;
     }
-    document.body.style.overflow = "auto"; // מחזיר את הגלילה
+    document.body.style.overflow = "auto";
     console.log("User Email Data:", userEmailData.email);
     try {
       const response = await fetch("http://localhost:3000/landing-page-generator/generateLandingPageContext", {
@@ -124,7 +129,6 @@ const CampaignPopup: React.FC<CampaignPopupProps> = ({ open, onClose, /*onSubmit
           BusinessData: BusinessData,
           UserEmailData: userEmailData.email,
         }),
-        
       });
       if (!response.ok) throw new Error("שגיאה ביצירת דף הנחיתה");
       const data = await response.json();
@@ -198,6 +202,9 @@ const CampaignPopup: React.FC<CampaignPopupProps> = ({ open, onClose, /*onSubmit
                 --text-color: ${colors.textColor};
                 --font: ${userFont};
               }
+              body {
+                font-family: ${userFont} !important;
+              }
             </style>
           </head>
           <body>
@@ -223,13 +230,12 @@ const CampaignPopup: React.FC<CampaignPopupProps> = ({ open, onClose, /*onSubmit
           alert("Error saving landing page");
           return;
         }
-        const landingPageData = await saveResponse.json();
-        console.log("Landing page saved:", landingPageData);
+        const savedLandingPage = await saveResponse.json();
   
         const campaignData = {
           ...form,
-          creatorId: user._id, 
-          landingPageFile: landingPageData.file,
+          creatorId: user._id,
+          landingPage: savedLandingPage.file,
         };
   
         const campaignResponse = await fetch("http://localhost:3000/campaigns", {
@@ -250,7 +256,6 @@ const CampaignPopup: React.FC<CampaignPopupProps> = ({ open, onClose, /*onSubmit
       }
     }, 500);
   };
-  
 
   const handleDelete = (index: number, section: any) => {
     setRemovedSections((prev) => [...prev, { section, index }]);
@@ -288,8 +293,10 @@ const CampaignPopup: React.FC<CampaignPopupProps> = ({ open, onClose, /*onSubmit
               width: "95%",
             }}
           >
-            <div className="popup-header"
-            style={{ display: "flex", justifyContent: "space-between", padding: "10px" }}>
+            <div
+              className="popup-header"
+              style={{ display: "flex", justifyContent: "space-between", padding: "10px" }}
+            >
               <button className="cancel-btn" onClick={onClose}>
                 ❌ סגור
               </button>
@@ -422,7 +429,6 @@ const CampaignPopup: React.FC<CampaignPopupProps> = ({ open, onClose, /*onSubmit
       )}
     </div>
   );
-  
 };
 
 export default CampaignPopup;
