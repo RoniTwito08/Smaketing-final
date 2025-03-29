@@ -52,8 +52,8 @@ const Reviews = ({ content, onDelete }: ReviewsProps) => {
             <img
               src={
                 index % 2 === 0
-                  ? "/src/assets/menReviewer.png"
-                  : "/src/assets/womenReviewer.png"
+                  ? "http://localhost:3000/src/assets/menReviewer.png"
+                  : "http://localhost:3000/src/assets/womenReviewer.png"
               }
               className={reviewsStyles.pic}
               alt="Reviewer"
