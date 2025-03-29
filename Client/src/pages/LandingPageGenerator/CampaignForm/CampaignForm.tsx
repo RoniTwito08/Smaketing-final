@@ -4,7 +4,7 @@ import SectionRenderer from "./sectionRendering";
 import Sidebar from "../SideBar/sideBar"; 
 import MobileView from "../SideBar/MobileView/MobileView"; 
 import TabletView from "../SideBar/TabletView/TabletView"; 
-import DesktopView from "../SideBar/DesktopView/DesktopView"; 
+import DesktopView from "../SideBar/DesktopView/DesktopView";
 import styles from "./landingPageStyles.module.css";
 import "./CampaignForm.css";
 import { useAuth } from "../../../context/AuthContext";
@@ -275,6 +275,16 @@ const CampaignPopup: React.FC<CampaignPopupProps> = ({ open, onClose /*, onSubmi
     setResponsiveView(view);
   };
 
+  // פונקציה לסגירת כל הפופאפים ואיפוס המצבים
+  const handleClose = () => {
+    setLandingPageData(null);
+    setSubmitted(false);
+    setShowMobilePopup(false);
+    setShowTabletPopup(false);
+    setShowDesktopPopup(false);
+    onClose();
+  };
+
   if (!open) return null;
 
   return (
@@ -297,7 +307,7 @@ const CampaignPopup: React.FC<CampaignPopupProps> = ({ open, onClose /*, onSubmi
               className="popup-header"
               style={{ display: "flex", justifyContent: "space-between", padding: "10px" }}
             >
-              <button className="cancel-btn" onClick={onClose}>
+              <button className="cancel-btn" onClick={handleClose}>
                 ❌ סגור
               </button>
               <button className="cancel-btn" onClick={handleSaveLandingPage}>
@@ -416,7 +426,7 @@ const CampaignPopup: React.FC<CampaignPopupProps> = ({ open, onClose /*, onSubmi
               </div>
   
               <div className="popup-actions">
-                <button className="cancel-btn" type="button" onClick={onClose}>
+                <button className="cancel-btn" type="button" onClick={handleClose}>
                   ביטול
                 </button>
                 <button className="submit-btn" type="submit">
