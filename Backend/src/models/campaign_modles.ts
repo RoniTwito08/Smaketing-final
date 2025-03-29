@@ -16,6 +16,7 @@ export interface Campaign {
   language: string;
   targetLocation: string;
   targetAge: string;
+  landingPage: string;
 }
 
 const campaignSchema = new mongoose.Schema<Campaign>({
@@ -34,6 +35,7 @@ const campaignSchema = new mongoose.Schema<Campaign>({
   language: { type: String, required: true },
   targetLocation: { type: String, required: true },
   targetAge: { type: String, required: true },
+  landingPage: { type: String, required: true },
 });
 
 const campaignModel = mongoose.model<Campaign>("Campaigns", campaignSchema);

@@ -155,6 +155,7 @@ const initApp = (): Promise<Express> => {
   app.use('/dist', express.static(path.join(__dirname, '../../Client/dist')));
   app.use('/src', express.static(path.join(__dirname, '../../Client/src')));
   app.use('/static', express.static(path.join(__dirname, 'public')));
+  app.use('/landingPages', express.static(path.join(__dirname, 'landingPages')));
 
   return new Promise<Express>((resolve, reject) => {
     if (!process.env.DB_CONNECT) {
