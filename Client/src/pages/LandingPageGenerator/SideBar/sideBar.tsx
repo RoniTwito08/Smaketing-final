@@ -1,7 +1,7 @@
 // Sidebar.tsx
 import { motion } from "framer-motion";
 import { IoChatbubbleEllipsesOutline, IoDesktopSharp } from "react-icons/io5";
-import { IoIosRemoveCircleOutline, IoIosColorFilter, IoIosCloudDone, IoIosOptions } from "react-icons/io";
+import { IoIosRemoveCircleOutline, IoIosColorFilter } from "react-icons/io";
 import { AiOutlineFontColors, AiOutlineExclamationCircle } from "react-icons/ai";
 import { FaTimes, FaMobileAlt, FaTabletAlt } from "react-icons/fa";
 import { MdOutlinePhoneIphone } from "react-icons/md";
@@ -127,14 +127,6 @@ const Sidebar = ({
           <div className={styles.sidebarItem} onClick={() => handleIconClick("responsive")}>
             <MdOutlinePhoneIphone size={30} />
             {isOpen && <span>Responsive</span>}
-          </div>
-          <div className={styles.sidebarItem} onClick={() => handleIconClick("marketingTone")}>
-            <IoIosOptions size={30} />
-            {isOpen && <span>Marketing tone</span>}
-          </div>
-          <div className={styles.sidebarItem} onClick={() => handleIconClick("ok")}>
-            <IoIosCloudDone size={30} />
-            {isOpen && <span>Ok, create this landing page</span>}
           </div>
         </nav>
         {isOpen && <div className={styles.divider}></div>}
