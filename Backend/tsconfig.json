@@ -9,7 +9,7 @@
     "rootDir": "src",            // <--- ADD THIS
     "strict": true,
     "resolveJsonModule": true,
-    "lib": ["es2015"]            // Make sure lib is inside compilerOptions
+    "lib": ["es2015" , "dom"]            // Make sure lib is inside compilerOptions
   },
   "include": ["src/**/*.ts"]     // <--- ADD THIS
 }

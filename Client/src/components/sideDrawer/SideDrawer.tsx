@@ -3,8 +3,6 @@ import { extendTheme } from "@mui/material/styles";
 import { AppProvider, Navigation, Router } from "@toolpad/core/AppProvider";
 import { DashboardLayout } from "@toolpad/core/DashboardLayout";
 import { PageContainer } from "@toolpad/core/PageContainer";
-import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
-import PersonOutlinedIcon from "@mui/icons-material/PersonOutlined";
 import CalendarTodayOutlinedIcon from "@mui/icons-material/CalendarTodayOutlined";
 import ContactsOutlinedIcon from "@mui/icons-material/ContactsOutlined";
 import SettingsIcon from "@mui/icons-material/Settings";
