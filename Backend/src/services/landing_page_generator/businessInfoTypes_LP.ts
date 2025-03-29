@@ -1,22 +1,26 @@
 export type BusinessData = {
-    businessName: string;
-    businessType: string;
-    businessAddress?: string;
-    businessField: string;
-    businessFieldDetails?: string;
-    serviceAreas: string;
-    serviceDescription: string;
-    uniqueService: string;
-    specialPackages: string;
-    incentives: string;
-    logoFile?: File;
-    businessImageFiles?: FileList;
-    designPreferences?: string;
-    socialMediaAccounts?: string[];
-    logo?: string;
-    businessImages?: string[];
-    objective?: string;
-};
+    data: {
+      _id: string;
+      userId: string;
+      businessName: string;
+      businessType: string;
+      businessAddress?: string;
+      businessField: string;
+      businessFieldDetails?: string;
+      serviceAreas: string;
+      serviceDescription: string;
+      uniqueService: string;
+      specialPackages: string;
+      incentives: string;
+      logo?: string;
+      businessImages?: string[];
+      designPreferences?: string;
+      socialMediaAccounts?: string[];
+      objective?: string;
+      __v?: number;
+    };
+  };
+  
 
 export type CampaignInfo = {
     budget: number;
