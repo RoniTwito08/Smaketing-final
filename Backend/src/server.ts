@@ -103,53 +103,52 @@ const initApp = (): Promise<Express> => {
 
   // שמירת דף נחיתה עם טיפול בשגיאות
   app.post("/api/saveLandingPage", (req: any, res: any) => {
-    try {
-      const { html, userPrimaryColor, userSecondaryColor, userTertiaryColor, userTextColor, userFont } = req.body;
-      if (!html) {
-        return res.status(400).json({ error: "Missing HTML content" });
+    const { html, userPrimaryColor, userSecondaryColor, userTertiaryColor, userTextColor, userFont } = req.body;
+    if (!html) {
+      return res.status(400).json({ error: "Missing HTML content" });
+    }
+  
+    const completeHTML = `
+  <!DOCTYPE html>
+  <html>
+    <head>
+      <meta charset="UTF-8">
+      <title>Landing Page</title>
+      <link rel="stylesheet" href="http://localhost:3000/dist/assets/index-BrGJOLjq.css">
+      <style>
+        :root {
+          --primary-color: ${userPrimaryColor};
+          --secondary-color: ${userSecondaryColor};
+          --tertiary-color: ${userTertiaryColor};
+          --text-color: ${userTextColor};
+          --font: ${userFont};
+        }
+      </style>
+    </head>
+    <body>
+      ${html}
+    </body>
+  </html>
+    `;
+  
+    const fileName = `landingPage-${Date.now()}.html`;
+    const folderPath = path.join(__dirname, "landingPages");
+    const filePath = path.join(folderPath, fileName);
+  
+    fs.mkdir(folderPath, { recursive: true }, (err) => {
+      if (err) {
+        console.error("Error creating folder:", err);
+        return res.status(500).json({ error: "Server error" });
       }
   
-      // קריאה לתוכן קובץ ה־CSS
-      const cssFilePath = path.join(__dirname, "../Client/dist/assets/index-uoALyoE3.css");
-      const cssContent = fs.existsSync(cssFilePath) ? fs.readFileSync(cssFilePath, "utf8") : "";
-  
-      const completeHTML = `
-        <!DOCTYPE html>
-        <html>
-          <head>
-            <meta charset="UTF-8">
-            <title>Landing Page</title>
-            <style>
-              ${cssContent}
-            </style>
-            <style>
-              :root {
-                --primary-color: ${userPrimaryColor};
-                --secondary-color: ${userSecondaryColor};
-                --tertiary-color: ${userTertiaryColor};
-                --text-color: ${userTextColor};
-                --font: ${userFont};
-              }
-            </style>
-          </head>
-          <body>
-            ${html}
-          </body>
-        </html>
-      `;
-  
-      const fileName = `landingPage-${Date.now()}.html`;
-      const folderPath = path.join(__dirname, "landingPages");
-      const filePath = path.join(folderPath, fileName);
-  
-      fs.mkdirSync(folderPath, { recursive: true });
-      fs.writeFileSync(filePath, completeHTML);
-  
-      res.status(200).json({ message: "Landing page saved", file: fileName });
-    } catch (error) {
-      console.error("Error saving landing page:", error);
-      res.status(500).json({ error: "Server error" });
-    }
+      fs.writeFile(filePath, completeHTML, (err) => {
+        if (err) {
+          console.error("Error writing file:", err);
+          return res.status(500).json({ error: "Server error" });
+        }
+        res.status(200).json({ message: "Landing page saved", file: fileName });
+      });
+    });
   });
   
 

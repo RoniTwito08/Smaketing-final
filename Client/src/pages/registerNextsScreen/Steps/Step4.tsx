@@ -2,8 +2,8 @@ import React, { useState } from "react";
 import { useFormContext, Controller } from "react-hook-form";
 
 const Step4: React.FC = () => {
-  const { control, watch } = useFormContext();
-  const watchedFiles = watch("logoFiles");
+  const { control, /*watch*/ } = useFormContext();
+  //const watchedFiles = watch("logoFiles");
 
   const [logoPreview, setLogoPreview] = useState<string | null>(null);
   const [businessImagesPreview, setBusinessImagesPreview] = useState<string[]>(
@@ -54,6 +54,7 @@ const Step4: React.FC = () => {
     if (files && files.length > 0) {
       const previews: string[] = [];
       Array.from(files).forEach((file, index) => {
+        void index;
         const reader = new FileReader();
         reader.onloadend = () => {
           previews.push(reader.result as string);
