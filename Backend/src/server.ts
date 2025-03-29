@@ -62,7 +62,7 @@ const initApp = (): Promise<Express> => {
   app.use("/uploads", express.static(path.join(__dirname, "../uploads")));
   app.use("/landing-page-generator", LandingPageGeneratorRoutes);
   app.use('/api/pexels_images', express.static(path.join(__dirname, 'pexels_images')));
-  app.use('/api/campaigns', CampaignRoutes);
+  app.use('/campaigns', CampaignRoutes);
   app.use("/uploads/profile_pictures", express.static(path.join(__dirname, "../uploads/profile_pictures")));
   app.use("/uploads/post_images", express.static(path.join(__dirname, "../uploads/post_images")));
   app.use("/uploads/business_pictures", express.static(path.join(__dirname, "../uploads/business_pictures")));
