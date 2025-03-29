@@ -60,6 +60,8 @@ Return your response in the following JSON format:
     "landingHeadline": "..."
   }
 }
+
+Return only valid JSON. Do not include explanations, markdown, or any other text.
 `.trim();
 }
 

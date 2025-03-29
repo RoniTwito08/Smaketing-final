@@ -30,6 +30,7 @@ export const BusinessSetting = () => {
     "Twitter",
     "Other",
   ];
+  console.log(errors , getValues());
 
   const professions = [
     "מעצב גרפי",
