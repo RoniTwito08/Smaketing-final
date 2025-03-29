@@ -17,7 +17,6 @@ const CampaignCard: React.FC<CampaignCardProps> = ({ campaign }) => {
       <p>
         <strong>מטרה:</strong> {campaign.campaginPurpose}
       </p>
-      {/* ניתן להוסיף כאן שדות נוספים לפי הצורך */}
     </div>
   );
 };
