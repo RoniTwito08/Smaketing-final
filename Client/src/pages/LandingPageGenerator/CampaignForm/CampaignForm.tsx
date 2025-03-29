@@ -36,7 +36,7 @@ interface CampaignPopupProps {
   onSubmit: (form: CampaignForm) => void;
 }
 
-const CampaignPopup: React.FC<CampaignPopupProps> = ({ open, onClose, onSubmit }) => {
+const CampaignPopup: React.FC<CampaignPopupProps> = ({ open, onClose, /*onSubmit*/ }) => {
   const { user } = useAuth();
   if (!user || !user._id) {
     throw new Error("User is not authenticated or userId is missing");

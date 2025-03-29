@@ -167,21 +167,21 @@ export const ChatModal = memo(
     );
 
     // Add a new function to fetch history
-    const fetchChatHistory = useCallback(async () => {
-      if (!selectedUser?._id || !currentUser._id) return;
+    // const fetchChatHistory = useCallback(async () => {
+    //   if (!selectedUser?._id || !currentUser._id) return;
       
-      try {
+    //   try {
         
-        // Always request fresh data from server
-        socketRef.current?.emit("getChatHistory", {
-          userId: currentUser._id,
-          partnerId: selectedUser._id,
-        });
-      } catch (error) {
-        console.error("[ChatModal] Failed to fetch chat history:", error);
-        setError("Failed to load chat history");
-      }
-    }, [selectedUser?._id, currentUser._id]);
+    //     // Always request fresh data from server
+    //     socketRef.current?.emit("getChatHistory", {
+    //       userId: currentUser._id,
+    //       partnerId: selectedUser._id,
+    //     });
+    //   } catch (error) {
+    //     console.error("[ChatModal] Failed to fetch chat history:", error);
+    //     setError("Failed to load chat history");
+    //   }
+    // }, [selectedUser?._id, currentUser._id]);
 
     // Socket connection effect
     useEffect(() => {
