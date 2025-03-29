@@ -63,7 +63,6 @@ export function convertCampaignToSetup(campaign: Campaign): CampaignSetup {
 }
 
 //המרה של נתוני עסק של אביב ברג'יסטר לאובייקט של נתוני עסק
-
 export function convertBusinessInfoToSlim(raw: any): SlimBusinessInfo {
   const info = raw.toObject ? raw.toObject() : raw; // optional: flatten Mongoose doc
 

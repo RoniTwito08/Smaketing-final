@@ -19,6 +19,7 @@ import cors from "cors";
 import path from "path";
 import helmet from "helmet";
 import { initializeSocket } from "./socket";
+import marketingRoutes from "./routes/marketingAnalysis_routes";
 
 const app = express();
 const httpServer = http.createServer(app);
@@ -51,6 +52,7 @@ const initApp = (): Promise<Express> => {
   app.use("/auth", authRoutes);
   app.use("/gemini", geminiRoutes);
   app.use("/business-info", businessInfoRoutes);
+  app.use("/marketing", marketingRoutes);
 
   app.use("/uploads", express.static(path.join(__dirname, "../uploads")));
   app.use(
