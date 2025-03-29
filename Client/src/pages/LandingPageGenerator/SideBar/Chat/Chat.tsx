@@ -36,7 +36,7 @@ export default function Chat() {
     setUserInputTone("");
     setUserInput("");
     try {
-      const response = await fetch("http://localhost:3000/api/getTextSuggestions", {
+      const response = await fetch("http://localhost:3000/landing-page-generator/getTextSuggestions", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ text: input, tone }),
