@@ -263,7 +263,7 @@ const CampaignPopup: React.FC<CampaignPopupProps> = ({ open, onClose, onSubmit }
             }}
           >
             <div className="popup-header"
-            style={{ display: "flex", justifyContent: "space-between" }}>
+            style={{ display: "flex", justifyContent: "space-between", padding: "10px" }}>
               <button className="cancel-btn" onClick={onClose}>
                 ❌ סגור
               </button>
