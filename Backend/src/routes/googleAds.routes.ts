@@ -1,6 +1,6 @@
 import express, { Request, Response, RequestHandler } from 'express';
 import { google } from 'googleapis';
-import googleAdsController from '../controllers/googleAds.controller';
+import googleAdsController from '../controllers/googleAds_controller';
 
 const router = express.Router();
 

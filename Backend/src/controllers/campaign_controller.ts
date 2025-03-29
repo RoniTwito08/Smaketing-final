@@ -2,6 +2,11 @@ import { Request, Response } from "express";
 import campaignModel from "../models/campaign_modles";
 import path from "path";
 import fs from "fs";
+import { GoogleAdsService } from "../services/googleAds/googleAds.service"; 
+import { googleAdsConfig } from "../config/google.config"; 
+import { CampaignStatus, AdvertisingChannelType } from "../services/googleAds/types";
+
+const googleAdsService = new GoogleAdsService(googleAdsConfig);
 
 export const createCampaign = async (req: Request, res: Response) => {
   try {
@@ -25,12 +30,12 @@ export const getAllCampaigns = async (req: Request, res: Response) => {
   }
 };
 
-export const getCampaignById = async (req: Request, res: Response) : Promise<void> => {
+export const getCampaignById = async (req: Request, res: Response): Promise<void> => {
   try {
     const campaign = await campaignModel.findById(req.params.id).populate("feedbacks");
-    if (!campaign) { 
-        res.status(404).json({ error: "Campaign not found" });
-        return;
+    if (!campaign) {
+      res.status(404).json({ error: "Campaign not found" });
+      return;
     }
 
     res.status(200).json(campaign);
@@ -39,12 +44,12 @@ export const getCampaignById = async (req: Request, res: Response) : Promise<voi
   }
 };
 
-export const updateCampaign = async (req: Request, res: Response) : Promise<void> => {
+export const updateCampaign = async (req: Request, res: Response): Promise<void> => {
   try {
     const campaign = await campaignModel.findById(req.params.id);
     if (!campaign) {
-         res.status(404).json({ error: "Campaign not found" });
-        return;
+      res.status(404).json({ error: "Campaign not found" });
+      return;
     }
 
     let campaignImage = campaign.campaignImage;
@@ -58,10 +63,14 @@ export const updateCampaign = async (req: Request, res: Response) : Promise<void
       campaignImage = newImage;
     }
 
-    const updated = await campaignModel.findByIdAndUpdate(req.params.id, {
-      ...req.body,
-      campaignImage,
-    }, { new: true });
+    const updated = await campaignModel.findByIdAndUpdate(
+      req.params.id,
+      {
+        ...req.body,
+        campaignImage,
+      },
+      { new: true }
+    );
 
     res.status(200).json(updated);
   } catch (error) {
@@ -69,12 +78,12 @@ export const updateCampaign = async (req: Request, res: Response) : Promise<void
   }
 };
 
-export const deleteCampaign = async (req: Request, res: Response) : Promise<void> => {
+export const deleteCampaign = async (req: Request, res: Response): Promise<void> => {
   try {
     const campaign = await campaignModel.findById(req.params.id);
     if (!campaign) {
-        res.status(404).json({ error: "Campaign not found" });
-        return;
+      res.status(404).json({ error: "Campaign not found" });
+      return;
     }
 
     if (campaign.campaignImage) {
@@ -89,15 +98,15 @@ export const deleteCampaign = async (req: Request, res: Response) : Promise<void
   }
 };
 
-export const markInterest = async (req: Request, res: Response) : Promise<void> => {
+export const markInterest = async (req: Request, res: Response): Promise<void> => {
   const { campaignId } = req.params;
   const { userId } = req.body;
 
   try {
     const campaign = await campaignModel.findById(campaignId);
     if (!campaign) {
-        res.status(404).json({ error: "Campaign not found" });
-        return;
+      res.status(404).json({ error: "Campaign not found" });
+      return;
     }
 
     if (!campaign.interestedUsers?.includes(userId)) {
@@ -111,22 +120,109 @@ export const markInterest = async (req: Request, res: Response) : Promise<void> 
   }
 };
 
-export const removeInterest = async (req: Request, res: Response) : Promise<void> => {
+export const removeInterest = async (req: Request, res: Response): Promise<void> => {
   const { campaignId } = req.params;
   const { userId } = req.body;
 
   try {
     const campaign = await campaignModel.findById(campaignId);
-    if (!campaign) { 
-        res.status(404).json({ error: "Campaign not found" });
-        return;
+    if (!campaign) {
+      res.status(404).json({ error: "Campaign not found" });
+      return;
     }
 
-    campaign.interestedUsers = campaign.interestedUsers?.filter(id => id !== userId);
+    campaign.interestedUsers = campaign.interestedUsers?.filter((id) => id !== userId);
     await campaign.save();
 
     res.status(200).json({ message: "Interest removed", interested: campaign.interestedUsers?.length });
   } catch (error) {
     res.status(500).json({ error: "Internal server error" });
+  }
+};
+
+export const fetchGoogleCampaigns = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const { customerId } = req.query;
+    if (!customerId || typeof customerId !== 'string') {
+      res.status(400).json({ error: 'Missing or invalid customerId' });
+      return;
+    }
+
+    const campaigns = await googleAdsService.getCampaigns();
+    res.status(200).json(campaigns);
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to fetch campaigns', details: error });
+  }
+};
+
+export const fetchCampaignStatistics = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const { startDate, endDate } = req.query;
+    const { id } = req.params;
+
+    if (!startDate || !endDate) {
+      res.status(400).json({ error: "Missing startDate or endDate" });
+      return;
+    }
+
+    const stats = await googleAdsService.getCampaignStatistics(
+      id,
+      startDate as string,
+      endDate as string
+    );
+
+    
+    const summary = stats.reduce(
+      (acc, item) => {
+        acc.clicks += item.clicks;
+        acc.impressions += item.impressions;
+        acc.conversions += item.conversions;
+        acc.costMicros += item.costMicros;
+        return acc;
+      },
+      {
+        clicks: 0,
+        impressions: 0,
+        conversions: 0,
+        costMicros: 0,
+      }
+    );
+
+    const ctr = summary.impressions ? summary.clicks / summary.impressions : 0;
+
+    res.status(200).json({
+      ...summary,
+      ctr,
+      dailyBreakdown: stats,
+    });
+  } catch (error) {
+    res.status(500).json({ error: "Failed to fetch campaign statistics", details: error });
+  }
+};
+
+// controller חדש
+export const launchGoogleAdsCampaign = async (req: Request, res: Response) => {
+  try {
+    const { businessName, objective } = req.body;
+
+    const today = new Date();
+    const startDate = today.toISOString().split("T")[0].replace(/-/g, "");
+    const endDate = new Date(today.setMonth(today.getMonth() + 1))
+      .toISOString()
+      .split("T")[0]
+      .replace(/-/g, "");
+
+      const campaign = await googleAdsService.createCampaign({
+        name: `קמפיין של ${businessName}`,
+        status: CampaignStatus.PAUSED,
+        advertisingChannelType: AdvertisingChannelType.SEARCH,
+        startDate,
+        endDate,
+      });
+      
+    res.status(201).json({ message: "Campaign launched successfully", campaign });
+  } catch (error) {
+    console.error("Error launching campaign:", error);
+    res.status(500).json({ error: "Failed to launch campaign" });
   }
 };

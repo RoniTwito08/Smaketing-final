@@ -18,6 +18,7 @@ import LogoutIcon from "@mui/icons-material/Logout";
 import { useAuth } from "../../context/AuthContext";
 import MainFeed from "../../pages/feedPage/MainFeed";
 import { User } from "../../types/user";
+import { GoogleAdsAnalytics } from "../GoogleAdsAnalytics/GoogleAdsAnalytics";
 
 export default function DashboardLayoutBasic(props: any) {
   const { window } = props;
@@ -45,7 +46,7 @@ export default function DashboardLayoutBasic(props: any) {
       icon: <ContactsOutlinedIcon />,
     },
     {
-      segment: "Analysis",
+      segment: "analytics",
       title: "ניתוחים ונתונים",
       icon: <AnalysisIcon />,
     },
@@ -136,7 +137,7 @@ export default function DashboardLayoutBasic(props: any) {
   // Update the route mapping
   const routeComponents: { [key: string]: React.ReactNode } = {
     "/my-campign": <MyPosts />, // matan- to edit
-    "/analytics": <MyPosts />, // roni and omer- to edit
+    "/analytics": <GoogleAdsAnalytics />, 
     "/settings/account": <AccountSettings />,
     "/settings/business-settings": <BusinessSetting />,
     "/feed": <MainFeed />,
