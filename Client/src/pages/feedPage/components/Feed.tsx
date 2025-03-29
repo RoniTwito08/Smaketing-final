@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Post } from "../../../components/feed/types";
 import PostCard from "../../../components/feed/Posts/postCard/PostCard";
+import CampaignPopup from "../../LandingPageGenerator/CampaignForm/CampaignForm"; // נתיב לקובץ שיצרנו קודם
 import "./Feed.css";
 
 const Feed: React.FC<{ posts: Post[]; className?: string }> = ({
@@ -8,6 +9,7 @@ const Feed: React.FC<{ posts: Post[]; className?: string }> = ({
   className,
 }) => {
   const [postList, setPostList] = useState<Post[]>(posts);
+  const [showPopup, setShowPopup] = useState(false);
 
   useEffect(() => {
     setPostList(posts);
@@ -17,6 +19,10 @@ const Feed: React.FC<{ posts: Post[]; className?: string }> = ({
     setPostList((prevPosts) => prevPosts.filter((post) => post._id !== postId));
   };
 
+  const handleCampaignSubmit = (data: any) => {
+    console.log("Campaign submitted:", data);
+  };
+
   return (
     <div className={`feed ${className || ""}`}>
       {postList.length > 0 ? (
@@ -24,8 +30,16 @@ const Feed: React.FC<{ posts: Post[]; className?: string }> = ({
           <PostCard key={post._id} post={post} onDelete={handleDeletePost} />
         ))
       ) : (
-        <p className="no-posts">אין פוסטים להצגה</p>
+        <button className="noPostsButton" onClick={() => setShowPopup(true)}>
+          צור קמפיין
+        </button>
       )}
+
+      <CampaignPopup
+        open={showPopup}
+        onClose={() => setShowPopup(false)}
+        onSubmit={handleCampaignSubmit}
+      />
     </div>
   );
 };

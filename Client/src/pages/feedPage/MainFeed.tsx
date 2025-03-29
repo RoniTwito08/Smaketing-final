@@ -1,5 +1,5 @@
 import { useFetchPosts } from "./hooks/useFetchPosts";
-import Feed from "../feedPage/components/Feed";
+import Feed from "./components/Feed";
 import "./MainFeed.css";
 
 export const MainFeed = () => {
@@ -12,7 +12,6 @@ export const MainFeed = () => {
     <div className="main-feed-container">
       <div className="main-feed">
         {error && <p>Error loading posts</p>}
-        {posts.length === 0 && !isFetchingNextPage && <p>No posts available</p>}
         <Feed posts={posts} />
       </div>
 

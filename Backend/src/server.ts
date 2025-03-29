@@ -13,12 +13,16 @@ import authRoutes from "./routes/auth_routes";
 import chatRoutes from "./routes/chat_routes";
 import geminiRoutes from "./routes/gemini_routes";
 import businessInfoRoutes from "./routes/businessInfo_routes";
+import LandingPageGeneratorRoutes from "./routes/landing_page_builder_routes";
+import CampaignRoutes from './routes/campaign_routes'
 import swaggerJsDoc from "swagger-jsdoc";
 import swaggerUI from "swagger-ui-express";
 import cors from "cors";
 import path from "path";
 import helmet from "helmet";
 import { initializeSocket } from "./socket";
+import fs from 'fs';
+
 
 const app = express();
 const httpServer = http.createServer(app);
@@ -51,7 +55,10 @@ const initApp = (): Promise<Express> => {
   app.use("/auth", authRoutes);
   app.use("/gemini", geminiRoutes);
   app.use("/business-info", businessInfoRoutes);
-
+  app.use("/landing-page-generator",LandingPageGeneratorRoutes);
+  app.use('/api/pexels_images', express.static(path.join(__dirname, 'pexels_images')));
+  app.use('/api/campaigns', CampaignRoutes);
+  
   app.use(
     "/uploads/profile_pictures",
     express.static(path.join(__dirname, "../uploads/profile_pictures"))
@@ -118,6 +125,61 @@ const initApp = (): Promise<Express> => {
     }
   });
 };
+
+
+app.use('/dist', express.static(path.join(__dirname, '../frontend/dist')));
+app.use('/src', express.static(path.join(__dirname, '../../Client/src')));
+app.use('/static', express.static(path.join(__dirname, 'public')));
+
+//save landing page fule in folder
+app.post("/api/saveLandingPage", (req: any, res: any) => {
+  const { html, userPrimaryColor, userSecondaryColor, userTertiaryColor, userTextColor, userFont } = req.body;
+  if (!html) {
+    return res.status(400).json({ error: "Missing HTML content" });
+  }
+
+  const completeHTML = `
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Landing Page</title>
+    <link rel="stylesheet" href="http://localhost:3000/dist/assets/index-uoALyoE3.css">
+    <style>
+      :root {
+        --primary-color: ${userPrimaryColor};
+        --secondary-color: ${userSecondaryColor};
+        --tertiary-color: ${userTertiaryColor};
+        --text-color: ${userTextColor};
+        --font: ${userFont};
+      }
+    </style>
+  </head>
+  <body>
+    ${html}
+  </body>
+</html>
+  `;
+
+  const fileName = `landingPage-${Date.now()}.html`;
+  const folderPath = path.join(__dirname, "landingPages");
+  const filePath = path.join(folderPath, fileName);
+
+  fs.mkdir(folderPath, { recursive: true }, (err) => {
+    if (err) {
+      console.error("Error creating folder:", err);
+      return res.status(500).json({ error: "Server error" });
+    }
+
+    fs.writeFile(filePath, completeHTML, (err) => {
+      if (err) {
+        console.error("Error writing file:", err);
+        return res.status(500).json({ error: "Server error" });
+      }
+      res.status(200).json({ message: "Landing page saved", file: fileName });
+    });
+  });
+});
 
 export { app, httpServer };
 export default initApp;
