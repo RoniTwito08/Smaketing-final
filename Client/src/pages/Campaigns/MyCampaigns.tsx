@@ -34,9 +34,39 @@ export const MyCampaigns: React.FC = () => {
     setSelectedCampaign(null);
   };
 
-  const handleSubmitCampaign = () => {
-    // כאן תוכל להוסיף את הלוגיקה לשליחת הקמפיין
-    console.log("Submit campaign:", selectedCampaign);
+  const handleSubmitCampaign = async () => {
+    if (!selectedCampaign || !user?._id) return;
+
+    try {
+      const response = await fetch(`${config.apiUrl}/campaigns/google-launch`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          businessName: selectedCampaign.campaignName,
+          objective: selectedCampaign.campaginPurpose,
+          userId: user._id
+        }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to launch campaign');
+      }
+
+      const data = await response.json();
+      console.log('Campaign launched successfully:', data);
+      
+      // Close the popup and refresh the campaigns list
+      closePopup();
+      await fetchCampaigns();
+
+    } catch (error) {
+      console.error('Error launching campaign:', error);
+      // You might want to show an error message to the user here
+      alert('Failed to launch campaign. Please try again.');
+    }
   };
 
   return (
