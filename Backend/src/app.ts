@@ -8,7 +8,6 @@ import path from 'path';
 import https from 'https';
 import fs from 'fs';
 import { initializeSocket } from "./socket";
-import googleAdsRoutes from './routes/googleAds.routes';
 import cors from 'cors';
 
 initApp()
@@ -40,7 +39,6 @@ initApp()
       credentials: true
     }));
 
-    app.use('/api/google-ads', googleAdsRoutes);
 
     app.get("*", (req, res) => {
       res.sendFile(path.join(__dirname, "../../Smarketing-Client/dist/index.html"));

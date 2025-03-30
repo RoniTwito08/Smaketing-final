@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import campaignModel from "../models/campaign_modles";
+import userModel from "../models/user_models";
 import path from "path";
 import fs from "fs";
 import { GoogleAdsService } from "../services/googleAds/googleAds.service"; 
@@ -50,7 +51,6 @@ export const updateCampaign = async (req: Request, res: Response): Promise<void>
       return;
     }
 
-    // עדכון הקמפיין ללא טיפול בתמונה
     const updated = await campaignModel.findByIdAndUpdate(req.params.id, {
       ...req.body,
     }, { new: true });
@@ -179,10 +179,24 @@ export const fetchCampaignStatistics = async (req: Request, res: Response): Prom
   }
 };
 
-// controller חדש
-export const launchGoogleAdsCampaign = async (req: Request, res: Response) => {
+export const launchGoogleAdsCampaign = async (req: Request, res: Response): Promise<void> => {
   try {
-    const { businessName, objective } = req.body;
+    const { businessName, objective, userId } = req.body;
+
+    if (!userId) {
+      res.status(400).json({ error: "Missing userId" });
+      return ;
+    }
+
+    const customerId = await googleAdsService.createCustomerClient({
+      businessName,
+      currencyCode: "ILS",
+      timeZone: "Asia/Jerusalem"
+    });
+
+    await userModel.findByIdAndUpdate(userId, {
+      googleCustomerId: customerId
+    });
 
     const today = new Date();
     const startDate = today.toISOString().split("T")[0].replace(/-/g, "");
@@ -191,20 +205,25 @@ export const launchGoogleAdsCampaign = async (req: Request, res: Response) => {
       .split("T")[0]
       .replace(/-/g, "");
 
-      const campaign = await googleAdsService.createCampaign({
-        name: `קמפיין של ${businessName}`,
-        status: CampaignStatus.PAUSED,
-        advertisingChannelType: AdvertisingChannelType.SEARCH,
-        startDate,
-        endDate,
-      });
-      
-    res.status(201).json({ message: "Campaign launched successfully", campaign });
+    const campaign = await googleAdsService.createCampaign({
+      name: `קמפיין של ${businessName}`,
+      status: CampaignStatus.PAUSED,
+      advertisingChannelType: AdvertisingChannelType.SEARCH,
+      startDate,
+      endDate,
+    }, customerId);
+
+    res.status(201).json({
+      message: "Campaign launched successfully",
+      customerId,
+      campaign,
+    });
   } catch (error) {
     console.error("Error launching campaign:", error);
     res.status(500).json({ error: "Failed to launch campaign" });
   }
 };
+
 export const getAllCampaignsByUserId = async (req: Request, res: Response): Promise<void> => {
   const { userId } = req.params;
   try {
@@ -213,5 +232,7 @@ export const getAllCampaignsByUserId = async (req: Request, res: Response): Prom
   } catch (error) {
     res.status(500).json({ error: "Internal server error" });
   }
-}
+  
+};
+
 
