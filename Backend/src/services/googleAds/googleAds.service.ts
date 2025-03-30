@@ -3,8 +3,17 @@ import { AuthService } from "./auth.service";
 import { Campaign, CampaignStatistics, GoogleAdsConfig } from "./types";
 import campaignModel from "../../models/campaign_modles";
 
+interface GoogleAdsCreateCustomerResponse {
+  customerClient: {
+    id: string;
+    descriptiveName?: string;
+    currencyCode?: string;
+    timeZone?: string;
+  };
+}
+
 export class GoogleAdsService {
-  private baseUrl = "https://googleads.googleapis.com/v14";
+  private baseUrl = "https://googleads.googleapis.com/v17";
   private authService: AuthService;
   private customerId: string;
   private developerToken: string;
@@ -200,35 +209,74 @@ export class GoogleAdsService {
       endDate: campaign.endDate,
     };
   }
+
   async createCustomerClient(customerInfo: {
     businessName: string;
     currencyCode: string;
     timeZone: string;
   }): Promise<string> {
-    const headers = await this.getHeaders();
-  
-    const response = await request<{ resourceName: string }>({
-      url: `${this.baseUrl}/customers/${this.customerId}/customerClients`,
-      method: "POST",
-      headers: {
-        ...headers,
-        "Content-Type": "application/json",
-      },
-      data: {
-        customerClient: {
-          descriptiveName: customerInfo.businessName,
-          currencyCode: customerInfo.currencyCode,
-          timeZone: customerInfo.timeZone,
-          trackingUrlTemplate: "",
-          finalUrlSuffix: "",
+    try {
+      const headers = await this.getHeaders();
+      
+      const requestConfig = {
+        url: `${this.baseUrl}/customers/${this.customerId}:createCustomerClient`,
+        method: "POST" as const,
+        headers: {
+          ...headers,
+          "Content-Type": "application/json",
         },
-      },
-    });
-  
-    const newCustomerResourceName = response.data.resourceName;
-    const newCustomerId = newCustomerResourceName.split("/").pop()!;
-  
-    return newCustomerId;
+        data: {
+          customerClient: {
+            descriptiveName: customerInfo.businessName,
+            currencyCode: customerInfo.currencyCode,
+            timeZone: customerInfo.timeZone
+          }
+        },
+        validateStatus: (status: number) => true,
+      };
+
+      // Log complete request details
+      console.log('Complete request details:', JSON.stringify({
+        url: requestConfig.url,
+        method: requestConfig.method,
+        headers: requestConfig.headers,
+        data: requestConfig.data,
+        baseUrl: this.baseUrl,
+        customerId: this.customerId
+      }, null, 2));
+
+      const response = await request<GoogleAdsCreateCustomerResponse>(requestConfig);
+
+      console.log('Complete response:', {
+        status: response.status,
+        statusText: response.statusText,
+        headers: response.headers,
+        data: response.data
+      });
+
+      if (response.status !== 200) {
+        throw new Error(`Google Ads API Error: ${response.status} - ${JSON.stringify(response.data)}`);
+      }
+
+      if (!response.data?.customerClient?.id) {
+        throw new Error('No customer client ID returned in response');
+      }
+
+      return response.data.customerClient.id;
+    } catch (error: any) {
+      console.error('Detailed error in createCustomerClient:', {
+        error: error.message,
+        response: error.response?.data,
+        request: {
+          url: error.config?.url,
+          method: error.config?.method,
+          headers: error.config?.headers,
+          data: error.config?.data
+        },
+        status: error.response?.status
+      });
+      throw error;
+    }
   }
   
 } 

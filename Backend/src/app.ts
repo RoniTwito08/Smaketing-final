@@ -9,6 +9,7 @@ import https from 'https';
 import fs from 'fs';
 import { initializeSocket } from "./socket";
 import cors from 'cors';
+import authRoutes from './routes/auth.routes';
 
 initApp()
   .then((app) => {
@@ -39,6 +40,7 @@ initApp()
       credentials: true
     }));
 
+    app.use('/api/auth', authRoutes);
 
     app.get("*", (req, res) => {
       res.sendFile(path.join(__dirname, "../../Smarketing-Client/dist/index.html"));
