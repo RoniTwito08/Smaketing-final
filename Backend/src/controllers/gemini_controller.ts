@@ -1,64 +1,80 @@
-/* istanbul ignore file */
+/* istanbul ignore file */ // ignore for coverage
 
 import { Request, Response } from "express";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import dotenv from "dotenv";
+import { Campaign } from "../services/googleAds/types";
 
 dotenv.config();
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || "");
 
-function getImageFormat(base64: string): string {
-  if (base64.startsWith("data:image/jpeg")) return "jpeg";
-  if (base64.startsWith("data:image/png")) return "png";
-  return "unknown";
-}
-
-function isValidBase64(base64: string): boolean {
-  const base64Regex = /^[A-Za-z0-9+/=]+$/;
-  return base64Regex.test(base64);
-}
-
-export async function getGeminiImageDescription(
+export async function getGeminiKeywordsFromCampaign(
   req: Request,
   res: Response
 ): Promise<void> {
   try {
-    let { base64Image } = req.body;
+    const { campaign }: { campaign: Campaign } = req.body;
 
-    if (!base64Image) {
-      res.status(400).json({ error: "לא נבחרה תמונה" });
+    if (!campaign) {
+      res.status(400).json({ error: "Missing campaign data" });
+      return;
     }
 
-    // בדיקה אם התמונה בפורמט נתמך
-    const format = getImageFormat(base64Image);
-    if (!["jpeg", "jpg", "png"].includes(format)) {
-      res
-        .status(400)
-        .json({ error: "יש להעלות תמונה בפורמט JPEG או PNG או JPG" });
-    }
-
-    // ניקוי הקידומת של Base64
-    base64Image = base64Image.replace(/^data:image\/\w+;base64,/, "");
-
-    if (!isValidBase64(base64Image)) {
-      res.status(400).json({ error: "פורמט תמונה שגוי" });
-    }
-
-    // שליחת הבקשה ל-Gemini
     const model = genAI.getGenerativeModel({ model: "gemini-1.5-pro" });
 
-    const result = await model.generateContent([
-      { inlineData: { mimeType: `image/${format}`, data: base64Image } },
-      {
-        text: "אתה כותב פוסטים במדיה החברתית לטובת שיווק העסק. תכתוב תיאור לפוסט בצורה יצירתית ומעניינת ברשת החברתית המיועד לשיווק של העסק ומכיל את התמונה הבאה. תכתוב רק את המלל של הפוסט בעברית. תן אפשרות אחת בלבד.",
-      },
-    ]);
+    const prompt = `
+You are a Google Ads marketing assistant.
 
-    const description = (await result.response.text()) || "לא ניתן ליצור תיאור";
+Your task is to generate 5–10 marketing keyword ideas for a Google Ads campaign.
 
-    res.json({ response: description });
-  } catch (error) {
-    res.status(500).json({ error: "שגיאה בשרת" });
+Campaign Information:
+- Name: ${campaign.name}
+- Type: ${campaign.advertisingChannelType}
+- Goal: ${
+      campaign.optimizationGoalSetting?.optimizationGoalTypes?.[0] ??
+      "not specified"
+    }
+- Start Date: ${campaign.startDate}
+- End Date: ${campaign.endDate}
+- Budget (micros): ${campaign.targetSpend?.targetSpendingAmountMicros ?? "N/A"}
+- Scheduled Time: ${campaign.scheduledTime ?? "Not specified"}
+
+👉 Please generate keywords that are highly relevant and optimized for this campaign's goal and targeting.
+
+Return the result as a **valid JSON array**, where each keyword object contains:
+- keywordText: the actual keyword (string)
+- matchType: one of ["EXACT", "PHRASE", "BROAD"]
+
+📦 Example output:
+[
+  {
+    "keywordText": "עורך דין חוזים",
+    "matchType": "EXACT"
+  },
+  {
+    "keywordText": "ייעוץ משפטי לעסקים",
+    "matchType": "PHRASE"
+  }
+]
+
+⚠️ Do NOT include any explanation or markdown. Return only the raw JSON array.
+`.trim();
+
+    const result = await model.generateContent(prompt);
+    const text = (await result.response.text()).trim();
+
+    // אפשר לנקות markdown אם צריך:
+    const cleaned = text
+      .replace(/```json\s*/i, "")
+      .replace(/```$/, "")
+      .trim();
+
+    const keywords = JSON.parse(cleaned);
+
+    res.json({ keywords });
+  } catch (error: any) {
+    console.error("Gemini error:", error);
+    res.status(500).json({ error: "שגיאה בעת יצירת מילות מפתח" });
   }
 }
