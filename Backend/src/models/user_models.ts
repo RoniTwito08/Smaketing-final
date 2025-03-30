@@ -7,6 +7,7 @@ export interface User {
   refreshToken?: string[];
   profilePicture?: string | null;
   role?: string;
+  googleCustomerId?: string | null;
 }
 
 const userSchema = new mongoose.Schema<User>({
@@ -33,6 +34,10 @@ const userSchema = new mongoose.Schema<User>({
     default: [],
   },
   profilePicture: {
+    type: String,
+    required: false,
+  },
+  googleCustomerId: {
     type: String,
     required: false,
   },
