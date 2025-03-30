@@ -1,6 +1,7 @@
 import { request } from "gaxios";
 import { AuthService } from "./auth.service";
 import { Campaign, CampaignStatistics, GoogleAdsConfig } from "./types";
+import campaignModel from "../../models/campaign_modles";
 
 export class GoogleAdsService {
   private baseUrl = "https://googleads.googleapis.com/v14";
@@ -117,14 +118,19 @@ export class GoogleAdsService {
     return this.transformStatisticsResponse(response.data);
   }
 
-  async createCampaign(campaign: Omit<Campaign, "id">): Promise<Campaign> {
+  async createCampaign(
+    campaign: Omit<Campaign, "id">,
+    customerId?: string
+  ): Promise<Campaign> {
+    const targetCustomerId = customerId || this.customerId;
+  
     const response = await request({
-      url: `${this.baseUrl}/customers/${this.customerId}/campaigns`,
+      url: `${this.baseUrl}/customers/${targetCustomerId}/campaigns`,
       method: "POST",
       headers: await this.getHeaders(),
       data: this.transformCampaignRequest(campaign),
     });
-
+  
     return this.transformCampaignResponse(response.data)[0];
   }
 
@@ -194,4 +200,36 @@ export class GoogleAdsService {
       endDate: campaign.endDate,
     };
   }
+  async createCustomerClient(customerInfo: {
+    businessName: string;
+    currencyCode: string;
+    timeZone: string;
+  }): Promise<string> {
+    const headers = await this.getHeaders();
+  
+    const response = await request<{ resourceName: string }>({
+      url: `${this.baseUrl}/customers/${this.customerId}/customerClients`,
+      method: "POST",
+      headers: {
+        ...headers,
+        "Content-Type": "application/json",
+      },
+      data: {
+        customerClient: {
+          descriptiveName: customerInfo.businessName,
+          currencyCode: customerInfo.currencyCode,
+          timeZone: customerInfo.timeZone,
+          trackingUrlTemplate: "",
+          finalUrlSuffix: "",
+        },
+      },
+    });
+  
+    const newCustomerResourceName = response.data.resourceName;
+    const newCustomerId = newCustomerResourceName.split("/").pop()!;
+  
+    return newCustomerId;
+  }
+  
 } 
+
