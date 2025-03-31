@@ -1,13 +1,20 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import React, { useState, useEffect } from "react";
+import axios from "axios";
 import {
-  Container, Paper, Typography, TextField, Button, Grid, Card, CardContent
-} from '@mui/material';
-import { DatePicker } from '@mui/x-date-pickers';
-import GoogleAdsRadarChart from '../charts/GoogleAdsRadarChart';
-import GoogleAdsPieChart from '../charts/GoogleAdsPieChart';
-import GoogleAdsChart from '../charts/GoogleAdsChart';
-import GoogleAdsBarChart from '../charts/GoogleAdsBarChart';
+  Container,
+  Paper,
+  Typography,
+  TextField,
+  Button,
+  Grid,
+  Card,
+  CardContent,
+} from "@mui/material";
+import { DatePicker } from "@mui/x-date-pickers";
+import GoogleAdsRadarChart from "../charts/GoogleAdsRadarChart";
+import GoogleAdsPieChart from "../charts/GoogleAdsPieChart";
+import GoogleAdsChart from "../charts/GoogleAdsChart";
+import GoogleAdsBarChart from "../charts/GoogleAdsBarChart";
 
 interface DailyStat {
   date: string;
@@ -41,8 +48,8 @@ interface Campaign {
 
 export const GoogleAdsAnalytics: React.FC = () => {
   const [campaigns, setCampaigns] = useState<Campaign[]>([]);
-  const [customerId, setCustomerId] = useState('517-512-4700');
-  const [selectedCampaign, setSelectedCampaign] = useState<string>('');
+  const [customerId, setCustomerId] = useState("517-512-4700");
+  const [selectedCampaign, setSelectedCampaign] = useState<string>("");
   const [startDate, setStartDate] = useState<Date | null>(null);
   const [endDate, setEndDate] = useState<Date | null>(null);
   const [stats, setStats] = useState<CampaignStats | null>(null);
@@ -53,12 +60,15 @@ export const GoogleAdsAnalytics: React.FC = () => {
 
   const fetchCampaigns = async () => {
     try {
-      const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/google-ads/campaigns`, {
-        params: { customerId }
-      });
+      const response = await axios.get(
+        `${import.meta.env.VITE_API_URL}/api/google-ads/campaigns`,
+        {
+          params: { customerId },
+        }
+      );
       setCampaigns(response.data);
     } catch (error) {
-      console.error('Failed to fetch campaigns:', error);
+      console.error("Failed to fetch campaigns:", error);
     }
   };
 
@@ -71,53 +81,59 @@ export const GoogleAdsAnalytics: React.FC = () => {
         {
           params: {
             customerId,
-            startDate: startDate.toISOString().split('T')[0],
-            endDate: endDate.toISOString().split('T')[0],
+            startDate: startDate.toISOString().split("T")[0],
+            endDate: endDate.toISOString().split("T")[0],
           },
         }
       );
       setStats(response.data);
     } catch (error) {
-      console.error('Failed to fetch campaign statistics:', error);
+      console.error("Failed to fetch campaign statistics:", error);
     }
   };
 
   const radarData = stats
     ? [
-        { metric: 'Clicks', value: stats.clicks || 0 },
-        { metric: 'Impressions', value: stats.impressions || 0 },
-        { metric: 'CTR', value: stats.ctr || 0 },
+        { metric: "Clicks", value: stats.clicks || 0 },
+        { metric: "Impressions", value: stats.impressions || 0 },
+        { metric: "CTR", value: stats.ctr || 0 },
         {
-          metric: 'CPC',
-          value: stats.costMicros && stats.clicks ? stats.costMicros / stats.clicks / 1_000_000 : 0,
+          metric: "CPC",
+          value:
+            stats.costMicros && stats.clicks
+              ? stats.costMicros / stats.clicks / 1_000_000
+              : 0,
         },
-        { metric: 'Conversions', value: stats.conversions || 0 },
+        { metric: "Conversions", value: stats.conversions || 0 },
       ]
     : [];
 
   const pieData = stats
     ? [
         {
-          name: 'Total Spend',
+          name: "Total Spend",
           value: parseFloat((stats.costMicros / 1_000_000).toFixed(2)),
         },
       ]
     : [];
 
-  const areaData = stats?.dailyBreakdown?.map((day) => ({
-    date: day.date,
-    value: day.clicks,
-  })) || [];
+  const areaData =
+    stats?.dailyBreakdown?.map((day) => ({
+      date: day.date,
+      value: day.clicks,
+    })) || [];
 
-  const barData = stats?.dailyBreakdown?.map((day) => ({
-    campaignId: selectedCampaign,
-    campaignName: campaigns.find((c) => c.id === selectedCampaign)?.name || '',
-    impressions: day.impressions,
-    clicks: day.clicks,
-    cost: day.costMicros / 1_000_000,
-    conversions: day.conversions,
-    date: day.date,
-  })) || [];
+  const barData =
+    stats?.dailyBreakdown?.map((day) => ({
+      campaignId: selectedCampaign,
+      campaignName:
+        campaigns.find((c) => c.id === selectedCampaign)?.name || "",
+      impressions: day.impressions,
+      clicks: day.clicks,
+      cost: day.costMicros / 1_000_000,
+      conversions: day.conversions,
+      date: day.date,
+    })) || [];
 
   return (
     <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
@@ -147,11 +163,12 @@ export const GoogleAdsAnalytics: React.FC = () => {
               SelectProps={{ native: true }}
             >
               <option value="">Select a campaign</option>
-              {campaigns.map((campaign) => (
-                <option key={campaign.id} value={campaign.id}>
-                  {campaign.name}
-                </option>
-              ))}
+              {Array.isArray(campaigns) &&
+                campaigns.map((campaign) => (
+                  <option key={campaign.id} value={campaign.id}>
+                    {campaign.name}
+                  </option>
+                ))}
             </TextField>
           </Grid>
 
@@ -201,7 +218,9 @@ export const GoogleAdsAnalytics: React.FC = () => {
                       </Grid>
                       <Grid item xs={6} md={3}>
                         <Typography variant="subtitle2">Impressions</Typography>
-                        <Typography variant="h6">{stats.impressions}</Typography>
+                        <Typography variant="h6">
+                          {stats.impressions}
+                        </Typography>
                       </Grid>
                       <Grid item xs={6} md={3}>
                         <Typography variant="subtitle2">Cost</Typography>
@@ -211,7 +230,9 @@ export const GoogleAdsAnalytics: React.FC = () => {
                       </Grid>
                       <Grid item xs={6} md={3}>
                         <Typography variant="subtitle2">Conversions</Typography>
-                        <Typography variant="h6">{stats.conversions}</Typography>
+                        <Typography variant="h6">
+                          {stats.conversions}
+                        </Typography>
                       </Grid>
                     </Grid>
                   </CardContent>
@@ -224,10 +245,18 @@ export const GoogleAdsAnalytics: React.FC = () => {
                 </Typography>
               </Grid>
 
-              <Grid item xs={12}><GoogleAdsRadarChart data={radarData} /></Grid>
-              <Grid item xs={12}><GoogleAdsPieChart data={pieData} /></Grid>
-              <Grid item xs={12}><GoogleAdsChart data={areaData} /></Grid>
-              <Grid item xs={12}><GoogleAdsBarChart data={barData} /></Grid>
+              <Grid item xs={12}>
+                <GoogleAdsRadarChart data={radarData} />
+              </Grid>
+              <Grid item xs={12}>
+                <GoogleAdsPieChart data={pieData} />
+              </Grid>
+              <Grid item xs={12}>
+                <GoogleAdsChart data={areaData} />
+              </Grid>
+              <Grid item xs={12}>
+                <GoogleAdsBarChart data={barData} />
+              </Grid>
             </>
           )}
         </Grid>
