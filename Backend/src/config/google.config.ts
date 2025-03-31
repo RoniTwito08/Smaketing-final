@@ -6,6 +6,6 @@ export const googleAdsConfig = {
   clientSecret: process.env.GOOGLE_ADS_CLIENT_SECRET!,
   developerToken: process.env.GOOGLE_ADS_DEVELOPER_TOKEN!,
   refreshToken: process.env.GOOGLE_ADS_REFRESH_TOKEN!,
-  customerId: '5175124700', 
+  customerId: '5764136313', 
   redirectUri: process.env.GOOGLE_ADS_REDIRECT_URI!
 };
