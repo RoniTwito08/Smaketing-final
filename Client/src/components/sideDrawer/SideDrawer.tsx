@@ -19,7 +19,6 @@ import { useAuth } from "../../context/AuthContext";
 import MainFeed from "../../pages/feedPage/MainFeed";
 import { User } from "../../types/user";
 import { GoogleAdsAnalytics } from "../GoogleAdsAnalytics/GoogleAdsAnalytics";
-import { MyCampaigns } from "../../pages/Campaigns/MyCampaigns";
 
 export default function DashboardLayoutBasic(props: any) {
   const { window } = props;

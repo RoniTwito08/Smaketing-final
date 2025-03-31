@@ -43,7 +43,7 @@ initApp()
     app.use('/api/auth', authRoutes);
 
     app.get("*", (req, res) => {
-      res.sendFile(path.join(__dirname, "../../Smarketing-Client/dist/index.html"));
+      res.sendFile(path.join(__dirname, "../../Client/dist/index.html"));
     });
 
     // Error handling middleware
