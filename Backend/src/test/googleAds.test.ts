@@ -14,6 +14,7 @@ describe('GoogleAdsService', () => {
     developerToken: 'test-developer-token',
     refreshToken: 'test-refresh-token',
     customerId: 'test-customer-id',
+    redirectUri: 'http://localhost',
   };
 
   beforeEach(() => {

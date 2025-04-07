@@ -1,5 +1,5 @@
 import { useState } from "react";
-import galleryStyle from "./Gallery.module.css";
+import galleryStyle from "./gallery.module.css";
 
 export default function Gallery() {
     const [images, setImages] = useState<(string | null)[]>([null, null, null, null]);
