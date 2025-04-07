@@ -1,6 +1,6 @@
-import { GoogleAdsService } from '../googleAds.service';
-import { AuthService } from '../auth.service';
-import { Campaign, CampaignStatus, AdvertisingChannelType } from '../../types';
+import { GoogleAdsService } from '.././services/googleAds/googleAds.service';
+import { AuthService } from '.././services/googleAds/auth.service';
+import { Campaign, CampaignStatus, AdvertisingChannelType } from '.././services/googleAds/types';
 import { request } from 'gaxios';
 
 jest.mock('../auth.service');
@@ -14,6 +14,7 @@ describe('GoogleAdsService', () => {
     developerToken: 'test-developer-token',
     refreshToken: 'test-refresh-token',
     customerId: 'test-customer-id',
+    redirectUri: 'http://localhost',
   };
 
   beforeEach(() => {
