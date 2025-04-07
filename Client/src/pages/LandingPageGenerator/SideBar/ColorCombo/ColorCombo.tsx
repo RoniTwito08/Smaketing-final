@@ -1,4 +1,4 @@
-import colorComboStyles from "./ColorCombo.module.css";
+import colorComboStyles from "./colorCombo.module.css";
 
 interface ColorComboProps {
     primaryColor: string;

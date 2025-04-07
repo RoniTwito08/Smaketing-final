@@ -1,5 +1,5 @@
-import { AuthService } from '../auth.service';
-import { GoogleAdsConfig } from '../../types';
+import { AuthService } from '.././services/googleAds/auth.service';
+import { GoogleAdsConfig } from '.././services/googleAds/types';
 import { OAuth2Client } from 'google-auth-library';
 
 // Create a mock class that extends OAuth2Client
@@ -23,6 +23,7 @@ describe('AuthService', () => {
     developerToken: 'test-developer-token',
     refreshToken: 'test-refresh-token',
     customerId: 'test-customer-id',
+    redirectUri: 'http://localhost',
   };
 
   beforeEach(() => {
