@@ -56,7 +56,7 @@ export default function PlanItem({ plan, checkoutData }: PlanItemProps) {
         </div>
         <p className={styles.planDescription}>{plan.description}</p>
         <PlanSelect checkoutUrl={getCheckoutUrl({ plan, checkoutData })}>
-          <button className={styles.selectButton}>בחר תכנית</button>
+          <button className={styles.selectButton}>בחר מסלול</button>
         </PlanSelect>
       </div>
       <div className={styles.planPerks}>
