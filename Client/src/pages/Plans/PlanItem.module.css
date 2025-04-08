@@ -1,123 +1,86 @@
 /* src/components/PlanItem.module.css */
 .planItem {
-    background-color: #f8f8f8;
-    border: 1px solid #e0e0e0;
-    padding: 16px;
-    border-radius: 8px;
+    background-color: #55545e;       /* רקע כהה */
+    border: 1px solid #333;          /* גבולות כהים עדינים */
+    padding: 24px;
+    border-radius: 12px;
     display: flex;
     flex-direction: column;
     overflow: hidden;
+    color: #e0e0e0;                  /* צבע טקסט כללי בהיר */
+    transition: transform 0.2s ease;
+  }
+  
+  .planItem:hover {
+    transform: translateY(-5px);
   }
   
   .planItemMain {
     text-align: center;
-    padding: 10px;
+    padding: 12px;
+    flex-grow: 1;
   }
   
+  /* עדכון הכותרת: עשינו אותה גדולה יותר, בולטת יותר, עם ניגודיות גבוהה וטקסט עם צללים */
   .planName {
-    font-size: 1.5rem;
-    margin-bottom: 8px;
+    font-size: 2rem;              /* גודל גופן מוגדל */
+    margin-bottom: 12px;
+    color: #ffffff;               /* צבע לבן כדי להבדיל מהרקע הכהה */
+    font-weight: 800;             /* עובי גופן גבוה */
+    text-shadow: 2px 2px 4px rgba(255, 249, 249, 0.7); /* צל טקסט לחיזוק הקריאות */
   }
   
   .planPrice {
-    margin-bottom: 8px;
+    margin-bottom: 12px;
   }
   
   .currency {
-    font-size: 0.875rem;
+    font-size: 1rem;
     vertical-align: top;
+    margin-right: 4px;
   }
   
   .amount {
-    font-size: 2rem;
-    font-weight: bold;
+    font-size: 2.5rem;
+    font-weight: 800;
+    color: #ffffff;
   }
   
   .planDescription {
     font-size: 1rem;
-    margin-bottom: 12px;
+    margin-bottom: 16px;
+    color: #ccc;
   }
   
   .selectButton {
-    background-color: #28a745;
-    color: white;
-    padding: 8px 16px;
+    background: linear-gradient(135deg, #00c6ff, #0072ff);
+    color: #ffffff;
+    padding: 10px 20px;
     border: none;
-    border-radius: 4px;
+    border-radius: 8px;
     cursor: pointer;
+    font-weight: 600;
+    margin-top: 16px;
+    transition: box-shadow 0.2s ease, transform 0.2s ease;
   }
   
   .selectButton:hover {
-    background-color: #218838;
+    box-shadow: 0 8px 16px rgba(0, 114, 255, 0.4);
+    transform: translateY(-3px);
   }
   
   .planPerks {
-    background-color: #fff;
-    padding: 12px;
-    margin-top: 16px;
-    border-top: 1px solid #e0e0e0;
+    background-color: #2c2c2c;
+    padding: 16px;
+    margin-top: 24px;
+    border-top: 1px solid #444;
+    overflow-y: auto;
   }
   
   .perkItem {
     font-size: 0.875rem;
-    margin: 4px 0;
+    margin: 6px 0;
     text-align: center;
+    color: #bbb;
   }
-    .perkItemIcon {
-        margin-right: 8px;
-        vertical-align: middle;
-    }
-    .perkItemText {
-        display: inline-block;
-        vertical-align: middle;
-    }
-    .perkItemText:hover {
-        text-decoration: underline;
-    }
-    .perkItemText:focus {
-        outline: 2px solid #0070f3;
-    }
-    .perkItemText:focus-visible {
-        outline: 2px solid #0070f3;
-    }
-    .perkItemText:active {
-        color: #0056b3;
-    }
-    .perkItemText:disabled {
-        color: #ccc;
-        cursor: not-allowed;
-    }
-    .perkItemText:disabled:hover {
-        text-decoration: none;
-    }
-    .perkItemText:disabled:active {
-        color: #ccc;
-    }
-    .perkItemText:disabled:focus {
-        outline: none;
-    }
-    .perkItemText:focus-visible {
-        outline: 2px solid #0070f3;
-    }
-    .perkItemText:focus-visible:hover {
-        text-decoration: underline;
-    }
-    .perkItemText:focus-visible:active {
-        color: #0056b3;
-    }
-    .perkItemText:focus-visible:disabled {
-        color: #ccc;
-        cursor: not-allowed;
-    }
-    .perkItemText:focus-visible:disabled:hover {
-        text-decoration: none;
-    }
-    .perkItemText:focus-visible:disabled:active {
-        color: #ccc;
-    }
-    .perkItemText:focus-visible:disabled:focus {
-        outline: none;
-    }
-    .perkItemText:focus-visible:disabled:focus-visible {
-        outline: none;
-    }  
+  

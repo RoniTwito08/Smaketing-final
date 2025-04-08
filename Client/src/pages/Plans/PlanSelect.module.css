@@ -1,40 +1,23 @@
 /* src/components/PlanSelect.module.css */
 .planSelectLink {
     width: 100%;
-    text-decoration: none;
     display: block;
-    /* ניתן להוסיף כאן סגנונות נוספים לדוגמה */
-    padding: 10px;
-    background-color: #0070f3;
-    color: #fff;
+    text-decoration: none;
+    padding: 12px 16px;
+    background: linear-gradient(135deg, #00c6ff, #0072ff);
+    color: #ffffff;
+    border-radius: 8px;
     text-align: center;
-    border-radius: 4px;
-    transition: background-color 0.3s ease;
+    font-weight: 600;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
   }
   
   .planSelectLink:hover {
-    background-color: #005bb5;
+    transform: translateY(-3px);
+    box-shadow: 0 10px 20px rgba(0, 114, 255, 0.3);
   }
-.planSelectLink:active {
-    background-color: #004494;
-  }
-.planSelectLink:focus {
-    outline: none;
-    box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.5);
-  }
-.planSelectLink:disabled {
-    background-color: #ccc;
-    cursor: not-allowed;
-  }
-.planSelectLink:disabled:hover {
-    background-color: #ccc;
-  }
-.planSelectLink:disabled:active {
-    background-color: #ccc;
-  }
-.planSelectLink:disabled:focus {
-    box-shadow: none;
-  }
-.planSelectLink:focus-visible {
-    outline: 2px solid #0070f3;
-  }   
+    .planSelectLink:active {
+        transform: translateY(0);
+        box-shadow: 0 5px 10px rgba(0, 114, 255, 0.2);
+    }
+  
