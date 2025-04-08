@@ -30,6 +30,7 @@ const AppRouter: React.FC = () => {
         }
       />
     </Routes>
+    
   );
 };
 
