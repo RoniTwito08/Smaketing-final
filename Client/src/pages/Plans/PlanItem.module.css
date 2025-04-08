@@ -1,0 +1,123 @@
+/* src/components/PlanItem.module.css */
+.planItem {
+    background-color: #f8f8f8;
+    border: 1px solid #e0e0e0;
+    padding: 16px;
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+  
+  .planItemMain {
+    text-align: center;
+    padding: 10px;
+  }
+  
+  .planName {
+    font-size: 1.5rem;
+    margin-bottom: 8px;
+  }
+  
+  .planPrice {
+    margin-bottom: 8px;
+  }
+  
+  .currency {
+    font-size: 0.875rem;
+    vertical-align: top;
+  }
+  
+  .amount {
+    font-size: 2rem;
+    font-weight: bold;
+  }
+  
+  .planDescription {
+    font-size: 1rem;
+    margin-bottom: 12px;
+  }
+  
+  .selectButton {
+    background-color: #28a745;
+    color: white;
+    padding: 8px 16px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  
+  .selectButton:hover {
+    background-color: #218838;
+  }
+  
+  .planPerks {
+    background-color: #fff;
+    padding: 12px;
+    margin-top: 16px;
+    border-top: 1px solid #e0e0e0;
+  }
+  
+  .perkItem {
+    font-size: 0.875rem;
+    margin: 4px 0;
+    text-align: center;
+  }
+    .perkItemIcon {
+        margin-right: 8px;
+        vertical-align: middle;
+    }
+    .perkItemText {
+        display: inline-block;
+        vertical-align: middle;
+    }
+    .perkItemText:hover {
+        text-decoration: underline;
+    }
+    .perkItemText:focus {
+        outline: 2px solid #0070f3;
+    }
+    .perkItemText:focus-visible {
+        outline: 2px solid #0070f3;
+    }
+    .perkItemText:active {
+        color: #0056b3;
+    }
+    .perkItemText:disabled {
+        color: #ccc;
+        cursor: not-allowed;
+    }
+    .perkItemText:disabled:hover {
+        text-decoration: none;
+    }
+    .perkItemText:disabled:active {
+        color: #ccc;
+    }
+    .perkItemText:disabled:focus {
+        outline: none;
+    }
+    .perkItemText:focus-visible {
+        outline: 2px solid #0070f3;
+    }
+    .perkItemText:focus-visible:hover {
+        text-decoration: underline;
+    }
+    .perkItemText:focus-visible:active {
+        color: #0056b3;
+    }
+    .perkItemText:focus-visible:disabled {
+        color: #ccc;
+        cursor: not-allowed;
+    }
+    .perkItemText:focus-visible:disabled:hover {
+        text-decoration: none;
+    }
+    .perkItemText:focus-visible:disabled:active {
+        color: #ccc;
+    }
+    .perkItemText:focus-visible:disabled:focus {
+        outline: none;
+    }
+    .perkItemText:focus-visible:disabled:focus-visible {
+        outline: none;
+    }  
