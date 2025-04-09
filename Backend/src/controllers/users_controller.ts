@@ -51,14 +51,32 @@ const getAllUsers = async (req: Request, res: Response) => {
 };
 
 const getEmailById = async (req: Request, res: Response) => {
-  const userId = req.params.id; 
+  const userId = req.params.id;
   try {
     const user = await userModel.findById(userId).select("email");
     if (user != null) res.send(user);
     else res.status(400).send("user not found");
-  }
-  catch (error) {
+  } catch (error) {
     res.status(400).send(error);
+  }
+};
+
+const getGoogleCustomerIdByUserId = async (
+  req: Request,
+  res: Response
+): Promise<Response | void> => {
+  try {
+    const { userId } = req.params;
+
+    const user = await userModel.findById(userId);
+    if (!user || !user.googleCustomerId) {
+      return res.status(404).json({ message: "Google Customer ID not found" });
+    }
+
+    return res.json({ googleCustomerId: user.googleCustomerId });
+  } catch (error) {
+    console.error("Error fetching customer ID:", error);
+    return res.status(500).json({ error: "Server error" });
   }
 };
 
@@ -66,5 +84,6 @@ export default {
   getUserById,
   deleteUserById,
   getAllUsers,
-  getEmailById
+  getEmailById,
+  getGoogleCustomerIdByUserId,
 };
