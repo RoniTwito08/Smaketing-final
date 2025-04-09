@@ -20,8 +20,8 @@ initApp()
     
     if (isProduction) {
       const httpsOptions = {
-        key: fs.readFileSync('/home/st111/client-key.pem'),
-        cert: fs.readFileSync('/home/st111/client-cert.pem')
+        key: fs.readFileSync('/home/cs131/client-key.pem'),
+        cert: fs.readFileSync('/home/cs131/client-cert.pem')
       };
       server = https.createServer(httpsOptions, app);
       // Initialize socket.io with HTTPS server in production
@@ -30,12 +30,12 @@ initApp()
       server = httpServer;
     }
 
-    app.use(express.static(path.join(__dirname, "../../Smarketing-Client/dist")));
+    app.use(express.static(path.join(__dirname, "../../Client/dist")));
     
     // Add CORS before routes
     app.use(cors({
       origin: process.env.NODE_ENV === 'production' 
-        ? 'https://your-production-domain.com' 
+        ? 'https://smarketing.cs.colman.ac.il' 
         : 'http://localhost:5173', // Vite's default port
       credentials: true
     }));
@@ -62,5 +62,6 @@ initApp()
     });
   })
   .catch((error) => {
+    console.log("❌  Error initializing app:", error);
     process.exit(1);
   });

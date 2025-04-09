@@ -34,7 +34,7 @@ const initApp = (): Promise<Express> => {
   app.use(
     cors({
       origin: isProduction
-        ? "https://node10.cs.colman.ac.il"
+        ? "https://smarketing.cs.colman.ac.il"
         : ["http://localhost:5173", "http://localhost:3000"],
       credentials: true,
       methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
@@ -96,7 +96,7 @@ const initApp = (): Promise<Express> => {
       servers: [
         {
           url: isProduction
-            ? "https://node10.cs.colman.ac.il"
+            ? "https://smarketing.cs.colman.ac.il"
             : "http://localhost:3000",
           description: isProduction
             ? "Production server"
@@ -110,9 +110,9 @@ const initApp = (): Promise<Express> => {
   app.use("/api-docs", swaggerUI.serve, swaggerUI.setup(specs));
 
   // הפניה מנתיב השורש ל-api-docs
-  app.get("/", (req, res) => {
-    res.redirect("/api-docs");
-  });
+  // app.get("/", (req, res) => {
+  //   res.redirect("/api-docs");
+  // });
 
   // שמירת דף נחיתה עם טיפול בשגיאות
   app.post("/api/saveLandingPage", (req: any, res: any) => {
@@ -183,6 +183,7 @@ const initApp = (): Promise<Express> => {
     if (!process.env.DB_CONNECT) {
       reject(new Error("DB_CONNECT is not defined in .env file"));
     } else {
+      console.log('daaa');
       mongoose
         .connect(process.env.DB_CONNECT)
         .then(() => {
@@ -191,6 +192,7 @@ const initApp = (): Promise<Express> => {
           resolve(app);
         })
         .catch((error) => {
+          console.error("Error connecting to MongoDB:", error);
           reject(error);
         });
     }
