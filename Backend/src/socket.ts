@@ -19,7 +19,7 @@ export const initializeSocket = (server: HTTPServer) => {
   const io = new SocketIOServer(server, {
     cors: {
       origin: isProduction
-        ? "https://node10.cs.colman.ac.il"
+        ? "https://smarketing.cs.colman.ac.il"
         : "http://localhost:5173",
       methods: ["GET", "POST", "PUT", "DELETE"],
       credentials: true,
@@ -31,8 +31,8 @@ export const initializeSocket = (server: HTTPServer) => {
 
   if (isProduction) {
     const options = {
-      key: fs.readFileSync("/home/st111/client-key.pem"),
-      cert: fs.readFileSync("/home/st111/client-cert.pem"),
+      key: fs.readFileSync("/home/cs131/client-key.pem"),
+      cert: fs.readFileSync("/home/cs131/client-cert.pem"),
     };
     // Use options for production setup
   }

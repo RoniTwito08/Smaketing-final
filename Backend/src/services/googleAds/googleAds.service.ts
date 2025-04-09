@@ -1,7 +1,12 @@
 import { request } from "gaxios";
 import { AuthService } from "./auth.service";
-import { Campaign, CampaignStatistics, GoogleAdsConfig } from "./types";
-import campaignModel from "../../models/campaign_modles";
+import {
+  Campaign,
+  CampaignStatistics,
+  GoogleAdsConfig,
+  CampaignStatus,
+  AdvertisingChannelType,
+} from "./types";
 
 interface GoogleAdsCreateCustomerResponse {
   customerClient: {
@@ -27,40 +32,28 @@ export class GoogleAdsService {
   private async getHeaders() {
     const accessToken = await this.authService.getAccessToken();
     return {
-      Authorization: `Bearer ${accessToken}`,
+      Authorization: `Bearer ${accessToken}`, // <-- fixed with backticks
       "developer-token": this.developerToken,
     };
   }
 
+  // ------------------------------------------------------
+  // 1) GET ALL CAMPAIGNS
+  // ------------------------------------------------------
   async getCampaigns(): Promise<Campaign[]> {
     const query = `
       SELECT 
         campaign.resource_name,
-        campaign.id, 
-        campaign.name, 
+        campaign.id,
+        campaign.name,
         campaign.status,
         campaign.advertising_channel_type,
         campaign.start_date,
         campaign.end_date,
-        campaign.target_spend,
-        campaign.manual_cpc,
-        campaign.network_settings,
-        campaign.geo_target_type_setting,
         campaign.campaign_budget,
         campaign.bidding_strategy_type,
-        campaign.accessible_bidding_strategy,
-        campaign.labels,
-        campaign.frequency_caps,
-        campaign.optimization_score,
-        campaign.excluded_parent_asset_set_groups,
-        campaign.bidding_strategy,
-        campaign.serving_status,
-        campaign.ad_serving_optimization_status,
-        campaign.payment_mode,
-        campaign.optimization_goal_setting,
-        campaign.tracking_setting,
-        campaign.audience_setting,
-        campaign.real_time_bidding_setting,
+        campaign.manual_cpc,
+        campaign.target_spend,
         metrics.clicks,
         metrics.impressions,
         metrics.cost_micros,
@@ -68,28 +61,13 @@ export class GoogleAdsService {
         metrics.conversions_value,
         metrics.average_cpc,
         metrics.ctr,
-        metrics.average_position,
-        metrics.interaction_rate,
-        metrics.average_cpm,
-        metrics.video_view_rate,
-        metrics.average_cpv,
-        segments.date,
-        segments.hour,
-        segments.quarter,
-        segments.month,
-        segments.week,
-        segments.day_of_week,
-        segments.device,
-        segments.conversion_action,
-        segments.conversion_action_category,
-        segments.conversion_action_name,
-        segments.external_conversion_source
+        segments.date
       FROM campaign
       WHERE campaign.status != 'REMOVED'
-    `;
+    `; // <-- entire query is now a backtick-enclosed string
 
     const response = await request({
-      url: `${this.baseUrl}/customers/${this.customerId}/googleAds:search`,
+      url: `${this.baseUrl}/customers/${this.customerId}/googleAds:search`, // <--- backticks
       method: "POST",
       headers: await this.getHeaders(),
       data: { query },
@@ -98,6 +76,42 @@ export class GoogleAdsService {
     return this.transformCampaignResponse(response.data);
   }
 
+  private transformCampaignResponse(data: any): Campaign[] {
+    if (!data.results) return [];
+
+    return data.results.map((result: any) => {
+      const c = result.campaign;
+      const m = result.metrics;
+      return {
+        id: c.id,
+        resourceName: c.resourceName,
+        name: c.name,
+        status: c.status,
+        advertisingChannelType: c.advertisingChannelType,
+        startDate: c.startDate,
+        endDate: c.endDate,
+        campaignBudget: c.campaignBudget,
+        biddingStrategyType: c.biddingStrategyType,
+        manualCpc: c.manualCpc,
+        targetSpend: c.targetSpend,
+        metrics: m
+          ? {
+              clicks: Number(m.clicks),
+              impressions: Number(m.impressions),
+              costMicros: Number(m.costMicros),
+              conversions: Number(m.conversions),
+              conversionsValue: Number(m.conversionsValue),
+              averageCpc: Number(m.averageCpc),
+              ctr: Number(m.ctr),
+            }
+          : undefined,
+      } as Campaign;
+    });
+  }
+
+  // ------------------------------------------------------
+  // 2) GET CAMPAIGN STATISTICS (BY DATE RANGE)
+  // ------------------------------------------------------
   async getCampaignStatistics(
     campaignId: string,
     startDate: string,
@@ -106,7 +120,7 @@ export class GoogleAdsService {
     const query = `
       SELECT 
         campaign.id, 
-        campaign.name, 
+        campaign.name,
         metrics.impressions, 
         metrics.clicks, 
         metrics.conversions, 
@@ -114,8 +128,8 @@ export class GoogleAdsService {
         segments.date
       FROM campaign
       WHERE campaign.id = '${campaignId}'
-      AND segments.date BETWEEN '${startDate}' AND '${endDate}'
-    `;
+        AND segments.date BETWEEN '${startDate}' AND '${endDate}'
+    `; // backtick-enclosed
 
     const response = await request({
       url: `${this.baseUrl}/customers/${this.customerId}/googleAds:search`,
@@ -127,68 +141,9 @@ export class GoogleAdsService {
     return this.transformStatisticsResponse(response.data);
   }
 
-  async createCampaign(
-    campaign: Omit<Campaign, "id">,
-    customerId?: string
-  ): Promise<Campaign> {
-    const targetCustomerId = customerId || this.customerId;
-  
-    const response = await request({
-      url: `${this.baseUrl}/customers/${targetCustomerId}/campaigns`,
-      method: "POST",
-      headers: await this.getHeaders(),
-      data: this.transformCampaignRequest(campaign),
-    });
-  
-    return this.transformCampaignResponse(response.data)[0];
-  }
-
-  private transformCampaignResponse(data: any): Campaign[] {
-    return data.results.map((result: any) => ({
-      id: result.campaign.id,
-      resourceName: result.campaign.resourceName,
-      name: result.campaign.name,
-      status: result.campaign.status,
-      advertisingChannelType: result.campaign.advertisingChannelType,
-      startDate: result.campaign.startDate,
-      endDate: result.campaign.endDate,
-      scheduledTime: result.campaign.scheduledTime,
-      targetSpend: result.campaign.targetSpend,
-      manualCpc: result.campaign.manualCpc,
-      networkSettings: result.campaign.networkSettings,
-      geoTargetTypeSetting: result.campaign.geoTargetTypeSetting,
-      campaignBudget: result.campaign.campaignBudget,
-      biddingStrategyType: result.campaign.biddingStrategyType,
-      accessibleBiddingStrategy: result.campaign.accessibleBiddingStrategy,
-      labels: result.campaign.labels,
-      frequencyCaps: result.campaign.frequencyCaps,
-      optimizationScore: result.campaign.optimization_score,
-      servingStatus: result.campaign.serving_status,
-      adServingOptimizationStatus: result.campaign.ad_serving_optimization_status,
-      paymentMode: result.campaign.payment_mode,
-      optimizationGoalSetting: result.campaign.optimization_goal_setting,
-      trackingSetting: result.campaign.tracking_setting,
-      audienceSetting: result.campaign.audience_setting,
-      realTimeBiddingSetting: result.campaign.real_time_bidding_setting,
-      metrics: result.metrics ? {
-        clicks: Number(result.metrics.clicks),
-        impressions: Number(result.metrics.impressions),
-        costMicros: Number(result.metrics.costMicros),
-        conversions: Number(result.metrics.conversions),
-        conversionsValue: Number(result.metrics.conversionsValue),
-        averageCpc: Number(result.metrics.averageCpc),
-        ctr: Number(result.metrics.ctr),
-        averagePosition: Number(result.metrics.averagePosition),
-        interactionRate: Number(result.metrics.interactionRate),
-        averageCpm: Number(result.metrics.averageCpm),
-        videoViewRate: Number(result.metrics.videoViewRate),
-        averageCpv: Number(result.metrics.averageCpv)
-      } : undefined,
-      segments: result.segments
-    }));
-  }
-
   private transformStatisticsResponse(data: any): CampaignStatistics[] {
+    if (!data.results) return [];
+
     return data.results.map((result: any) => ({
       campaignId: result.campaign.id,
       campaignName: result.campaign.name,
@@ -200,16 +155,158 @@ export class GoogleAdsService {
     }));
   }
 
-  private transformCampaignRequest(campaign: Omit<Campaign, "id">): any {
-    return {
+  // ------------------------------------------------------
+  // 3) CREATE CAMPAIGN
+  // ------------------------------------------------------
+  async createCampaign(
+    campaign: Omit<Campaign, "id">,
+    customerId?: string
+  ): Promise<Campaign> {
+    const targetCustomerId = customerId || this.customerId;
+
+    const data = {
       name: campaign.name,
       status: campaign.status,
       advertisingChannelType: campaign.advertisingChannelType,
       startDate: campaign.startDate,
       endDate: campaign.endDate,
     };
+
+    const response = await request<{ results?: Array<{ campaign: Campaign }> }>({
+      url: `${this.baseUrl}/customers/${targetCustomerId}/campaigns`,
+      method: "POST",
+      headers: await this.getHeaders(),
+      data,
+    });
+
+    const campaignData = response.data.results?.[0]?.campaign;
+    if (!campaignData) {
+      throw new Error("Failed to create campaign; no response data.");
+    }
+
+    return {
+      id: campaignData.id,
+      resourceName: campaignData.resourceName,
+      name: campaignData.name,
+      status: campaignData.status,
+      advertisingChannelType: campaignData.advertisingChannelType,
+      startDate: campaignData.startDate,
+      endDate: campaignData.endDate,
+    } as Campaign;
   }
 
+  // ------------------------------------------------------
+  // 4) UPDATE CAMPAIGN (bidding, budget, dates, etc.)
+  // ------------------------------------------------------
+  /**
+   * Update a single Google Ads campaign by ID (using mutate).
+   *
+   * @param campaignId The existing campaign's ID in Google Ads.
+   * @param updates    An object of fields to update, e.g.:
+   *  {
+   *    name: 'New Campaign Name',
+   *    status: 'PAUSED',
+   *    startDate: '20250101',
+   *    endDate: '20251231',
+   *    campaignBudget: 'customers/123/campaignBudgets/456', // resource name
+   *    biddingStrategyType: 'MANUAL_CPC',
+   *    manualCpc: { enhancedCpcEnabled: true },
+   *    targetSpend: {
+   *      cpcBidCeilingMicros: "1000000",
+   *      targetSpendingAmountMicros: "5000000"
+   *    }
+   *  }
+   */
+  async updateCampaign(
+    campaignId: string,
+    updates: Partial<Campaign>
+  ): Promise<Campaign> {
+    // Resource name format: "customers/{customerId}/campaigns/{campaignId}"
+    const resourceName = `customers/${this.customerId}/campaigns/${campaignId}`;
+
+    // Build 'update' object
+    const updateFields: any = { resourceName };
+
+    // Basic fields
+    if (updates.name) {
+      updateFields.name = updates.name;
+    }
+    if (updates.status) {
+      updateFields.status = updates.status;
+    }
+    if (updates.startDate) {
+      updateFields.startDate = updates.startDate;
+    }
+    if (updates.endDate) {
+      updateFields.endDate = updates.endDate;
+    }
+
+    // Budget field (resource name like "customers/123/campaignBudgets/456")
+    if (updates.campaignBudget) {
+      updateFields.campaignBudget = updates.campaignBudget;
+    }
+
+    // Bidding strategy
+    if (updates.biddingStrategyType) {
+      updateFields.biddingStrategyType = updates.biddingStrategyType;
+    }
+    if (updates.manualCpc) {
+      updateFields.manualCpc = updates.manualCpc;
+    }
+    if (updates.targetSpend) {
+      updateFields.targetSpend = updates.targetSpend;
+    }
+
+    // Gather updateMask paths (snake_case)
+    const paths: string[] = [];
+    if (updates.name) paths.push("name");
+    if (updates.status) paths.push("status");
+    if (updates.startDate) paths.push("start_date");
+    if (updates.endDate) paths.push("end_date");
+    if (updates.campaignBudget) paths.push("campaign_budget");
+    if (updates.biddingStrategyType) paths.push("bidding_strategy_type");
+    if (updates.manualCpc) paths.push("manual_cpc");
+    if (updates.targetSpend) paths.push("target_spend");
+
+    const requestBody = {
+      operations: [
+        {
+          update: updateFields,
+          updateMask: {
+            paths,
+          },
+        },
+      ],
+    };
+
+    const response = await request<{ results?: Array<{ campaign: Campaign }> }>({
+      url: `${this.baseUrl}/customers/${this.customerId}/campaigns:mutate`,
+      method: "POST",
+      headers: await this.getHeaders(),
+      data: requestBody,
+    });
+
+    const updatedCampaignData = response.data.results?.[0]?.campaign;
+    if (!updatedCampaignData) {
+      throw new Error("Failed to update campaign; missing response data.");
+    }
+
+    return {
+      id: updatedCampaignData.id,
+      resourceName: updatedCampaignData.resourceName,
+      name: updatedCampaignData.name,
+      status: updatedCampaignData.status,
+      advertisingChannelType: updatedCampaignData.advertisingChannelType,
+      startDate: updatedCampaignData.startDate,
+      endDate: updatedCampaignData.endDate,
+      campaignBudget: updatedCampaignData.campaignBudget,
+      biddingStrategyType: updatedCampaignData.biddingStrategyType,
+    } as Campaign;
+  }
+
+  // ------------------------------------------------------
+  // 5) CREATE CUSTOMER CLIENT
+  // ------------------------------------------------------
   async createCustomerClient(customerInfo: {
     businessName: string;
     currencyCode: string;
@@ -217,7 +314,7 @@ export class GoogleAdsService {
   }): Promise<string> {
     try {
       const headers = await this.getHeaders();
-      
+
       const requestConfig = {
         url: `${this.baseUrl}/customers/${this.customerId}:createCustomerClient`,
         method: "POST" as const,
@@ -229,55 +326,153 @@ export class GoogleAdsService {
           customerClient: {
             descriptiveName: customerInfo.businessName,
             currencyCode: customerInfo.currencyCode,
-            timeZone: customerInfo.timeZone
-          }
+            timeZone: customerInfo.timeZone,
+          },
         },
         validateStatus: (status: number) => true,
       };
 
-      // Log complete request details
-      console.log('Complete request details:', JSON.stringify({
-        url: requestConfig.url,
-        method: requestConfig.method,
-        headers: requestConfig.headers,
-        data: requestConfig.data,
-        baseUrl: this.baseUrl,
-        customerId: this.customerId
-      }, null, 2));
-
-      const response = await request<GoogleAdsCreateCustomerResponse>(requestConfig);
-
-      console.log('Complete response:', {
-        status: response.status,
-        statusText: response.statusText,
-        headers: response.headers,
-        data: response.data
-      });
+      const response = await request<GoogleAdsCreateCustomerResponse>(
+        requestConfig
+      );
 
       if (response.status !== 200) {
-        throw new Error(`Google Ads API Error: ${response.status} - ${JSON.stringify(response.data)}`);
+        throw new Error(
+          `Google Ads API Error: ${response.status} - ${JSON.stringify(
+            response.data
+          )}`
+        );
       }
 
       if (!response.data?.customerClient?.id) {
-        throw new Error('No customer client ID returned in response');
+        throw new Error("No customer client ID returned in response");
       }
 
       return response.data.customerClient.id;
     } catch (error: any) {
-      console.error('Detailed error in createCustomerClient:', {
+      console.error("Detailed error in createCustomerClient:", {
         error: error.message,
         response: error.response?.data,
-        request: {
-          url: error.config?.url,
-          method: error.config?.method,
-          headers: error.config?.headers,
-          data: error.config?.data
-        },
-        status: error.response?.status
+        status: error.response?.status,
       });
       throw error;
     }
   }
-  
-} 
 
+  // ------------------------------------------------------
+  // 6) KEYWORD MANAGEMENT (Ad Group Criteria)
+  // ------------------------------------------------------
+
+  /**
+   * Add keywords to a given ad group (CREATE operation).
+   * @param adGroupId e.g. "123456"
+   * @param keywords  e.g. [{ text: "shoes", matchType: "BROAD" }, ...]
+   */
+  async addKeywordsToAdGroup(
+    adGroupId: string,
+    keywords: { text: string; matchType: string }[]
+  ) {
+    const adGroupResourceName = `customers/${this.customerId}/adGroups/${adGroupId}`;
+
+    const operations = keywords.map((k) => ({
+      create: {
+        adGroup: adGroupResourceName,
+        status: "ENABLED",
+        keyword: {
+          text: k.text,
+          matchType: k.matchType, // e.g. 'BROAD', 'PHRASE', 'EXACT'
+        },
+      },
+    }));
+
+    const response = await request({
+      url: `${this.baseUrl}/customers/${this.customerId}/adGroupCriteria:mutate`,
+      method: "POST",
+      headers: await this.getHeaders(),
+      data: { operations },
+    });
+
+    // Each operation result is in response.data.results
+    return (response.data as any).results?.map((r: any) => r.adGroupCriterion) || [];
+  }
+
+  /**
+   * Update an existing keyword (ad group criterion).
+   * @param adGroupId   e.g. "123456"
+   * @param criterionId e.g. "7890"  (the unique ID for that keyword)
+   * @param updates     e.g. { text?: 'new text', matchType?: 'EXACT', status?: 'PAUSED' }
+   */
+  async updateKeyword(
+    adGroupId: string,
+    criterionId: string,
+    updates: { text?: string; matchType?: string; status?: string }
+  ) {
+    const resourceName = `customers/${this.customerId}/adGroupCriteria/${adGroupId}~${criterionId}`;
+
+    const updateObj: any = { resourceName };
+    const paths: string[] = [];
+
+    // If we're updating text or matchType, nest inside `keyword` object
+    if (updates.text || updates.matchType) {
+      updateObj.keyword = {};
+      if (updates.text) {
+        updateObj.keyword.text = updates.text;
+        paths.push("keyword.text");
+      }
+      if (updates.matchType) {
+        updateObj.keyword.matchType = updates.matchType;
+        paths.push("keyword.match_type");
+      }
+    }
+    // status is a top-level field
+    if (updates.status) {
+      updateObj.status = updates.status;
+      paths.push("status");
+    }
+
+    const body = {
+      operations: [
+        {
+          update: updateObj,
+          updateMask: { paths },
+        },
+      ],
+    };
+
+    const response = await request({
+      url: `${this.baseUrl}/customers/${this.customerId}/adGroupCriteria:mutate`,
+      method: "POST",
+      headers: await this.getHeaders(),
+      data: body,
+    });
+
+    const data = response.data as { results?: { adGroupCriterion: any }[] };
+    return data.results?.[0]?.adGroupCriterion;
+  }
+
+  /**
+   * Remove a keyword from an ad group by resource name (REMOVE operation).
+   * @param adGroupId   e.g. "123456"
+   * @param criterionId e.g. "7890"
+   */
+  async removeKeyword(adGroupId: string, criterionId: string) {
+    const resourceName = `customers/${this.customerId}/adGroupCriteria/${adGroupId}~${criterionId}`;
+
+    const body = {
+      operations: [
+        {
+          remove: resourceName,
+        },
+      ],
+    };
+
+    const response = await request({
+      url: `${this.baseUrl}/customers/${this.customerId}/adGroupCriteria:mutate`,
+      method: "POST",
+      headers: await this.getHeaders(),
+      data: body,
+    });
+
+    return (response.data as any).results?.[0]?.adGroupCriterion;
+  }
+}
