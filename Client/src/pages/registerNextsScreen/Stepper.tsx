@@ -44,8 +44,10 @@ const MultiStepForm: React.FC = () => {
 
     try {
       await businessInfoService.createBusinessInfo(data, userId, token);
-      toast.success("הטופס נשלח בהצלחה!");
-      navigate("/profile");
+      toast.success("הטופס נשלח בהצלחה! הנך מועבר לאזור האישי");
+      setTimeout(() => {
+        navigate("/profile");
+      }, 1500);
     } catch (error: any) {
       console.error("Error updating business info:", error);
       toast.error(error.message || "שגיאה בעדכון המידע, אנא נסה שוב");
