@@ -34,7 +34,7 @@ const RegisterForm: React.FC = () => {
     } else {
       try {
         await registerUser(data.email, data.password, data.fullName);
-        toast.success("נרשמת בהצלחה!");
+        toast.success("נרשמת בהצלחה! הנך מועבר לעמוד פרטי עסק");
 
         const userData = await loginUser(data.email, data.password);
         if (!userData || !userData.accessToken) {
@@ -53,7 +53,9 @@ const RegisterForm: React.FC = () => {
           userData.accessToken
         );
 
-        navigate("/stepper");
+        setTimeout(() => {
+          navigate("/stepper");
+        }, 1500);
       } catch (error: any) {
         console.error("Registration error:", error);
 
