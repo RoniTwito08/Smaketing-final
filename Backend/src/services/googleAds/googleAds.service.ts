@@ -172,12 +172,14 @@ export class GoogleAdsService {
       endDate: campaign.endDate,
     };
 
-    const response = await request<{ results?: Array<{ campaign: Campaign }> }>({
-      url: `${this.baseUrl}/customers/${targetCustomerId}/campaigns`,
-      method: "POST",
-      headers: await this.getHeaders(),
-      data,
-    });
+    const response = await request<{ results?: Array<{ campaign: Campaign }> }>(
+      {
+        url: `${this.baseUrl}/customers/${targetCustomerId}/campaigns`,
+        method: "POST",
+        headers: await this.getHeaders(),
+        data,
+      }
+    );
 
     const campaignData = response.data.results?.[0]?.campaign;
     if (!campaignData) {
@@ -279,12 +281,14 @@ export class GoogleAdsService {
       ],
     };
 
-    const response = await request<{ results?: Array<{ campaign: Campaign }> }>({
-      url: `${this.baseUrl}/customers/${this.customerId}/campaigns:mutate`,
-      method: "POST",
-      headers: await this.getHeaders(),
-      data: requestBody,
-    });
+    const response = await request<{ results?: Array<{ campaign: Campaign }> }>(
+      {
+        url: `${this.baseUrl}/customers/${this.customerId}/campaigns:mutate`,
+        method: "POST",
+        headers: await this.getHeaders(),
+        data: requestBody,
+      }
+    );
 
     const updatedCampaignData = response.data.results?.[0]?.campaign;
     if (!updatedCampaignData) {
@@ -393,7 +397,9 @@ export class GoogleAdsService {
     });
 
     // Each operation result is in response.data.results
-    return (response.data as any).results?.map((r: any) => r.adGroupCriterion) || [];
+    return (
+      (response.data as any).results?.map((r: any) => r.adGroupCriterion) || []
+    );
   }
 
   /**
@@ -474,5 +480,50 @@ export class GoogleAdsService {
     });
 
     return (response.data as any).results?.[0]?.adGroupCriterion;
+  }
+
+  /**
+   * Update campaign and handle keyword updates (if provided).
+   *
+   * @param campaignId The ID of the campaign to update.
+   * @param campaignUpdates Partial campaign fields to update.
+   * @param adGroupId Optional Ad Group ID for keyword updates.
+   * @param keywords Optional array of keyword updates/additions.
+   */
+  async updateCampaignAndKeywords(
+    campaignId: string,
+    campaignUpdates: Partial<Campaign>,
+    adGroupId?: string,
+    keywords?: Array<{
+      text: string;
+      matchType: string;
+      criterionId?: string;
+      status?: string;
+    }>
+  ): Promise<Campaign> {
+    // Step 1: Update campaign fields
+    const updatedCampaign = await this.updateCampaign(
+      campaignId,
+      campaignUpdates
+    );
+
+    // Step 2: Handle keywords
+    if (adGroupId && Array.isArray(keywords) && keywords.length > 0) {
+      for (const kw of keywords) {
+        if (kw.criterionId) {
+          await this.updateKeyword(adGroupId, kw.criterionId, {
+            text: kw.text,
+            matchType: kw.matchType,
+            status: kw.status,
+          });
+        } else {
+          await this.addKeywordsToAdGroup(adGroupId, [
+            { text: kw.text, matchType: kw.matchType },
+          ]);
+        }
+      }
+    }
+
+    return updatedCampaign;
   }
 }

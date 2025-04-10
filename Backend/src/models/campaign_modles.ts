@@ -1,5 +1,11 @@
 import mongoose, { Schema } from "mongoose";
-
+export interface MarketingHistoryEntry {
+  date: Date;
+  analysis: any;
+  issues: string[];
+  prompt: string;
+  suggestions: any;
+}
 export interface Campaign {
   creatorId: string;
   campaignName: string;
@@ -25,7 +31,7 @@ const campaignSchema = new mongoose.Schema<Campaign>({
   campaignContent: { type: String, required: true },
   //campaignImage: { type: String },
   feedbacks: [{ type: Schema.Types.ObjectId, ref: "Feedback" }],
-  interestedUsers: [{ type: String , default: []}],
+  interestedUsers: [{ type: String, default: [] }],
   budget: { type: Number, required: true },
   marketingLevel: { type: String, required: true },
   campaginPurpose: { type: String, required: true },

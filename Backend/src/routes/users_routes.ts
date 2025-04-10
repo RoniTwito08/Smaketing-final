@@ -107,4 +107,12 @@ router.delete("/:id", authMiddleware, (req, res) => {
 
 router.get("/email/:id", usersController.getEmailById);
 
+router.get("/google-customer-id/:userId", async (req, res, next) => {
+  try {
+    await usersController.getGoogleCustomerIdByUserId(req, res);
+  } catch (error) {
+    next(error);
+  }
+});
+
 export default router;
