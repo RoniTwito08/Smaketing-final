@@ -8,10 +8,11 @@ import { Campaign } from "../services/googleAds/types";
 console.log("🔁 Cron system loaded");
 
 // everyday at 8:00 AM
-cron.schedule("0 8 * * *", async () => {
-  console.log("🔁 Running daily marketing analysis job...");
+async function handleDailyMarketingJob() {
+  console.log("running marketing analysis job...");
   try {
     const users = await userModel.find({ googleCustomerId: { $ne: null } });
+    console.log("users found:", users.length);
 
     for (const user of users) {
       try {
@@ -38,9 +39,46 @@ cron.schedule("0 8 * * *", async () => {
           const result = await runMarketingAlgo(campaign, rawBusiness);
 
           console.log(
-            `Analysis result for ${user.email} / campaign "${campaign.name}":`
+            `Analysis result for ${user.email} / campaign "${campaign.name}"`
           );
-          console.log(JSON.stringify(result, null, 2));
+
+          const { suggestions } = result;
+
+          const updateFields = {
+            startDate: suggestions.startDate?.replace(/-/g, ""),
+            endDate: suggestions.endDate?.replace(/-/g, ""),
+
+            name: campaign.name,
+            status: campaign.status,
+            campaignBudget: campaign.campaignBudget,
+            biddingStrategyType: campaign.biddingStrategyType,
+            manualCpc: campaign.manualCpc,
+            targetSpend: campaign.targetSpend,
+          };
+
+          const keywordIdeas = suggestions.llmSuggestions?.keywordIdeas ?? [];
+          const formattedKeywords = keywordIdeas.map((kw) => ({
+            text: kw,
+            matchType: "BROAD", // בהמשך אולי לתת לגימיני להגדיר גם את הסוג של כל מילה
+          }));
+
+          // roni- to add to campign
+          // const adGroupId = campaign.adGroupId;
+          // temp group id
+          const adGroupId = "1234567890"; // replace with actual adGroupId
+
+          try {
+            await googleAdsService.updateCampaignAndKeywords(
+              campaign.id,
+              updateFields,
+              adGroupId,
+              formattedKeywords
+            );
+
+            console.log(`Campaign "${campaign.name}" updated with keywords`);
+          } catch (err) {
+            console.error(`Failed to update campaign "${campaign.name}":`, err);
+          }
         }
       } catch (err) {
         console.error(`Error processing user ${user.email}:`, err);
@@ -49,4 +87,8 @@ cron.schedule("0 8 * * *", async () => {
   } catch (error) {
     console.error("Cron job failed:", error);
   }
-});
+}
+
+cron.schedule("0 8 * * *", handleDailyMarketingJob);
+
+void handleDailyMarketingJob();
