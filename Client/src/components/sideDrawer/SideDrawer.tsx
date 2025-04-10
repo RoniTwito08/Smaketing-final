@@ -11,6 +11,7 @@ import MenuOutlinedIcon from "@mui/icons-material/MenuOutlined";
 import { ChatList } from "../Chat/ChatList";
 import { ChatModal } from "../Chat/ChatModal";
 import logo from "../../assets/Smarketing.png";
+import logoDark from "../../assets/Smarketing-dark.png";
 import { MyPosts } from "../../pages/userProfileScreen/MyPosts";
 import { AccountSettings } from "../../pages/userProfileScreen/AccountSettings";
 import { BusinessSetting } from "../../pages/userProfileScreen/BusinessSetting";
@@ -19,8 +20,9 @@ import { useAuth } from "../../context/AuthContext";
 import MainFeed from "../../pages/feedPage/MainFeed";
 import { User } from "../../types/user";
 import { GoogleAdsAnalytics } from "../GoogleAdsAnalytics/GoogleAdsAnalytics";
-import PlansPage  from "../../pages/Plans/PlansPage";
+import PlansPage from "../../pages/Plans/PlansPage";
 import Plansicon from "@mui/icons-material/Paid";
+import { useMode } from "../../theme";
 
 export default function DashboardLayoutBasic(props: any) {
   const { window } = props;
@@ -144,7 +146,7 @@ export default function DashboardLayoutBasic(props: any) {
   // Update the route mapping
   const routeComponents: { [key: string]: React.ReactNode } = {
     "/my-campign": <MyPosts />, // matan- to edit
-    "/analytics": <GoogleAdsAnalytics />, 
+    "/analytics": <GoogleAdsAnalytics />,
     "/settings/account": <AccountSettings />,
     "/settings/business-settings": <BusinessSetting />,
     "/plans": <PlansPage />,
@@ -188,7 +190,16 @@ export default function DashboardLayoutBasic(props: any) {
         slots={{
           appTitle: () => (
             <div>
-              <img src={logo} alt="App Logo" style={{ height: "40px" }} />
+              <img
+                src={logo}
+                alt="App Logo"
+                style={{
+                  height: "80px",
+                  width: "auto",
+                  display: "block",
+                  objectFit: "contain",
+                }}
+              />
             </div>
           ),
         }}
