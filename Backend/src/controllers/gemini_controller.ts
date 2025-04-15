@@ -10,20 +10,11 @@ dotenv.config();
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || "");
 
 export async function getGeminiKeywordsFromCampaign(
-  req: Request,
-  res: Response
-): Promise<void> {
-  try {
-    const { campaign }: { campaign: Campaign } = req.body;
+  campaign: Campaign
+): Promise<{ keywordText: string; matchType: string }[]> {
+  const model = genAI.getGenerativeModel({ model: "gemini-1.5-pro" });
 
-    if (!campaign) {
-      res.status(400).json({ error: "Missing campaign data" });
-      return;
-    }
-
-    const model = genAI.getGenerativeModel({ model: "gemini-1.5-pro" });
-
-    const prompt = `
+  const prompt = `
 You are a Google Ads marketing assistant.
 
 Your task is to generate 5–10 marketing keyword ideas for a Google Ads campaign.
@@ -32,9 +23,8 @@ Campaign Information:
 - Name: ${campaign.name}
 - Type: ${campaign.advertisingChannelType}
 - Goal: ${
-      campaign.optimizationGoalSetting?.optimizationGoalTypes?.[0] ??
-      "not specified"
-    }
+    campaign.optimizationGoalSetting?.optimizationGoalTypes?.[0] ?? "not specified"
+  }
 - Start Date: ${campaign.startDate}
 - End Date: ${campaign.endDate}
 - Budget (micros): ${campaign.targetSpend?.targetSpendingAmountMicros ?? "N/A"}
@@ -61,20 +51,13 @@ Return the result as a **valid JSON array**, where each keyword object contains:
 ⚠️ Do NOT include any explanation or markdown. Return only the raw JSON array.
 `.trim();
 
-    const result = await model.generateContent(prompt);
-    const text = (await result.response.text()).trim();
+  const result = await model.generateContent(prompt);
+  const text = (await result.response.text()).trim();
 
-    // אפשר לנקות markdown אם צריך:
-    const cleaned = text
-      .replace(/```json\s*/i, "")
-      .replace(/```$/, "")
-      .trim();
+  const cleaned = text
+    .replace(/```json\s*/i, "")
+    .replace(/```$/, "")
+    .trim();
 
-    const keywords = JSON.parse(cleaned);
-
-    res.json({ keywords });
-  } catch (error: any) {
-    console.error("Gemini error:", error);
-    res.status(500).json({ error: "שגיאה בעת יצירת מילות מפתח" });
-  }
+  return JSON.parse(cleaned);
 }
