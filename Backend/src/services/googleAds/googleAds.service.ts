@@ -38,6 +38,55 @@ export class GoogleAdsService {
   }
 
   // ------------------------------------------------------
+  // Create Ad Group (for a campaign)
+  // ------------------------------------------------------
+  async createAdGroup(
+    adGroupData: {
+      name: string;
+      campaignResourceName: string;
+      status: "ENABLED" | "PAUSED" | "REMOVED";
+    },
+    customerId?: string
+  ): Promise<{ id: string; resourceName: string; name: string }> {
+    const targetCustomerId = customerId || this.customerId;
+  
+    const body = {
+      operations: [
+        {
+          create: {
+            name: adGroupData.name,
+            campaign: adGroupData.campaignResourceName,
+            status: adGroupData.status,
+          },
+        },
+      ],
+    };
+  
+    const response = await request({
+      url: `${this.baseUrl}/customers/${targetCustomerId}/adGroups:mutate`,
+      method: "POST",
+      headers: await this.getHeaders(),
+      data: body,
+    });
+  
+    const result = (response.data as any).results?.[0];
+    if (!result) {
+      throw new Error("Failed to create Ad Group: No response data");
+    }
+  
+    const resourceName = result.resourceName;
+    const adGroupId = resourceName.split("/").pop(); // get ID from "customers/123/adGroups/456"
+  
+    return {
+      id: adGroupId,
+      resourceName,
+      name: adGroupData.name,
+    };
+  }
+
+  // ------------------------------------------------------
+
+  // ------------------------------------------------------
   // 1) GET ALL CAMPAIGNS
   // ------------------------------------------------------
   async getCampaigns(): Promise<Campaign[]> {

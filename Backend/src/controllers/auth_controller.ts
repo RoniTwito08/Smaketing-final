@@ -476,3 +476,48 @@ export default {
   getUserById,
   createToken,
 };
+
+
+interface Pizza{
+prepare(): void;
+}
+
+class pizzaMargherita implements Pizza{
+    prepare(): void {
+        console.log("Preparing Margherita pizza...");
+    }
+}
+class pizzaPepperoni implements Pizza{
+    prepare(): void {
+        console.log("Preparing Pepperoni pizza...");
+    }
+}
+class pizzaFectory{
+    static createPizza(type: string): Pizza {
+        switch (type.toLowerCase()) {
+            case "margherita":
+                return new pizzaMargherita();
+            case "pepperoni":
+                return new pizzaPepperoni();
+            default:
+                throw new Error("Unknown pizza type");
+        }
+    }
+}
+class Singelton{
+    private static instance: Singelton | null = null;
+    private constructor() {
+        // private constructor to prevent instantiation
+    }
+
+    public static getInstance(): Singelton {
+        if (this.instance === null) {
+            this.instance = new Singelton();
+        }
+        return this.instance;
+    }
+
+    public doSomething(): void {
+        console.log("Doing something...");
+    }
+}

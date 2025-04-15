@@ -6,7 +6,7 @@ import fs from "fs";
 import { GoogleAdsService } from "../services/googleAds/googleAds.service"; 
 import { googleAdsConfig } from "../config/google.config"; 
 import { CampaignStatus, AdvertisingChannelType } from "../services/googleAds/types";
-
+import {getGeminiKeywordsFromCampaign} from "../controllers/gemini_controller"; // Adjust the import path as necessary
 const googleAdsService = new GoogleAdsService(googleAdsConfig);
 
 export const createCampaign = async (req: Request, res: Response) => {
@@ -213,6 +213,22 @@ export const launchGoogleAdsCampaign = async (req: Request, res: Response): Prom
       endDate,
     }, customerId);
 
+    const adGroup = await googleAdsService.createAdGroup({
+      name: "Ad Group for Shoes",
+      campaignResourceName: campaign.resourceName!,
+      status: "ENABLED",
+    }, customerId);
+
+    // save adgroup in campain model
+    await campaignModel.findByIdAndUpdate(campaign.id, {
+      adGroupId: adGroup.id,
+    });
+
+    // Generate keywords using Gemini
+    const keywords = await getGeminiKeywordsFromCampaign(campaign);
+
+    await googleAdsService.addKeywordsToAdGroup(adGroup.id, keywords.map(kw => ({ text: kw.keywordText, matchType: kw.matchType })));
+
     res.status(201).json({
       message: "Campaign launched successfully",
       customerId,
@@ -223,6 +239,8 @@ export const launchGoogleAdsCampaign = async (req: Request, res: Response): Prom
     res.status(500).json({ error: "Failed to launch campaign" });
   }
 };
+
+
 
 export const getAllCampaignsByUserId = async (req: Request, res: Response): Promise<void> => {
   const { userId } = req.params;
