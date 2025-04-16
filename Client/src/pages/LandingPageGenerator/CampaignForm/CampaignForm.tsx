@@ -236,6 +236,27 @@ const CampaignPopup: React.FC<CampaignPopupProps> = ({ open, onClose /*, onSubmi
           alert("Error saving landing page");
           return;
         }
+
+        const savedLandingPage = await saveResponse.json();
+  
+        const campaignData = {
+          ...form,
+          creatorId: user._id,
+          landingPage: savedLandingPage.file,
+        };
+  
+        const campaignResponse = await fetch("http://localhost:3000/campaigns", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(campaignData),
+        });
+        if (!campaignResponse.ok) {
+          alert("Error saving campaign in DB");
+          return;
+        }
+        const campaignResult = await campaignResponse.json();
+        console.log("Campaign created:", campaignResult);
+        
         alert("Landing page saved successfully!");
       } catch (error) {
         console.error(error);
