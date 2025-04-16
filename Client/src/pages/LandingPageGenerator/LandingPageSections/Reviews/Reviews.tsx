@@ -1,4 +1,3 @@
-// Reviews.tsx
 import reviewsStyles from './reviews.module.css';
 import { FaStar, FaStarHalfAlt } from "react-icons/fa";
 import { useEffect, useState } from "react";
@@ -13,8 +12,6 @@ const Reviews = ({ content, onDelete }: ReviewsProps) => {
   const [randomIndex, setRandomIndex] = useState<number | null>(null);
   const [isHovered, setIsHovered] = useState(false);
   const [reviews, setReviews] = useState<string[]>([]);
-  const [editingIndex, setEditingIndex] = useState<number | null>(null);
-  const [editingValue, setEditingValue] = useState("");
 
   useEffect(() => {
     const initialReviews = content
@@ -24,20 +21,16 @@ const Reviews = ({ content, onDelete }: ReviewsProps) => {
   }, [content]);
 
   useEffect(() => {
-    setRandomIndex(Math.floor(Math.random() * 3) + 1);
-  }, []);
+    setRandomIndex(Math.floor(Math.random() * reviews.length));
+  }, [reviews]);
 
-  const handleDoubleClick = (index: number) => {
-    setEditingIndex(index);
-    setEditingValue(reviews[index]);
-  };
-
-  const handleSave = (index: number) => {
-    const updatedReviews = [...reviews];
-    updatedReviews[index] = editingValue;
-    setReviews(updatedReviews);
-    setEditingIndex(null);
-    setEditingValue("");
+  const handleBlur = (index: number, e: React.FocusEvent<HTMLParagraphElement>) => {
+    const newText = e.currentTarget.innerText;
+    setReviews(prev => {
+      const copy = [...prev];
+      copy[index] = newText;
+      return copy;
+    });
   };
 
   return (
@@ -52,50 +45,28 @@ const Reviews = ({ content, onDelete }: ReviewsProps) => {
             <img
               src={
                 index % 2 === 0
-                  ? "http://localhost:3000/src/assets/menReviewer.png"
-                  : "http://localhost:3000/src/assets/womenReviewer.png"
+                  ? "/src/assets/menReviewer.png"
+                  : "/src/assets/womenReviewer.png"
               }
               className={reviewsStyles.pic}
               alt="Reviewer"
             />
-            {editingIndex === index ? (
-              <div className={reviewsStyles.editContainer}>
-                <textarea
-                  value={editingValue}
-                  onChange={(e) => setEditingValue(e.target.value)}
-                  className={reviewsStyles.editInput}
-                />
-                <button
-                  onClick={() => handleSave(index)}
-                  className={reviewsStyles.saveButton}
-                >
-                  שמור
-                </button>
-              </div>
-            ) : (
-              <p
-                className={reviewsStyles.reviewText}
-                onDoubleClick={() => handleDoubleClick(index)}
-              >
-                {review}
-              </p>
-            )}
+            <p
+              className={reviewsStyles.reviewText}
+              contentEditable
+              suppressContentEditableWarning
+              onBlur={e => handleBlur(index, e)}
+            >
+              {review}
+            </p>
             <div className={reviewsStyles.stars}>
               {index === randomIndex ? (
                 <>
-                  <FaStar />
-                  <FaStar />
-                  <FaStar />
-                  <FaStar />
-                  <FaStarHalfAlt />
+                  <FaStar /><FaStar /><FaStar /><FaStar /><FaStarHalfAlt />
                 </>
               ) : (
                 <>
-                  <FaStar />
-                  <FaStar />
-                  <FaStar />
-                  <FaStar />
-                  <FaStar />
+                  <FaStar /><FaStar /><FaStar /><FaStar /><FaStar />
                 </>
               )}
             </div>
