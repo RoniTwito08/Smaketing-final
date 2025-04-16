@@ -64,7 +64,7 @@
 .actionBar {
   position: absolute;
   top: 12px;
-  left: 12px;
+  right: -40px;
 }
 
 @media (max-width: 768px) {
