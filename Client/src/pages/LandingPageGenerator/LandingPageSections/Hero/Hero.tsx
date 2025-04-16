@@ -1,4 +1,3 @@
-// Hero.tsx
 import { useState, useEffect } from "react";
 import heroStyles from "./hero.module.css";
 
@@ -25,116 +24,48 @@ function Hero({ title, content, buttonText }: HeroProps) {
     "2": content,
     "3": buttonText,
   });
-  const [editingId, setEditingId] = useState<string | null>(null);
-  const [editingValue, setEditingValue] = useState("");
 
   useEffect(() => {
-    setTextValues({
-      "1": title,
-      "2": content,
-      "3": buttonText,
-    });
+    setTextValues({ "1": title, "2": content, "3": buttonText });
   }, [title, content, buttonText]);
 
-  const handleDoubleClickEdit = (id: string) => {
-    setEditingId(id);
-    setEditingValue(textValues[id]);
+  const handleBlur = (id: string, e: React.FocusEvent<HTMLElement>) => {
+    const newText = e.currentTarget.innerText;
+    setTextValues((prev) => ({ ...prev, [id]: newText }));
   };
-
-  const handleSaveEdit = (id: string) => {
-    setTextValues((prev) => ({ ...prev, [id]: editingValue }));
-    setEditingId(null);
-    setEditingValue("");
-  };
-
-  // הפונקציה המדויקת מה‑Header
-  const handleScroll = () => {
-    const el =
-      document.getElementById("contactUs") ||
-      document.getElementById("contact-us-root");
-    if (!el) return;
-  
-    // מחשבים יעד גלילה
-    const rect = el.getBoundingClientRect();
-    const scrollY = window.pageYOffset;
-    const headerOffset = 80;
-    const targetY = rect.top + scrollY - headerOffset;
-    const finalY = targetY === scrollY ? targetY + 1 : targetY;
-  
-    // מוצאים את אלמנט הגלילה בפועל
-    let scrollContainer: HTMLElement | null = document.scrollingElement as HTMLElement;
-    // אם זה לא גליל, ננסה לטפס עד שמוצאים overflow
-    if (!scrollContainer || scrollContainer.scrollHeight <= scrollContainer.clientHeight) {
-      let parent: HTMLElement | null = el.parentElement;
-      while (parent) {
-        const style = getComputedStyle(parent);
-        if (/(auto|scroll)/.test(style.overflowY || "")) {
-          scrollContainer = parent;
-          break;
-        }
-        parent = parent.parentElement;
-      }
-    }
-  
-    // בסוף, מגלגלים בקונטיינר הנכון
-    if (scrollContainer) {
-      scrollContainer.scrollTo({ top: finalY, behavior: "smooth" });
-    }
-  };
-  
 
   const renderContent = (item: ItemType) => {
-    if (editingId === item.id) {
-      return (
-        <div className={heroStyles.editContainer}>
-          {item.type === "content" ? (
-            <textarea
-              value={editingValue}
-              onChange={(e) => setEditingValue(e.target.value)}
-              className={heroStyles.editInput}
-            />
-          ) : (
-            <input
-              type="text"
-              value={editingValue}
-              onChange={(e) => setEditingValue(e.target.value)}
-              className={heroStyles.editInput}
-            />
-          )}
-          <button
-            onClick={() => handleSaveEdit(item.id)}
-            className={heroStyles.saveButton}
-          >
-            שמור
-          </button>
-        </div>
-      );
-    }
+    const commonProps = {
+      contentEditable: true,
+      suppressContentEditableWarning: true,
+      onBlur: (e: React.FocusEvent<HTMLElement>) => handleBlur(item.id, e),
+      className:
+        item.type === "title"
+          ? heroStyles.heroTitle
+          : item.type === "content"
+          ? heroStyles.heroText
+          : heroStyles.heroButton,
+    };
+
     switch (item.type) {
       case "title":
-        return (
-          <h3
-            className={heroStyles.heroTitle}
-            onDoubleClick={() => handleDoubleClickEdit(item.id)}
-          >
-            {textValues[item.id]}
-          </h3>
-        );
+        return <h3 {...commonProps}>{textValues[item.id]}</h3>;
       case "content":
-        return (
-          <p
-            className={heroStyles.heroText}
-            onDoubleClick={() => handleDoubleClickEdit(item.id)}
-          >
-            {textValues[item.id]}
-          </p>
-        );
+        return <p {...commonProps}>{textValues[item.id]}</p>;
       case "button":
         return (
           <button
-            className={heroStyles.heroButton}
-            onDoubleClick={() => handleDoubleClickEdit(item.id)}
-            onClick={handleScroll}  // הגלילה חלקה בדיוק כמו ב‑Header
+            {...(commonProps as any)}
+            onClick={() => {
+              const el =
+                document.getElementById("contactUs") ||
+                document.getElementById("contact-us-root");
+              if (!el) return;
+              const rect = el.getBoundingClientRect();
+              const scrollY = window.pageYOffset;
+              const targetY = rect.top + scrollY - 80;
+              window.scrollTo({ top: targetY, behavior: "smooth" });
+            }}
           >
             {textValues[item.id]}
           </button>
