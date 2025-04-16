@@ -11,29 +11,21 @@ interface FeaturesProps {
 const Features = ({ content, image, onDelete }: FeaturesProps) => {
   const [isHovered, setIsHovered] = useState(false);
   const [services, setServices] = useState<string[]>([]);
-  const [editingIndex, setEditingIndex] = useState<number | null>(null);
-  const [editingValue, setEditingValue] = useState("");
 
   useEffect(() => {
-    // Initialize services from content slice
-    const initialServices = content.slice(2, content.length - 3).map(service =>
-      service.replace(/['",]/g, "").trim()
-    );
+    const initialServices = content
+      .slice(2, content.length - 3)
+      .map(s => s.replace(/['",]/g, '').trim());
     setServices(initialServices);
-    console.log(image);
   }, [content]);
 
-  const handleDoubleClick = (index: number, currentValue: string) => {
-    setEditingIndex(index);
-    setEditingValue(currentValue);
-  };
-
-  const handleSave = (index: number) => {
-    const updatedServices = [...services];
-    updatedServices[index] = editingValue;
-    setServices(updatedServices);
-    setEditingIndex(null);
-    setEditingValue("");
+  const handleBlur = (index: number, e: React.FocusEvent<HTMLSpanElement>) => {
+    const newText = e.currentTarget.innerText;
+    setServices(prev => {
+      const copy = [...prev];
+      copy[index] = newText;
+      return copy;
+    });
   };
 
   return (
@@ -52,33 +44,22 @@ const Features = ({ content, image, onDelete }: FeaturesProps) => {
         </div>
         <div className={featuresStyles.featuresContent}>
           <ul className={featuresStyles.featuresList}>
-            {services.map((service, index) => (
-              <li key={index} className={featuresStyles.featureItem}>
-                {editingIndex === index ? (
-                  <div className={featuresStyles.editContainer}>
-                    <input
-                      type="text"
-                      value={editingValue}
-                      onChange={(e) => setEditingValue(e.target.value)}
-                      className={featuresStyles.editInput}
-                    />
-                    <button
-                      onClick={() => handleSave(index)}
-                      className={featuresStyles.saveButton}
-                    >
-                      שמור
-                    </button>
-                  </div>
-                ) : (
-                  <span onDoubleClick={() => handleDoubleClick(index, service)}>
-                    {service}
-                  </span>
-                )}
+            {services.map((service, idx) => (
+              <li key={idx} className={featuresStyles.featureItem}>
+                <span
+                  contentEditable
+                  suppressContentEditableWarning
+                  onBlur={e => handleBlur(idx, e)}
+                  className={featuresStyles.featureText}
+                >
+                  {service}
+                </span>
               </li>
             ))}
           </ul>
         </div>
       </div>
+
       {isHovered && onDelete && (
         <div className={featuresStyles.actionBar}>
           <ActionsButtons onDelete={onDelete} sectionName="features" />
