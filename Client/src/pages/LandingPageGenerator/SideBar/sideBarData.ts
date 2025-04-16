@@ -119,12 +119,6 @@ export const colorComboData = [
     textColor: "#33691E",
     secondaryColor: "#C5E1A5",
     tertiaryColor: "#AED581"
-  },
-  {
-    primaryColor: "#F0F4C3",
-    textColor: "#827717",
-    secondaryColor: "#E6EE9C",
-    tertiaryColor: "#DCE775"
   }
 ];
 
