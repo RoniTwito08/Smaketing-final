@@ -11,7 +11,6 @@ import MenuOutlinedIcon from "@mui/icons-material/MenuOutlined";
 import { ChatList } from "../Chat/ChatList";
 import { ChatModal } from "../Chat/ChatModal";
 import logo from "../../assets/Smarketing.png";
-import logoDark from "../../assets/Smarketing-dark.png";
 import { MyPosts } from "../../pages/userProfileScreen/MyPosts";
 import { AccountSettings } from "../../pages/userProfileScreen/AccountSettings";
 import { BusinessSetting } from "../../pages/userProfileScreen/BusinessSetting";
@@ -22,7 +21,6 @@ import { User } from "../../types/user";
 import { GoogleAdsAnalytics } from "../GoogleAdsAnalytics/GoogleAdsAnalytics";
 import PlansPage from "../../pages/Plans/PlansPage";
 import Plansicon from "@mui/icons-material/Paid";
-import { useMode } from "../../theme";
 
 export default function DashboardLayoutBasic(props: any) {
   const { window } = props;
