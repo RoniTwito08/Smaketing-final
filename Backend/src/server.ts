@@ -13,6 +13,7 @@ import geminiRoutes from "./routes/gemini_routes";
 import businessInfoRoutes from "./routes/businessInfo_routes";
 import LandingPageGeneratorRoutes from "./routes/landing_page_builder_routes";
 import CampaignRoutes from "./routes/campaign_routes";
+import LeadsRoutes from "./routes/leads_routes";
 import swaggerJsDoc from "swagger-jsdoc";
 import swaggerUI from "swagger-ui-express";
 import cors from "cors";
@@ -35,12 +36,24 @@ const initApp = (): Promise<Express> => {
     cors({
       origin: isProduction
         ? "https://smarketing.cs.colman.ac.il"
-        : ["http://localhost:5173", "http://localhost:3000"],
+        : ["http://localhost:5173", "http://localhost:3000", "http://127.0.0.1:3001"],
       credentials: true,
-      methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-      allowedHeaders: ["Content-Type", "Authorization"],
+      methods: ["GET","POST","PUT","DELETE","OPTIONS"],
+      allowedHeaders: ["Content-Type","Authorization"],
     })
   );
+
+  app.use(
+    "/dist",
+    express.static(path.join(__dirname, "../../Client/dist"), {
+      setHeaders: (res, path) => {
+        // מאפשר רק ל־127.0.0.1:3001
+        res.setHeader("Access-Control-Allow-Origin", "http://127.0.0.1:3001");
+        res.setHeader("Access-Control-Allow-Methods", "GET");
+      },
+    })
+  );
+  
   // טיפול בבקשות preflight
   app.options("*", cors());
 
@@ -59,6 +72,7 @@ const initApp = (): Promise<Express> => {
   app.use("/gemini", geminiRoutes);
   app.use("/business-info", businessInfoRoutes);
   app.use("/marketing", marketingRoutes);
+  app.use("/leads", LeadsRoutes);
 
   app.use("/uploads", express.static(path.join(__dirname, "../uploads")));
   app.use("/landing-page-generator", LandingPageGeneratorRoutes);
@@ -128,28 +142,7 @@ const initApp = (): Promise<Express> => {
       return res.status(400).json({ error: "Missing HTML content" });
     }
 
-    const completeHTML = `
-  <!DOCTYPE html>
-  <html>
-    <head>
-      <meta charset="UTF-8">
-      <title>Landing Page</title>
-      <link rel="stylesheet" href="http://localhost:3000/dist/assets/index-BrGJOLjq.css">
-      <style>
-        :root {
-          --primary-color: ${userPrimaryColor};
-          --secondary-color: ${userSecondaryColor};
-          --tertiary-color: ${userTertiaryColor};
-          --text-color: ${userTextColor};
-          --font: ${userFont};
-        }
-      </style>
-    </head>
-    <body>
-      ${html}
-    </body>
-  </html>
-    `;
+    const completeHTML = `${html}`;
 
     const fileName = `landingPage-${Date.now()}.html`;
     const folderPath = path.join(__dirname, "landingPages");
