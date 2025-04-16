@@ -23,7 +23,6 @@
     width: 100%; 
     max-width: 300px; 
     aspect-ratio: 1 / 1; 
-    border: 2px dashed black;
     border-radius: 8px;
     cursor: pointer;
     display: flex;
