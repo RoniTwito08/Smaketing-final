@@ -28,17 +28,36 @@ h1, h2, h3 {
 .sidebar {
   position:relative;
   height: 110vh;
-  background: linear-gradient(135deg, #000000 0%, #8e8181 100%);
-  color: #fff;
   display: flex;
   flex-direction: column;
   padding: 15px;
-  box-shadow: -2px 0 10px rgba(149, 142, 142, 0.7);
   transition: width 0.4s ease-out;
   overflow: hidden;
-  z-index: 10;
+  z-index: 100;
   min-width: 60px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.sidebarItem::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  right: 0%;             
+  top: -10%;
+  transform: translateY(-50%) translateX(8px);
+  white-space: nowrap;
+  background: rgba(0, 0, 0, 0.75);
+  color: #fff;
+  font-size: 0.75rem;
+  padding: 4px 8px;
+  border-radius: 4px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.15s ease, transform 0.15s ease;
+  z-index: 1001;
+}
+
+.sidebar.closed .sidebarItem:hover::after {
+  opacity: 1;
+  transform: translateY(-50%) translateX(12px);
 }
 
 .sidebar.closed {
@@ -60,7 +79,7 @@ h1, h2, h3 {
 .closeButton {
   background: none;
   border: none;
-  color: #fff;
+  color: #000000;
   cursor: pointer;
   font-size: 22px;
   transition: transform 0.2s ease-in-out, color 0.2s ease-in-out;
@@ -68,7 +87,6 @@ h1, h2, h3 {
 
 .closeButton:hover {
   transform: scale(1.2);
-  color: #ff4f4f;
 }
 
 .sidebarMenu {
@@ -169,41 +187,60 @@ h1, h2, h3 {
 }
 
 .removedSection {
-  background-color: #ffffff;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  padding: 10px 15px;
-  margin-bottom: 10px;
+  background-color: #fff;
+  border: 1px solid #e0e0e0;
+  border-radius: 12px;
+  padding: 12px 20px;
+  margin-bottom: 12px;
   width: 100%;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.removedSection:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
 }
 
 .removedSection p {
   margin: 0;
-  font-weight: bold;
+  font-weight: 600;
   color: #333;
+  flex: 1;
+  padding-right: 10px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .removedSection button {
-  background-color: #ff4f4f;
+  background-color: #ff5a5f;
   color: #fff;
   border: none;
-  padding: 5px 12px;
-  border-radius: 4px;
+  padding: 8px 16px;
+  border-radius: 6px;
   cursor: pointer;
-  transition: background-color 0.3s ease;
+  font-size: 0.9rem;
+  font-weight: 500;
+  transition: background-color 0.3s ease, transform 0.2s ease;
 }
 
 .removedSection button:hover {
-  background-color: #e03d3d;
+  background-color: #e04848;
+  transform: scale(1.05);
 }
+
+.removedSection button:active {
+  transform: scale(0.95);
+}
+
 
 .actionsExplanation {
   background: none;
-  color: #fff;
+  color: #000000;
   padding: 10px;
   border-radius: 8px;
   box-shadow: none;
@@ -215,23 +252,23 @@ h1, h2, h3 {
 .actionsExplanation p {
   margin: 0 0 10px 0;
   font-weight: bold;
-  color: #fff;
+  color: #000000;
 }
 
 .actionsExplanation ul {
   list-style: disc;
   margin: 0 0 10px 20px;
   padding: 0;
-  color: #fff;
+  color: #000000;
 }
 
 .actionsExplanation li {
   margin-bottom: 5px;
-  color: #fff;
+  color: #000000;
 }
 
 .responsiveExplanation {
-  color: #fff;
+  color: #000000;
   padding: 15px;
   border-radius: 8px;
   box-shadow: none;
@@ -244,7 +281,7 @@ h1, h2, h3 {
 .responsiveExplanation p {
   margin: 0 0 10px 0;
   font-weight: bold;
-  color: #fff;
+  color: #000000;
 }
 
 .responsiveDevices {
@@ -276,7 +313,7 @@ h1, h2, h3 {
   margin-top: 5px;
   font-size: 13px;
   font-weight: 600;
-  color: #fff;
+  color: #000000;
 }
 
 .marketingToneExplanation {
