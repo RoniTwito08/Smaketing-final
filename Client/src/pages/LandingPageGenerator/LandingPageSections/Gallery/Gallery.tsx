@@ -6,6 +6,7 @@ import { config } from "../../../../config";
 
 export default function Gallery() {
   const [images, setImages] = useState<string[]>([]);
+  
   const { user, accessToken } = useAuth();
   const userId = user?._id;
 

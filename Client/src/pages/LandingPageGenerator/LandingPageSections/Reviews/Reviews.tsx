@@ -34,6 +34,7 @@ const Reviews = ({ content, onDelete }: ReviewsProps) => {
   };
 
   return (
+    
     <section
       className={reviewsStyles.reviewsSection}
       onMouseEnter={() => setIsHovered(true)}

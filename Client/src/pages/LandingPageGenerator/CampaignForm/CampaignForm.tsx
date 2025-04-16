@@ -8,6 +8,8 @@ import DesktopView from "../SideBar/DesktopView/DesktopView";
 import styles from "./landingPageStyles.module.css";
 import "./CampaignForm.css";
 import { useAuth } from "../../../context/AuthContext";
+import { IoRocketOutline } from "react-icons/io5";
+import { MdCancel } from "react-icons/md";
 
 interface CampaignForm {
   creatorId: string;
@@ -313,17 +315,22 @@ const CampaignPopup: React.FC<CampaignPopupProps> = ({ open, onClose /*, onSubmi
               width: "95%",
             }}
           >
-            <div
-              className="popup-header"
-              style={{ display: "flex", justifyContent: "space-between", padding: "10px" }}
-            >
-              <button className="cancel-btn" onClick={handleClose}>
-                 סגור
-              </button>
-              <button className="cancel-btn" onClick={handleSaveLandingPage}>
-               שגר קמפיין
-              </button>
+            <div className="popup-header">
+              <p className="promptText">
+                האם אתה מעוניין לשגר את דף הנחיתה?
+              </p>
+              <div className="buttonGroup">
+                <button className="cancelBtn" onClick={handleClose}>
+                  <MdCancel className="icon" />
+                  <span>ביטול</span>
+                </button>
+                <button className="launchBtn" onClick={handleSaveLandingPage}>
+                  <IoRocketOutline className="icon" />
+                  <span>שגר קמפיין</span>
+                </button>
+              </div>
             </div>
+
   
             <div className={styles.landingPageLayout}>
               <DragDropContext onDragEnd={onDragEnd}>
