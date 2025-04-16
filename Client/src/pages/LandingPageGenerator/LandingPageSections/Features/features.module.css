@@ -68,9 +68,12 @@
   box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
 }
 
-/* actionBar נשאר ללא שינוי */
+.actionBar {
+  position: absolute;
+  top: 12px;
+  right: -20px;
+}
 
-/* Media queries */
 @media (max-width: 768px) {
   .featuresSection {
     flex-direction: column;
