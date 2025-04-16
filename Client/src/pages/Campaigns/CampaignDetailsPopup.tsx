@@ -1,5 +1,11 @@
+// CampaignDetailsPopup.tsx
+
 import React from "react";
 import styles from "./CampaignDetailsPopup.module.css";
+import { IoMdAnalytics } from "react-icons/io";
+import { MdDeleteOutline } from "react-icons/md";
+import { IoIosSend } from "react-icons/io";
+import { FaRegCirclePause } from "react-icons/fa6";
 
 interface CampaignDetailsPopupProps {
   campaign: any;
@@ -13,7 +19,7 @@ const CampaignDetailsPopup: React.FC<CampaignDetailsPopupProps> = ({ campaign, o
       <div className={styles.popup}>
         <div className={styles.header}>
           <h2>{campaign.campaignName}</h2>
-          <button className={styles.closeBtn} onClick={onClose}>
+          <button className={styles.closeBtn} onClick={onClose} data-tooltip="סגור">
             &times;
           </button>
         </div>
@@ -32,8 +38,30 @@ const CampaignDetailsPopup: React.FC<CampaignDetailsPopupProps> = ({ campaign, o
           )}
         </div>
         <div className={styles.footer}>
-          <button className={styles.submitBtn} onClick={onSubmit}>
-            שגר קמפיין
+          <button
+            className={styles.submitBtn}
+            onClick={onSubmit}
+            data-tooltip="שלח"
+          >
+            <IoIosSend />
+          </button>
+          <button
+            className={styles.AnalyticsBtn}
+            data-tooltip="גרפים ואנליטיקות"
+          >
+            <IoMdAnalytics />
+          </button>
+          <button
+            className={styles.deleteBtn}
+            data-tooltip="מחק"
+          >
+            <MdDeleteOutline />
+          </button>
+          <button
+            className={styles.pauseBtn}
+            data-tooltip="השהה"
+          >
+            <FaRegCirclePause />
           </button>
         </div>
       </div>

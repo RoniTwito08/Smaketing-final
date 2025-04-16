@@ -92,8 +92,8 @@ const Sidebar = ({
     <>
       <motion.div
         className={`${styles.sidebar} ${isOpen ? styles.open : styles.closed}`}
-        initial={{ width: "3%" }}
-        animate={{ width: isOpen ? "20%" : "5%" }}
+        initial={{ width: "5%" }}
+        animate={{ width: isOpen ? "25%" : "8%" }}
         transition={{ duration: 0.9 }}
       >
         <div className={styles.sidebarHeader}>
@@ -104,31 +104,61 @@ const Sidebar = ({
           )}
         </div>
         <nav className={styles.sidebarMenu}>
-          <div className={styles.sidebarItem} onClick={() => handleIconClick("actions")}>
+          <div
+            className={styles.sidebarItem}
+            onClick={() => handleIconClick("actions")}
+            data-tooltip="פעולות"
+          >
             <AiOutlineExclamationCircle size={30} />
-            {isOpen && <span>Actions</span>}
+            {isOpen && <span>פעולות</span>}
           </div>
-          <div className={styles.sidebarItem} onClick={() => handleIconClick("color")}>
+
+          <div
+            className={styles.sidebarItem}
+            onClick={() => handleIconClick("color")}
+            data-tooltip="צבעים"
+          >
             <IoIosColorFilter size={30} />
-            {isOpen && <span>Colors</span>}
+            {isOpen && <span>צבעים</span>}
           </div>
-          <div className={styles.sidebarItem} onClick={() => handleIconClick("font")}>
+
+          <div
+            className={styles.sidebarItem}
+            onClick={() => handleIconClick("font")}
+            data-tooltip="גופנים"
+          >
             <AiOutlineFontColors size={30} />
-            {isOpen && <span>Fonts</span>}
+            {isOpen && <span>גופנים</span>}
           </div>
-          <div className={styles.sidebarItem} onClick={() => handleIconClick("removeSection")}>
+
+          <div
+            className={styles.sidebarItem}
+            onClick={() => handleIconClick("removeSection")}
+            data-tooltip="הסרת סקשנים"
+          >
             <IoIosRemoveCircleOutline size={30} />
-            {isOpen && <span>Sections removed</span>}
+            {isOpen && <span>הסרת סקשנים</span>}
           </div>
-          <div className={styles.sidebarItem} onClick={() => handleIconClick("chat")}>
+
+          <div
+            className={styles.sidebarItem}
+            onClick={() => handleIconClick("chat")}
+            data-tooltip="צ'אט"
+          >
             <IoChatbubbleEllipsesOutline size={30} />
-            {isOpen && <span>Chat</span>}
+            {isOpen && <span>צ'אט</span>}
           </div>
-          <div className={styles.sidebarItem} onClick={() => handleIconClick("responsive")}>
+
+          <div
+            className={styles.sidebarItem}
+            onClick={() => handleIconClick("responsive")}
+            data-tooltip="רספונסיבי"
+          >
             <MdOutlinePhoneIphone size={30} />
-            {isOpen && <span>Responsive</span>}
+            {isOpen && <span>רספונסיבי</span>}
           </div>
         </nav>
+
         {isOpen && <div className={styles.divider}></div>}
         {isOpen && (
           <div className={styles.subMenuContainer}>
@@ -234,8 +264,8 @@ const Sidebar = ({
                   <div>
                     {removedSections.map((item, idx) => (
                       <div key={idx} className={styles.removedSection}>
-                        <p>{item.section.sectionName}</p>
                         <button onClick={() => onRestore(item)}>שחזר</button>
+                        <p>{item.section.sectionName}</p>
                       </div>
                     ))}
                   </div>
