@@ -27,7 +27,6 @@ h1, h2, h3 {
 
 .sidebar {
   position:relative;
-  height: 280vh;
   display: flex;
   flex-direction: column;
   padding: 15px;
@@ -35,7 +34,6 @@ h1, h2, h3 {
   overflow: hidden;
   z-index: 100;
   min-width: 60px;
-  border-left: 2px solid #0055aa;
 }
 
 .sidebarItem::after {
@@ -146,7 +144,7 @@ h1, h2, h3 {
 
 .subMenuColors {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(2, 1fr);
   row-gap: 20px;
   column-gap: 10px;
   align-items: center;
