@@ -47,6 +47,42 @@ function Hero({ title, content, buttonText }: HeroProps) {
     setEditingValue("");
   };
 
+  // הפונקציה המדויקת מה‑Header
+  const handleScroll = () => {
+    const el =
+      document.getElementById("contactUs") ||
+      document.getElementById("contact-us-root");
+    if (!el) return;
+  
+    // מחשבים יעד גלילה
+    const rect = el.getBoundingClientRect();
+    const scrollY = window.pageYOffset;
+    const headerOffset = 80;
+    const targetY = rect.top + scrollY - headerOffset;
+    const finalY = targetY === scrollY ? targetY + 1 : targetY;
+  
+    // מוצאים את אלמנט הגלילה בפועל
+    let scrollContainer: HTMLElement | null = document.scrollingElement as HTMLElement;
+    // אם זה לא גליל, ננסה לטפס עד שמוצאים overflow
+    if (!scrollContainer || scrollContainer.scrollHeight <= scrollContainer.clientHeight) {
+      let parent: HTMLElement | null = el.parentElement;
+      while (parent) {
+        const style = getComputedStyle(parent);
+        if (/(auto|scroll)/.test(style.overflowY || "")) {
+          scrollContainer = parent;
+          break;
+        }
+        parent = parent.parentElement;
+      }
+    }
+  
+    // בסוף, מגלגלים בקונטיינר הנכון
+    if (scrollContainer) {
+      scrollContainer.scrollTo({ top: finalY, behavior: "smooth" });
+    }
+  };
+  
+
   const renderContent = (item: ItemType) => {
     if (editingId === item.id) {
       return (
@@ -98,6 +134,7 @@ function Hero({ title, content, buttonText }: HeroProps) {
           <button
             className={heroStyles.heroButton}
             onDoubleClick={() => handleDoubleClickEdit(item.id)}
+            onClick={handleScroll}  // הגלילה חלקה בדיוק כמו ב‑Header
           >
             {textValues[item.id]}
           </button>
