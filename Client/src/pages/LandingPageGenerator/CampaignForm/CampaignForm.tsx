@@ -318,10 +318,10 @@ const CampaignPopup: React.FC<CampaignPopupProps> = ({ open, onClose /*, onSubmi
               style={{ display: "flex", justifyContent: "space-between", padding: "10px" }}
             >
               <button className="cancel-btn" onClick={handleClose}>
-                ❌ סגור
+                 סגור
               </button>
               <button className="cancel-btn" onClick={handleSaveLandingPage}>
-                אישור ✅
+               שגר קמפיין
               </button>
             </div>
   
