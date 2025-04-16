@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import { generateContent, fetchPexelsImage } from '../services/landing_page_generator/textAndImage_generator';
 import { BusinessData , CampaignInfo , UserEmailData } from '../services/landing_page_generator/businessInfoTypes_LP';
 import path from 'path';
+import { text } from 'body-parser';
 
 export const generateLandingPageContext = async (req: Request, res: Response): Promise<void> => {
     try {
@@ -117,6 +118,31 @@ export const generateLandingPageContext = async (req: Request, res: Response): P
             copyRights: "©2025 כל הזכויות שמורות לצוות Smarketing"
         };
 
+        // בתוך ה־generateLandingPageContext, לאחר שמוגדר business:
+        const colorAndFontPrompt = {
+            primaryColor: await generateContent(
+            `Provide only a single primary color hex code (e.g. #1A2B3C) suitable for the business "${business.businessName}". Do NOT wrap it in JSON or add any text. without \n in the end`
+            ),
+            secondaryColor: await generateContent(
+            `Provide only a single secondary color hex code (e.g. #4D5E6F) suitable for the business "${business.businessName}". Do NOT wrap it in JSON or add any text. without \n in the end`
+            ),
+            tertiaryColor: await generateContent(
+            `Provide only a single tertiary (accent) color hex code (e.g. #AABBCC) suitable for the business "${business.businessName}". Do NOT wrap it in JSON or add any text. without \n in the end`
+            ),
+            textColor: await generateContent(
+            `Provide only a single text color hex code (e.g. #FFFFFF) suitable for the business "${business.businessName}". Do NOT wrap it in JSON or add any text. without \n in the end `
+            ),
+            font: await generateContent(
+            `Provide only a single font-family name (e.g. "Roboto" or "Arial, sans-serif") suitable as the default font for the business "${business.businessName}". Do NOT wrap it in JSON or add any text. without \n in the end`
+            )
+        };
+        
+        // דוגמא לפלט של כל שדה:
+        // colorAndFontPrompt.primaryColor === "#007bff"
+        // colorAndFontPrompt.secondaryColor === "#28a745"
+        // colorAndFontPrompt.tertiaryColor === "#adb5bd"
+        // colorAndFontPrompt.font === "Open Sans"
+  
         const context = {
             headerSection,
             heroSection,
@@ -125,7 +151,8 @@ export const generateLandingPageContext = async (req: Request, res: Response): P
             aboutUsSection,
             gallerySection,
             contactUsSection,
-            footerSection
+            footerSection,
+            colorAndFontPrompt,
         };
 
         res.status(200).json(context);
@@ -147,3 +174,5 @@ export const getTextSuggestions = async (req: Request, res: Response): Promise<v
         res.status(500).json({ error: "Internal server error" });
     }
 };
+
+
