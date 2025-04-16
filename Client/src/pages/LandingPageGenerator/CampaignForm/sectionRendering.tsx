@@ -52,7 +52,10 @@ const SectionRenderer = ({ section, onDeleteSection }: SectionRendererProps) => 
         return (
           <Features
             content={section.content ? section.content.split("\n") : []}
-            image={"http://localhost:3000/api/pexels_images/" + (section.image?.substring(61) || "")}
+            image={
+              "http://localhost:3000/api/pexels_images/" +
+              (section.image?.split("/").pop() || "")
+            }
             onDelete={onDeleteSection}
           />
         );
