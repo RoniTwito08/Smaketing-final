@@ -135,6 +135,7 @@ const CampaignPopup: React.FC<CampaignPopupProps> = ({ open, onClose /*, onSubmi
       if (!response.ok) throw new Error("שגיאה ביצירת דף הנחיתה");
       const data = await response.json();
       console.log("Landing Page Data:", data);
+      
       if (data) {
         const sectionsArray = Object.keys(data).map((key) => data[key]);
         setLandingPageData(sectionsArray);
@@ -147,6 +148,43 @@ const CampaignPopup: React.FC<CampaignPopupProps> = ({ open, onClose /*, onSubmi
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    if (submitted && landingPageData) {
+      // theme מגיע באינדקס 8
+      const theme = landingPageData[8] as {
+        primaryColor: string;
+        secondaryColor: string;
+        tertiaryColor: string;
+        font: string;
+      };
+  
+      // מגדירים משתני CSS גלובליים
+      document.documentElement.style.setProperty(
+        "--primary-color",
+        theme.primaryColor.trim()
+      );
+      document.documentElement.style.setProperty(
+        "--secondary-color",
+        theme.secondaryColor.trim()
+      );
+      document.documentElement.style.setProperty(
+        "--tertiary-color",
+        theme.tertiaryColor.trim()
+      );
+      // אין textColor ב־theme, אפשר לוותר או להגדיר ברירת־מחדל
+      // document.documentElement.style.setProperty("--text-color", "#333");
+  
+      // מגדירים פונט גלובלי
+      document.documentElement.style.setProperty(
+        "--font",
+        theme.font.trim()
+      );
+  
+      // שאר אתחול הדף
+    }
+  }, [submitted, landingPageData]);
+  
 
   useEffect(() => {
     if (landingPageData) {
