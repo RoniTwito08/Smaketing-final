@@ -95,6 +95,27 @@
   transform: translateY(-2px);
 }
 
+.heroTitle[contenteditable]:focus,
+.heroText[contenteditable]:focus,
+.heroButton[contenteditable]:focus {
+  outline: none;       
+  box-shadow: none;   
+}
+
+.heroTitle,
+.heroText,
+.heroButton {
+  outline: none;
+}
+
+.heroTitle[contenteditable]:focus,
+.heroText[contenteditable]:focus,
+.heroButton[contenteditable]:focus {
+  outline: 2px solid rgba(0, 0, 0, 0.1);
+  outline-offset: 4px;
+}
+
+
 @media (max-width: 768px) {
   .heroContainer {
     min-height: auto;
