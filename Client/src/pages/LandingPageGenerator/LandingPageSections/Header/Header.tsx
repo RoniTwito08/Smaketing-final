@@ -1,4 +1,4 @@
-import  { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import headerStyles from "./header.module.css";
 import { useAuth } from "../../../../context/AuthContext";
 import { businessInfoService } from "../../../../services/besinessInfo.service";
@@ -23,7 +23,6 @@ function Header({ businessName, title, buttonText }: HeaderProps) {
           if (data.data.logo) {
             setLogoPreview(config.apiUrl + "/" + data.data.logo);
           }
-          console.log("Business info fetched successfully:", config.apiUrl + data.logo);
         })
         .catch((err) => {
           console.error("Failed to fetch business info:", err);
@@ -32,7 +31,37 @@ function Header({ businessName, title, buttonText }: HeaderProps) {
   }, [userId, accessToken, logoPreview]);
 
   if (!userId || !accessToken) return null;
+  document.documentElement.style.scrollBehavior = "smooth";
 
+  const handleScroll = () => {
+    const el =
+      document.getElementById("contactUs") ||
+      document.getElementById("contact-us-root");
+    console.log("el:", el);
+    if (el) {
+      // מוצאים את ההורה הגליל
+      let parent: HTMLElement | null = el.parentElement;
+      while (parent && getComputedStyle(parent).overflowY === "visible") {
+        parent = parent.parentElement;
+      }
+      // אם מצאנו אלמנט עם overflow, מגלגלים בו
+      if (parent) {
+        parent.scrollTo({
+          top: el.offsetTop,
+          behavior: "smooth",
+        });
+      } else {
+        // ברירת מחדל ל־window
+        document.documentElement.style.scrollBehavior = "smooth";
+        el.scrollIntoView({ block: "start" });
+        setTimeout(() => {
+          document.documentElement.style.scrollBehavior = "";
+        }, 1000);
+      }
+    }
+  };
+  
+  
   return (
     <div className={headerStyles.headerWrapper}>
       <section className={headerStyles.headerSectionContainer}>
@@ -50,11 +79,12 @@ function Header({ businessName, title, buttonText }: HeaderProps) {
         <h1 className={headerStyles.businessName}>{businessName}</h1>
         <h2 className={headerStyles.sectionTitle}>{title}</h2>
         <div className={headerStyles.headerButtonContainer}>
-          <a href="#contactUs">
-            <button className={headerStyles.headerSectionButton}>
-              {buttonText}
-            </button>
-          </a>
+          <button
+            className={headerStyles.headerSectionButton}
+            onClick={handleScroll}
+          >
+            {buttonText}
+          </button>
         </div>
       </section>
     </div>
