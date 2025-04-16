@@ -66,7 +66,7 @@
   
   .popup-landing {
     width: 100%;
-    max-width: 1600px;      
+    max-width: 1100px;      
     height: 90vh;            
     margin-top: 60px;        
     overflow-y: auto;
@@ -132,4 +132,71 @@
   .submit-btn:hover {
     opacity: 0.9;
   }
-  
+
+.popup-header {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start; 
+  padding: 10px 24px;
+  border-bottom: 2px solid #0055aa;
+  background: #fff;
+}
+
+.promptText {
+  flex: 1;
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 500;
+  color: #333;
+  text-align: right; 
+}
+
+.buttonGroup {
+  display: flex;
+  gap: 12px;
+}
+
+.buttonGroup button {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #007bff;
+  color: #fff;
+  padding: 8px 12px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  border: none;            
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.1s ease;
+}
+
+.buttonGroup .cancelBtn {
+  background: #ccc;
+  color: #333;
+}
+
+.buttonGroup .cancelBtn:hover {
+  background: #b3b3b3;
+}
+
+.buttonGroup .launchBtn {
+  background: #007bff;
+}
+
+.buttonGroup .launchBtn:hover {
+  background: #006ae6;
+}
+
+.buttonGroup .icon {
+  width: 1.2em;
+  height: 1.2em;
+}
+
+.buttonGroup button span {
+  order: 2;
+}
+
+.buttonGroup button .icon {
+  order: 1;
+}
