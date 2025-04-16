@@ -1,5 +1,5 @@
 // src/components/PlanSelect.tsx
-import React, { PropsWithChildren } from 'react';
+import { PropsWithChildren } from 'react';
 import styles from './PlanSelect.module.css';
 
 interface PlanSelectProps {

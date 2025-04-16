@@ -71,7 +71,7 @@ const SectionRenderer = ({ section, onDeleteSection }: SectionRendererProps) => 
           />
         );
       case "contactUs":
-        return <ContactUs />;
+        return <div id="contact-us-root"><ContactUs /></div>;
       case "gallery":
         return <Gallery />;
       case "footer":
