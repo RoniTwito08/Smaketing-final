@@ -97,6 +97,6 @@ const router = express.Router();
  *         description: Internal server error
  */
 
-router.post("/", express.json(), getGeminiKeywordsFromCampaign);
+//router.post("/", express.json(), getGeminiKeywordsFromCampaign);
 
 export default router;

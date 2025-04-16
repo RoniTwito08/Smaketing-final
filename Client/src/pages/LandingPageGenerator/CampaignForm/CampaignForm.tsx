@@ -180,40 +180,46 @@ const CampaignPopup: React.FC<CampaignPopupProps> = ({ open, onClose /*, onSubmi
 
   const handleSaveLandingPage = async () => {
     setIsSidebarOpen(false);
+  
+    // נשמור קודם את תוכן ה־body (ל־preview) ונבנה את ה־HTML המלא רק לצורך השמירה
     setTimeout(async () => {
       if (!landingPageRef.current) return;
+  
+      // 1. clone landing page container בלבד (לצורך preview)
       const clone = landingPageRef.current.cloneNode(true) as HTMLElement;
-      const resizeHandles = clone.querySelectorAll("[data-resize-handle]");
-      resizeHandles.forEach((el) => el.remove());
+      clone.querySelectorAll("[data-resize-handle]").forEach(el => el.remove());
       const landingPageHTML = clone.innerHTML;
-      console.log("Landing Page HTML:", landingPageHTML);
+  
+      // 3. build complete HTML only for saving
       const completeHTML = `
-        <!DOCTYPE html>
-        <html>
-          <head>
-            <meta charset="UTF-8">
-            <title>Landing Page</title>
-            <link rel="stylesheet" href="http://localhost:3000/dist/assets/index-uoALyoE3.css">
-            <style>
-              :root {
-                --primary-color: ${colors.primaryColor};
-                --secondary-color: ${colors.secondaryColor};
-                --tertiary-color: ${colors.tertiaryColor};
-                --text-color: ${colors.textColor};
-                --font: ${userFont};
-              }
-              body {
-                font-family: ${userFont} !important;
-              }
-            </style>
-          </head>
-          <body>
-            ${landingPageHTML}
-          </body>
-        </html>
+  <!DOCTYPE html>
+  <html>
+    <head>
+      <meta charset="UTF-8">
+      <title>Landing Page</title>
+      <link rel="stylesheet" href="http://localhost:3000/dist/assets/index-BVIQh28a.css">
+      <style>
+        :root {
+          --primary-color: ${colors.primaryColor};
+          --secondary-color: ${colors.secondaryColor};
+          --tertiary-color: ${colors.tertiaryColor};
+          --text-color: ${colors.textColor};
+          --font: ${userFont};
+        }
+        body {
+          font-family: ${userFont} !important;
+        }
+      </style>
+    </head>
+    <body>
+      ${landingPageHTML}ֿ
+      <script type="module" src="http://localhost:3000/dist/assets/index-549pk3Cd.js"></script>
+    </body>
+  </html>
       `;
+  
+      // 4. לשמור לשרת
       try {
-        // שמירת דף הנחיתה
         const saveResponse = await fetch("http://localhost:3000/api/saveLandingPage", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -230,32 +236,15 @@ const CampaignPopup: React.FC<CampaignPopupProps> = ({ open, onClose /*, onSubmi
           alert("Error saving landing page");
           return;
         }
-        const savedLandingPage = await saveResponse.json();
-  
-        const campaignData = {
-          ...form,
-          creatorId: user._id,
-          landingPage: savedLandingPage.file,
-        };
-  
-        const campaignResponse = await fetch("http://localhost:3000/campaigns", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(campaignData),
-        });
-        if (!campaignResponse.ok) {
-          alert("Error saving campaign in DB");
-          return;
-        }
-        const campaignResult = await campaignResponse.json();
-        console.log("Campaign created:", campaignResult);
-        alert("Landing page and campaign saved successfully!");
+        alert("Landing page saved successfully!");
       } catch (error) {
-        console.error("Error saving landing page and campaign:", error);
+        console.error(error);
         alert("Error saving landing page and campaign");
       }
     }, 500);
   };
+  
+  
 
   const handleDelete = (index: number, section: any) => {
     setRemovedSections((prev) => [...prev, { section, index }]);

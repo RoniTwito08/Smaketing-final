@@ -1,4 +1,3 @@
-import React from 'react';
 import styles from './PlanItem.module.css';
 import PlanSelect from './PlanSelect';
 
