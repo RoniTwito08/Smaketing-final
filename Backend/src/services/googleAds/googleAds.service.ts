@@ -30,7 +30,7 @@ export class GoogleAdsService {
   }
 
   private async getHeaders() {
-    const accessToken = await this.authService.getAccessToken();
+    const accessToken = await this.authService.getAccessToken(); // check if its ok
     return {
       Authorization: `Bearer ${accessToken}`, // <-- fixed with backticks
       "developer-token": this.developerToken,
@@ -49,7 +49,7 @@ export class GoogleAdsService {
     customerId?: string
   ): Promise<{ id: string; resourceName: string; name: string }> {
     const targetCustomerId = customerId || this.customerId;
-  
+
     const body = {
       operations: [
         {
@@ -61,22 +61,22 @@ export class GoogleAdsService {
         },
       ],
     };
-  
+
     const response = await request({
       url: `${this.baseUrl}/customers/${targetCustomerId}/adGroups:mutate`,
       method: "POST",
       headers: await this.getHeaders(),
       data: body,
     });
-  
+
     const result = (response.data as any).results?.[0];
     if (!result) {
       throw new Error("Failed to create Ad Group: No response data");
     }
-  
+
     const resourceName = result.resourceName;
     const adGroupId = resourceName.split("/").pop(); // get ID from "customers/123/adGroups/456"
-  
+
     return {
       id: adGroupId,
       resourceName,
@@ -90,6 +90,17 @@ export class GoogleAdsService {
   // 1) GET ALL CAMPAIGNS
   // ------------------------------------------------------
   async getCampaigns(): Promise<Campaign[]> {
+    // delete from query:
+    //         campaign.manual_cpc,
+    //        campaign.target_spend,
+    const today = new Date();
+    const start = new Date();
+    start.setDate(today.getDate() - 30);
+
+    const formatDate = (d: Date) => d.toISOString().split("T")[0]; // YYYY-MM-DD
+    const startDate = formatDate(start);
+    const endDate = formatDate(today);
+
     const query = `
       SELECT 
         campaign.resource_name,
@@ -101,8 +112,6 @@ export class GoogleAdsService {
         campaign.end_date,
         campaign.campaign_budget,
         campaign.bidding_strategy_type,
-        campaign.manual_cpc,
-        campaign.target_spend,
         metrics.clicks,
         metrics.impressions,
         metrics.cost_micros,
@@ -113,16 +122,36 @@ export class GoogleAdsService {
         segments.date
       FROM campaign
       WHERE campaign.status != 'REMOVED'
+      AND segments.date BETWEEN '${startDate}' AND '${endDate}'
     `; // <-- entire query is now a backtick-enclosed string
+    try {
+      const response = await request({
+        url: `${this.baseUrl}/customers/${this.customerId}/googleAds:search`, // <--- backticks
+        method: "POST",
+        headers: await this.getHeaders(),
+        data: { query },
+      });
+      return this.transformCampaignResponse(response.data);
+    } catch (error: any) {
+      const googleError = error?.response?.data;
 
-    const response = await request({
-      url: `${this.baseUrl}/customers/${this.customerId}/googleAds:search`, // <--- backticks
-      method: "POST",
-      headers: await this.getHeaders(),
-      data: { query },
-    });
+      console.error("❌ Google Ads API error:", {
+        code: googleError?.error?.code,
+        message: googleError?.error?.message,
+        status: googleError?.error?.status,
+        details: googleError?.error?.details,
+        requestId: googleError?.error?.details?.[0]?.requestId,
+      });
 
-    return this.transformCampaignResponse(response.data);
+      if (googleError?.error?.details?.[0]?.errors) {
+        console.error("🔍 Google Ads errors array:");
+        for (const err of googleError.error.details[0].errors) {
+          console.error(JSON.stringify(err, null, 2));
+        }
+      }
+
+      throw new Error("Failed to fetch campaigns from Google Ads API.");
+    }
   }
 
   private transformCampaignResponse(data: any): Campaign[] {

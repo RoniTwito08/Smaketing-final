@@ -7,6 +7,7 @@ export interface Campaign {
   startDate: string;
   endDate: string;
   scheduledTime?: string;
+  adGroupId?: string;
   targetSpend?: {
     cpcBidCeilingMicros: string;
     targetSpendingAmountMicros: string;
@@ -112,4 +113,4 @@ export interface GoogleAdsConfig {
   refreshToken: string;
   customerId: string;
   redirectUri: string;
-} 
+}
