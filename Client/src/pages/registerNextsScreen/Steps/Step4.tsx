@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useFormContext, Controller } from "react-hook-form";
 
 const Step4: React.FC = () => {
-  const { control, /*watch*/ } = useFormContext();
+  const { control /*watch*/ } = useFormContext();
   //const watchedFiles = watch("logoFiles");
 
   const [logoPreview, setLogoPreview] = useState<string | null>(null);
@@ -166,46 +166,46 @@ const Step4: React.FC = () => {
 
       {/* שורה 3 */}
       <div style={styles.question}>
-        <p>האם יש לך חשבון עסקי ברשתות החברתיות?</p>
-        <div style={styles.checkboxGroup}>
-          <Controller
-            name="socialMediaAccounts"
-            control={control}
-            defaultValue={[]}
-            render={({ field }) => (
-              <>
-                {["Facebook", "Instagram", "TikTok", "Twitter", "Other"].map(
-                  (platform) => (
-                    <label key={platform}>
-                      <input
-                        type="checkbox"
-                        value={platform}
-                        checked={field.value.includes(platform)}
-                        onChange={(e) => {
-                          const isChecked = e.target.checked;
-                          field.onChange(
-                            isChecked
-                              ? [...field.value, platform]
-                              : field.value.filter(
-                                  (item: string) => item !== platform
-                                )
-                          );
-                        }}
-                      />
-                      {platform}
-                    </label>
-                  )
+        <p>
+          האם יש לך חשבונות עסקיים ברשתות החברתיות? הכנס קישור עבור כל פלטפורמה
+          שברשותך:
+        </p>
+
+        {["Facebook", "Instagram", "TikTok", "LinkedIn", "Other"].map(
+          (platform) => (
+            <div key={platform} style={{ marginBottom: "10px" }}>
+              <label style={{ display: "block", marginBottom: "5px" }}>
+                {platform}:
+              </label>
+              <Controller
+                name={`socialLinks.${platform.toLowerCase()}`}
+                control={control}
+                defaultValue=""
+                render={({ field }) => (
+                  <input
+                    {...field}
+                    type="url"
+                    placeholder={`הכנס קישור ל-${platform}`}
+                    style={styles.input}
+                  />
                 )}
-              </>
-            )}
-          />
-        </div>
+              />
+            </div>
+          )
+        )}
       </div>
     </div>
   );
 };
 
 const styles = {
+  input: {
+    width: "100%",
+    padding: "10px",
+    borderRadius: "5px",
+    border: "1px solid #ccc",
+    fontSize: "14px",
+  } as const,
   container: {
     fontFamily: "Assistant, sans-serif",
     maxWidth: "800px",

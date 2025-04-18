@@ -26,7 +26,13 @@ export interface BusinessInfo {
   logo: String;
   businessImages: [String];
   designPreferences?: String;
-  socialMediaAccounts?: [String];
+  socialLinks?: {
+    facebook?: string;
+    instagram?: string;
+    tiktok?: string;
+    linkedin?: string;
+    other?: string;
+  };
 
   // שלב 5
   objective: String;
@@ -61,9 +67,12 @@ const BusinessInfoModel = new mongoose.Schema<BusinessInfo>({
   },
 
   designPreferences: { type: String },
-  socialMediaAccounts: {
-    type: [String],
-    default: [],
+  socialLinks: {
+    facebook: { type: String },
+    instagram: { type: String },
+    tiktok: { type: String },
+    linkedin: { type: String },
+    other: { type: String },
   },
 
   // שלב 5

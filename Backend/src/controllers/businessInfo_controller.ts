@@ -12,6 +12,7 @@ export const createBusinessInfo = async (req: Request, res: Response) => {
     };
 
     const formFields = req.body;
+    console.log("Form fields:", formFields);
 
     const logo = files?.logo?.[0]?.path || null;
 
@@ -19,12 +20,22 @@ export const createBusinessInfo = async (req: Request, res: Response) => {
     const businessImages =
       files?.businessImages?.map((file) => file.path) || [];
 
+    let parsedSocialLinks;
+    if (formFields.socialLinks) {
+      try {
+        parsedSocialLinks = JSON.parse(formFields.socialLinks);
+      } catch (e) {
+        console.error("Could not parse socialLinks:", e);
+      }
+    }
+    console.log("socialLinks to save:", parsedSocialLinks);
     // בניית האובייקט לשמירה
     const businessInfo = new businessInfoModel({
       ...formFields,
       userId,
       logo,
       businessImages,
+      socialLinks: parsedSocialLinks,
     });
 
     await businessInfo.save();

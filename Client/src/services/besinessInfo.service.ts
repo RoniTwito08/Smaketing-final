@@ -17,6 +17,10 @@ export const businessInfoService = {
           formData.append(key, item.toString());
         });
       } else if (typeof value === "object") {
+        if (key === "socialLinks") {
+          console.log("socialLinks", value);
+          formData.append("socialLinks", JSON.stringify(value));
+        }
         continue;
       } else {
         formData.append(key, value.toString());
