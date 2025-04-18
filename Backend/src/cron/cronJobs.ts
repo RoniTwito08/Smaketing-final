@@ -40,6 +40,64 @@ async function handleDailyMarketingJob() {
         // get all campigns of the user
         const campaigns: Campaign[] = await googleAdsService.getCampaigns();
 
+        // for test:
+        // enum CampaignStatus {
+        //   ENABLED = "ENABLED",
+        //   PAUSED = "PAUSED",
+        //   REMOVED = "REMOVED",
+        // }
+
+        // enum AdvertisingChannelType {
+        //   SEARCH = "SEARCH",
+        //   DISPLAY = "DISPLAY",
+        //   VIDEO = "VIDEO",
+        //   SHOPPING = "SHOPPING",
+        // }
+
+        // Mocked campaigns for testing purposes
+        // const campaigns: Campaign[] = [
+        //   {
+        //     id: "123456789",
+        //     resourceName: "customers/5582899409/campaigns/123456789",
+        //     name: "קמפיין בדיקה",
+        //     status: CampaignStatus.ENABLED,
+        //     advertisingChannelType: AdvertisingChannelType.SEARCH,
+        //     startDate: "20250420",
+        //     endDate: "20250520",
+        //     // campaignBudget: "customers/5582899409/campaignBudgets/1111111",
+        //     biddingStrategyType: "MANUAL_CPC",
+        //     manualCpc: { enhancedCpcEnabled: true },
+        //     adGroupId: "987654321",
+        //     metrics: {
+        //       clicks: 100,
+        //       impressions: 1000,
+        //       costMicros: 5000000,
+        //       conversions: 10,
+        //       conversionsValue: 300,
+        //       averageCpc: 500000,
+        //       ctr: 0.1,
+        //       averagePosition: 1,
+        //       interactionRate: 0.2,
+        //       averageCpm: 2000000,
+        //       videoViewRate: 0,
+        //       averageCpv: 0,
+        //     },
+        //     segments: {
+        //       date: "2025-04-20",
+        //       hour: "14",
+        //       quarter: "Q2",
+        //       month: "APRIL",
+        //       week: "2025-W16",
+        //       dayOfWeek: "FRIDAY",
+        //       device: "DESKTOP",
+        //       conversionAction: "Form Submission",
+        //       conversionActionCategory: "LEAD",
+        //       conversionActionName: "Lead Form",
+        //       externalConversionSource: "WEBSITE",
+        //     },
+        //   },
+        // ];
+
         console.log("campaigns found:", campaigns.length);
 
         for (const campaign of campaigns) {
@@ -48,6 +106,7 @@ async function handleDailyMarketingJob() {
           console.log(
             `Analysis result for ${user.email} / campaign "${campaign.name}"`
           );
+          console.log("result:", result);
 
           const { suggestions } = result;
 
@@ -58,10 +117,9 @@ async function handleDailyMarketingJob() {
             name: campaign.name,
             status: campaign.status,
             campaignBudget: campaign.campaignBudget,
-            biddingStrategyType: campaign.biddingStrategyType,
-            manualCpc: campaign.manualCpc,
-            targetSpend: campaign.targetSpend,
           };
+
+          console.log("updateFields:", updateFields);
 
           const keywordIdeas = suggestions.llmSuggestions?.keywordIdeas ?? [];
           const formattedKeywords = keywordIdeas.map((kw) => ({
@@ -69,10 +127,10 @@ async function handleDailyMarketingJob() {
             matchType: "BROAD", // בהמשך אולי לתת לגימיני להגדיר גם את הסוג של כל מילה
           }));
 
-          // roni- to add to campign
-          // const adGroupId = campaign.adGroupId;
-          // temp group id
-          const adGroupId = "1234567890"; // replace with actual adGroupId
+          let adGroupId = undefined;
+          if (campaign.adGroupId) {
+            const adGroupId = campaign.adGroupId;
+          }
 
           try {
             await googleAdsService.updateCampaignAndKeywords(

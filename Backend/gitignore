@@ -6,3 +6,5 @@ dist/
 
 # Ignore .env file
 .env
+
+.env_dev

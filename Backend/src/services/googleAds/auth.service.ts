@@ -1,6 +1,6 @@
-import { OAuth2Client } from 'google-auth-library';
-import { GoogleAdsConfig } from './types';
-import axios from 'axios';
+import { OAuth2Client } from "google-auth-library";
+import { GoogleAdsConfig } from "./types";
+import axios from "axios";
 
 interface GoogleOAuthResponse {
   access_token: string;
@@ -14,6 +14,8 @@ export class AuthService {
   private config: GoogleAdsConfig;
 
   constructor(config: GoogleAdsConfig) {
+    console.log("💡 Using refresh token:", config.refreshToken);
+
     this.config = config;
     this.oauth2Client = new OAuth2Client({
       clientId: config.clientId,
@@ -28,16 +30,18 @@ export class AuthService {
 
   async getAccessToken(): Promise<string> {
     const { token } = await this.oauth2Client.getAccessToken();
-    return token || '';
+    return token || "";
   }
 
   async refreshAccessToken(): Promise<void> {
     await this.oauth2Client.refreshAccessToken();
   }
 
-  async exchangeCodeForTokens(code: string): Promise<{ accessToken: string; refreshToken: string }> {
+  async exchangeCodeForTokens(
+    code: string
+  ): Promise<{ accessToken: string; refreshToken: string }> {
     const response = await axios.post<GoogleOAuthResponse>(
-      'https://oauth2.googleapis.com/token',
+      "https://oauth2.googleapis.com/token",
       null,
       {
         params: {
@@ -45,13 +49,13 @@ export class AuthService {
           client_id: this.config.clientId,
           client_secret: this.config.clientSecret,
           redirect_uri: this.config.redirectUri,
-          grant_type: 'authorization_code',
+          grant_type: "authorization_code",
         },
-      },
+      }
     );
-  
+
     const data = response.data;
-  
+
     return {
       accessToken: data.access_token,
       refreshToken: data.refresh_token,
@@ -59,13 +63,13 @@ export class AuthService {
   }
 
   generateAuthUrl(): string {
-    const scopes = ['https://www.googleapis.com/auth/adwords'];
+    const scopes = ["https://www.googleapis.com/auth/adwords"];
 
     return this.oauth2Client.generateAuthUrl({
-      access_type: 'offline',
-      prompt: 'consent',
+      access_type: "offline",
+      prompt: "consent",
       scope: scopes,
       redirect_uri: this.config.redirectUri,
     });
   }
-} 
+}
