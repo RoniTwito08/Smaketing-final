@@ -51,8 +51,14 @@ export type FormValues = {
   /* העדפות עיצוב (למשל סגנון מודרני, מינימליסטי וכו') (אופציונלי) */
   designPreferences?: string;
 
-  /* רשימת רשתות חברתיות שבהן יש חשבון עסקי (אופציונלי) */
-  socialMediaAccounts?: string[];
+  /* קישורים לרשתות חברתיות לפי פלטפורמות (אופציונלי) */
+  socialLinks?: {
+    facebook?: string;
+    instagram?: string;
+    tiktok?: string;
+    linkedin?: string;
+    other?: string;
+  };
 
   /* לוגו שנשמר בשרת (נתיב תמונה) */
   logo?: string;

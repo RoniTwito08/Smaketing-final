@@ -33,6 +33,7 @@ const MultiStepForm: React.FC = () => {
   const handleBack = () => setActiveStep((prev) => prev - 1);
 
   const onSubmit: SubmitHandler<FormValues> = async (data) => {
+    console.log("Form data:", data);
     const token = localStorage.getItem("accessToken");
     const user = localStorage.getItem("user");
     const userId = JSON.parse(user!)._id;
