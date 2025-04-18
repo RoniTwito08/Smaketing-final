@@ -23,6 +23,7 @@ async function handleDailyMarketingJob() {
 
         const rawBusiness = await findBusinessInfoByUserId(userId);
 
+        console.log("before google ads service:", rawBusiness);
         const googleAdsService = new GoogleAdsService({
           clientId: process.env.GOOGLE_ADS_CLIENT_ID!,
           clientSecret: process.env.GOOGLE_ADS_CLIENT_SECRET!,
@@ -32,8 +33,14 @@ async function handleDailyMarketingJob() {
           customerId: customerId,
         });
 
+        console.log("google ads service created:", googleAdsService);
+
+        console.log("before get campaigns");
+
         // get all campigns of the user
         const campaigns: Campaign[] = await googleAdsService.getCampaigns();
+
+        console.log("campaigns found:", campaigns.length);
 
         for (const campaign of campaigns) {
           const result = await runMarketingAlgo(campaign, rawBusiness);
