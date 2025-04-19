@@ -21,6 +21,7 @@ import { User } from "../../types/user";
 import { GoogleAdsAnalytics } from "../GoogleAdsAnalytics/GoogleAdsAnalytics";
 import PlansPage from "../../pages/Plans/PlansPage";
 import Plansicon from "@mui/icons-material/Paid";
+import Receiptlong from "@mui/icons-material/ReceiptLong";
 
 export default function DashboardLayoutBasic(props: any) {
   const { window } = props;
@@ -56,6 +57,11 @@ export default function DashboardLayoutBasic(props: any) {
       segment: "plans",
       title: "מסלול השיווק שלי",
       icon: <Plansicon />,
+    },
+    {
+      segment: "my-Budget",
+      title: "התקציב שלי",
+      icon: <Receiptlong />,
     },
     {
       segment: "chats",
