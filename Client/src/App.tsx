@@ -11,6 +11,8 @@ import { GoogleOAuthProvider } from "@react-oauth/google";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
 
@@ -28,7 +30,7 @@ const rtlTheme = createTheme({
     MuiTextField: {
       styleOverrides: {
         root: {
-          direction: 'rtl',
+          direction: "rtl",
         },
       },
     },
@@ -49,6 +51,17 @@ const App: React.FC = () => {
                   <BrowserRouter>
                     <AppRoutes />
                   </BrowserRouter>
+                  <ToastContainer
+                    position="top-right"
+                    autoClose={3000}
+                    hideProgressBar={false}
+                    newestOnTop
+                    closeOnClick
+                    rtl
+                    pauseOnFocusLoss
+                    draggable
+                    pauseOnHover
+                  />
                 </div>
               </ThemeProvider>
             </CacheProvider>

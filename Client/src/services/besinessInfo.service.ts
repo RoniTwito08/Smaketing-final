@@ -113,8 +113,10 @@ export const businessInfoService = {
       if (value !== undefined && value !== null && !exclude.includes(key)) {
         if (Array.isArray(value)) {
           value.forEach((item) => formData.append(key, item));
+        } else if (key === "socialLinks" && typeof value === "object") {
+          formData.append("socialLinks", JSON.stringify(value));
         } else {
-          formData.append(key, value as string);
+          formData.append(key, value.toString());
         }
       }
     });
