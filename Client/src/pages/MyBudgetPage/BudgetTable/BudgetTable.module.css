@@ -1,0 +1,21 @@
+.table {
+  max-width: 850px;
+  width: 100%;
+  background-color: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.06);
+  overflow: hidden;
+  margin: 0 auto;
+}
+
+.header,
+.footer {
+  display: flex;
+  flex-direction: row-reverse;
+  justify-content: space-between;
+  font-weight: bold;
+  padding: 1rem 2rem;
+  background-color: #f0f0f0;
+  font-size: 1.2rem;
+  text-align: center;
+}

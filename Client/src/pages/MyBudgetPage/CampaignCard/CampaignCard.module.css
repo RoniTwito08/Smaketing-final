@@ -1,0 +1,23 @@
+.row {
+  display: flex;
+  flex-direction: row-reverse;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  padding: 2rem 3rem; /* 👈 more spacing */
+  font-size: 1.4rem; /* 👈 larger font */
+  border-bottom: 1px solid #eee;
+}
+
+.cell {
+  width: 120px;
+  text-align: left;
+}
+
+.name {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 1rem;
+}

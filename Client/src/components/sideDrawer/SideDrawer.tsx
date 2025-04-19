@@ -22,6 +22,7 @@ import { GoogleAdsAnalytics } from "../GoogleAdsAnalytics/GoogleAdsAnalytics";
 import PlansPage from "../../pages/Plans/PlansPage";
 import Plansicon from "@mui/icons-material/Paid";
 import Receiptlong from "@mui/icons-material/ReceiptLong";
+import { BudgetPage } from "../../pages/MyBudgetPage/BudgetPage/BudgetPage";
 
 export default function DashboardLayoutBasic(props: any) {
   const { window } = props;
@@ -155,6 +156,7 @@ export default function DashboardLayoutBasic(props: any) {
     "/settings/business-settings": <BusinessSetting />,
     "/plans": <PlansPage />,
     "/feed": <MainFeed />,
+    "/my-Budget": <BudgetPage />,
     "/chats":
       user && accessToken ? (
         <div style={{ position: "relative", height: "100%" }}>
