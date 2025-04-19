@@ -12,7 +12,6 @@ export const createBusinessInfo = async (req: Request, res: Response) => {
     };
 
     const formFields = req.body;
-    console.log("Form fields:", formFields);
 
     const logo = files?.logo?.[0]?.path || null;
 
@@ -28,7 +27,6 @@ export const createBusinessInfo = async (req: Request, res: Response) => {
         console.error("Could not parse socialLinks:", e);
       }
     }
-    console.log("socialLinks to save:", parsedSocialLinks);
     // בניית האובייקט לשמירה
     const businessInfo = new businessInfoModel({
       ...formFields,
@@ -67,17 +65,17 @@ export const updateBusinessInfo = async (req: Request, res: Response) => {
 
     const data = req.body;
 
-    // Parse fields that arrive as JSON strings
-    if (req.body.socialMediaAccounts) {
-      if (typeof req.body.socialMediaAccounts === "string") {
-        data.socialMediaAccounts = req.body.socialMediaAccounts
-          .split(",")
-          .map((s: string) => s.trim());
-      } else if (Array.isArray(req.body.socialMediaAccounts)) {
-        data.socialMediaAccounts = req.body.socialMediaAccounts;
+    if (req.body.socialLinks) {
+      if (typeof req.body.socialLinks === "string") {
+        try {
+          data.socialLinks = JSON.parse(req.body.socialLinks);
+        } catch (e) {
+          console.error("Failed to parse socialLinks:", e);
+          data.socialLinks = undefined;
+        }
+      } else {
+        data.socialLinks = req.body.socialLinks;
       }
-    } else {
-      data.socialMediaAccounts = [];
     }
 
     // Handle logo file

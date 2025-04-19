@@ -30,7 +30,6 @@ export const BusinessSetting = () => {
     "Twitter",
     "Other",
   ];
-  console.log(errors , getValues());
 
   const professions = [
     "מעצב גרפי",
@@ -112,6 +111,15 @@ export const BusinessSetting = () => {
   });
 
   if (isLoading) return <Typography>טוען פרטי עסק...</Typography>;
+
+  const platforms = [
+    "facebook",
+    "instagram",
+    "tiktok",
+    "linkedin",
+    "other",
+  ] as const;
+  type SocialPlatform = (typeof platforms)[number];
 
   return (
     <form className="profileContainer" onSubmit={handleSubmit(onSubmit)}>
@@ -256,38 +264,30 @@ export const BusinessSetting = () => {
             />
           </div>
 
-          <div className="businessFieldRow">
-            <label>רשתות חברתיות:</label>
-            <Controller
-              name="socialMediaAccounts"
-              control={control}
-              defaultValue={[]}
-              render={({ field }) => (
-                <div className="checkboxGroup">
-                  {socialPlatforms.map((platform) => (
-                    <label key={platform} className="checkboxItem">
-                      <input
-                        type="checkbox"
-                        className="customCheckbox"
-                        value={platform}
-                        checked={(field.value ?? []).includes(platform)}
-                        onChange={(e) => {
-                          const isChecked = e.target.checked;
-                          const currentValue = field.value ?? [];
-                          field.onChange(
-                            isChecked
-                              ? [...currentValue, platform]
-                              : currentValue.filter((item) => item !== platform)
-                          );
-                        }}
-                      />
-                      <span>{platform}</span>
-                    </label>
-                  ))}
-                </div>
-              )}
-            />
+          <div className="businessFieldRow fullWidth">
+            <label style={{ width: "100%", fontWeight: "600" }}>
+              רשתות חברתיות:
+            </label>
           </div>
+
+          {platforms.map((platform) => (
+            <div className="businessFieldRow" key={platform}>
+              <label htmlFor={`socialLinks.${platform}`}>
+                {platform.charAt(0).toUpperCase() + platform.slice(1)}:
+              </label>
+              <Controller
+                name={
+                  `socialLinks.${platform}` as `socialLinks.${SocialPlatform}`
+                }
+                control={control}
+                defaultValue=""
+                render={({ field }) => (
+                  <input {...field} placeholder={`קישור ל-${platform}`} />
+                )}
+              />
+            </div>
+          ))}
+
           <div className="businessFieldRow">
             <label htmlFor="logoFile">לוגו:</label>
             <div style={{ flex: 1 }}>
