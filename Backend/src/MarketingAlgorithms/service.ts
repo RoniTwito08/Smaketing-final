@@ -16,7 +16,7 @@ interface GeminiResponse {
 
 export async function callLLM(prompt: string): Promise<any> {
   console.log("Calling Gemini API with prompt:", prompt);
-  const MARKETING_GEMINI_API_KEY = process.env.GEMINI_API_KEY;
+  const MARKETING_GEMINI_API_KEY = process.env.MARKETING_GEMINI_API_KEY;
 
   if (!MARKETING_GEMINI_API_KEY) {
     throw new Error("Gemini API key is missing. Please check your .env file.");

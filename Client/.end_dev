@@ -1,3 +1,4 @@
 GOOGLE_CLIENT_ID=950730786723-fieqdsnl9pdu59ulecvbve0anmeak3av.apps.googleusercontent.com
-GEMINI_API_KEY = AIzaSyD7O0C1pUfXURTiYaBLWj1krEsKsQ2kRoo
 BASE_URL =  'https://smarketing.cs.colman.ac.il'
+KEYWORDS_GEMINI_API_KEY = AIzaSyC1Lia7DKw2IKjoHr3fypdMXWWAEd4fMmw
+MARKETING_GEMINI_API_KEY = AIzaSyD39fo_IV0LrpaJFtshnmWjSGPrjQeZhd8
