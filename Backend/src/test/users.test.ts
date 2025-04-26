@@ -1,7 +1,6 @@
 import request from "supertest";
 import initApp from "../server";
 import mongoose from "mongoose";
-import postModel from "../models/user_models";
 import jwt from "jsonwebtoken";
 import { Express } from "express";
 import userModel, { User } from "../models/user_models";
@@ -12,7 +11,6 @@ let userToken: string;
 
 beforeAll(async () => {
   app = await initApp();
-  await postModel.deleteMany();
   await userModel.deleteMany();
 
   testUser = await userModel.create({
@@ -32,7 +30,6 @@ beforeAll(async () => {
 });
 
 afterAll((done) => {
-  postModel.deleteMany();
   userModel.deleteMany();
   mongoose.connection.close();
   done();

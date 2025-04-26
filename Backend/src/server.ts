@@ -4,8 +4,6 @@ import mongoose from "mongoose";
 import bodyParser from "body-parser";
 import express, { Express } from "express";
 import http from "http";
-import postsRoutes from "./routes/posts_routes";
-import commentsRoutes from "./routes/comments_routes";
 import usersRoutes from "./routes/users_routes";
 import authRoutes from "./routes/auth_routes";
 import chatRoutes from "./routes/chat_routes";
@@ -36,10 +34,14 @@ const initApp = (): Promise<Express> => {
     cors({
       origin: isProduction
         ? "https://smarketing.cs.colman.ac.il"
-        : ["http://localhost:5173", "http://localhost:3000", "http://127.0.0.1:3001"],
+        : [
+            "http://localhost:5173",
+            "http://localhost:3000",
+            "http://127.0.0.1:3001",
+          ],
       credentials: true,
-      methods: ["GET","POST","PUT","DELETE","OPTIONS"],
-      allowedHeaders: ["Content-Type","Authorization"],
+      methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+      allowedHeaders: ["Content-Type", "Authorization"],
     })
   );
 
@@ -53,7 +55,7 @@ const initApp = (): Promise<Express> => {
       },
     })
   );
-  
+
   // טיפול בבקשות preflight
   app.options("*", cors());
 
@@ -65,8 +67,6 @@ const initApp = (): Promise<Express> => {
   app.use(bodyParser.urlencoded({ extended: true }));
 
   // הגדרת נתיבים
-  app.use("/posts", postsRoutes);
-  app.use("/comments", commentsRoutes);
   app.use("/users", usersRoutes);
   app.use("/auth", authRoutes);
   app.use("/gemini", geminiRoutes);
@@ -84,10 +84,6 @@ const initApp = (): Promise<Express> => {
   app.use(
     "/uploads/profile_pictures",
     express.static(path.join(__dirname, "../uploads/profile_pictures"))
-  );
-  app.use(
-    "/uploads/post_images",
-    express.static(path.join(__dirname, "../uploads/post_images"))
   );
   app.use(
     "/uploads/business_pictures",
@@ -176,7 +172,7 @@ const initApp = (): Promise<Express> => {
     if (!process.env.DB_CONNECT) {
       reject(new Error("DB_CONNECT is not defined in .env file"));
     } else {
-      console.log('daaa');
+      console.log("daaa");
       mongoose
         .connect(process.env.DB_CONNECT)
         .then(() => {
