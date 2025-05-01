@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
 
 export interface Lead {
+    userId: string;
     name: string;
     email: string;
     phone: string;
@@ -9,6 +10,10 @@ export interface Lead {
 }
 
 const leadSchema = new mongoose.Schema<Lead>({
+    userId: {
+        type: String,
+        required: true,
+    },
     name: {
         type: String,
         required: true,

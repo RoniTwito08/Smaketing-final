@@ -58,7 +58,7 @@ export default function DashboardLayoutBasic(props: any) {
     },
     {
       segment: "chats",
-      title: "צאטים",
+      title: "לידים",
       icon: <CalendarTodayOutlinedIcon />,
     },
     {

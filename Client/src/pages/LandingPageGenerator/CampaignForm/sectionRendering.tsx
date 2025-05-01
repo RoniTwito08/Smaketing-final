@@ -80,7 +80,6 @@ const SectionRenderer = ({ section, onDeleteSection }: SectionRendererProps) => 
       case "footer":
         return (
           <Footer
-            logo="/src/assets/test.png"
             contactInfo={section.contactInfo || ""}
             location={section.location || ""}
             copyRight={section.copyRights || ""}
