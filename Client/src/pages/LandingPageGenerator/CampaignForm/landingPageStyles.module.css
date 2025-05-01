@@ -13,11 +13,6 @@ body {
   overflow-x: hidden;
   direction: rtl;
 }
-
-h1, h2, h3 {
-  color: var(--text-color) !important;
-}
-
 .landingPageLayout {
   display: flex;
   flex-direction: row-reverse; 
