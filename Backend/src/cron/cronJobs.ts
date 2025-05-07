@@ -32,14 +32,16 @@ async function handleDailyMarketingJob() {
           redirectUri: process.env.GOOGLE_ADS_REDIRECT_URI!,
           customerId: customerId,
         });
+        console.log("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~:", googleAdsService);
+        console.log(googleAdsService);
 
-        console.log("google ads service created:", googleAdsService);
+        console.log("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!google ads service created:", googleAdsService);
 
         console.log("before get campaigns");
 
         // get all campigns of the user
         const campaigns: Campaign[] = await googleAdsService.getCampaigns();
-
+console.log('asfdasdds');
         // for test:
         // enum CampaignStatus {
         //   ENABLED = "ENABLED",

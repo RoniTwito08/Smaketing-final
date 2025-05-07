@@ -224,9 +224,10 @@ export const launchGoogleAdsCampaign = async (req: Request, res: Response): Prom
       adGroupId: adGroup.id,
     });
 
+    console.log('daaa');
     // Generate keywords using Gemini
     const keywords = await getGeminiKeywordsFromCampaign(campaign);
-
+    console.log('asdadads');
     await googleAdsService.addKeywordsToAdGroup(adGroup.id, keywords.map(kw => ({ text: kw.keywordText, matchType: kw.matchType })));
 
     res.status(201).json({

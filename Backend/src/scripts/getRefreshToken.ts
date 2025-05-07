@@ -8,9 +8,9 @@ dotenv.config();
 const app = express();
 const port = 3000;
 
-const clientId = process.env.GOOGLE_ADS_CLIENT_ID!;
-const clientSecret = process.env.GOOGLE_ADS_CLIENT_SECRET!;
-const redirectUri = process.env.GOOGLE_ADS_REDIRECT_URI || 'http://localhost:3000/oauth2callback';
+const clientId = "120082169705-99f9502l5poulsg0iqtja7j356nbjena.apps.googleusercontent.com";
+const clientSecret = "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";
+const redirectUri =  'http://localhost:3000/oauth2callback';
 const scope = 'https://www.googleapis.com/auth/adwords';
 
 app.get('/start', async (req, res) => {

@@ -34,6 +34,7 @@ export class GoogleAdsService {
     return {
       Authorization: `Bearer ${accessToken}`, // <-- fixed with backticks
       "developer-token": this.developerToken,
+      "login-customer-id": '5175124700', // <-- fixed with backticks
     };
   }
 
@@ -125,6 +126,9 @@ export class GoogleAdsService {
       AND segments.date BETWEEN '${startDate}' AND '${endDate}'
     `; // <-- entire query is now a backtick-enclosed string
     try {
+
+      console.log(await this.getHeaders());
+      console.log('asd;lkjdaslkadsjklasdjlkdsajklsdalkjsdajlkasdjkldaskjldskaljlkjdaslkjdasdas');
       const response = await request({
         url: `${this.baseUrl}/customers/${this.customerId}/googleAds:search`, // <--- backticks
         method: "POST",
@@ -133,6 +137,7 @@ export class GoogleAdsService {
       });
       return this.transformCampaignResponse(response.data);
     } catch (error: any) {
+      console.log(error);
       const googleError = error?.response?.data;
 
       console.error("❌ Google Ads API error:", {
@@ -242,22 +247,31 @@ export class GoogleAdsService {
   ): Promise<Campaign> {
     const targetCustomerId = customerId || this.customerId;
 
-    const data = {
-      name: campaign.name,
-      status: campaign.status,
-      advertisingChannelType: campaign.advertisingChannelType,
-      startDate: campaign.startDate,
-      endDate: campaign.endDate,
+    const operation = {
+      mutateOperations: [
+        {
+          campaignOperation: {
+            create: {
+              name: campaign.name,
+              status: campaign.status,
+              advertisingChannelType: campaign.advertisingChannelType,
+              startDate: campaign.startDate,
+              endDate: campaign.endDate,
+              manualCpc: {}, // You must include a bidding strategy like this
+              campaignBudget: `customers/${targetCustomerId}/campaignBudgets/1234567890`, // Ensure this is correct!
+            },
+          },
+        },
+      ],
     };
-
-    const response = await request<{ results?: Array<{ campaign: Campaign }> }>(
-      {
-        url: `${this.baseUrl}/customers/${targetCustomerId}/campaigns`,
-        method: "POST",
-        headers: await this.getHeaders(),
-        data,
-      }
-    );
+    
+    const response = await request<{ results?: Array<{ campaign: Campaign }> }>({
+      url: `${this.baseUrl}/customers/${targetCustomerId}/googleAds:mutate`,
+      method: "POST",
+      headers: await this.getHeaders(),
+      data: operation,
+    });
+    
 
     const campaignData = response.data.results?.[0]?.campaign;
     if (!campaignData) {
@@ -414,9 +428,8 @@ export class GoogleAdsService {
         validateStatus: (status: number) => true,
       };
 
-      const response = await request<GoogleAdsCreateCustomerResponse>(
-        requestConfig
-      );
+      const response = await request<{ resourceName: string }>(requestConfig);
+      console.log("Response from createCustomerClient:", response.data);
 
       if (response.status !== 200) {
         throw new Error(
@@ -426,11 +439,13 @@ export class GoogleAdsService {
         );
       }
 
-      if (!response.data?.customerClient?.id) {
-        throw new Error("No customer client ID returned in response");
+      if (!response.data?.resourceName) {
+        throw new Error("No customer resource name returned in response");
       }
 
-      return response.data.customerClient.id;
+      // Extract customer ID from resourceName (format: "customers/1234567890")
+      const customerId = response.data.resourceName.split('/')[1];
+      return customerId;
     } catch (error: any) {
       console.error("Detailed error in createCustomerClient:", {
         error: error.message,
