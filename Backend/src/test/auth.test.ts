@@ -1,7 +1,6 @@
 import request from "supertest";
 import initApp from "../server";
 import mongoose from "mongoose";
-import postModel from "../models/post_models";
 import { Express } from "express";
 import userModel, { User } from "../models/user_models";
 // import { send } from "process";
@@ -22,7 +21,6 @@ beforeAll(async () => {
   app = await initApp();
   originalTokenSecret = process.env.TOKEN_SECRET;
   await userModel.deleteMany();
-  await postModel.deleteMany();
 
   const hashedPassword = await bcrypt.hash("testpassword", 10);
 
@@ -44,7 +42,6 @@ beforeAll(async () => {
 afterAll((done) => {
   mongoose.connection.close();
   userModel.deleteMany();
-  postModel.deleteMany();
   process.env.TOKEN_SECRET = originalTokenSecret;
   done();
 });
