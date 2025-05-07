@@ -11,9 +11,8 @@ import MenuOutlinedIcon from "@mui/icons-material/MenuOutlined";
 import { ChatList } from "../Chat/ChatList";
 import { ChatModal } from "../Chat/ChatModal";
 import logo from "../../assets/Smarketing.png";
-import { MyPosts } from "../../pages/userProfileScreen/MyPosts";
 import { AccountSettings } from "../../pages/userProfileScreen/AccountSettings";
-import { BusinessSetting } from "../../pages/userProfileScreen/BusinessSetting";
+import { BusinessSetting } from "../../pages/businessProfileScreen/BusinessSetting";
 import LogoutIcon from "@mui/icons-material/Logout";
 import { useAuth } from "../../context/AuthContext";
 import MainFeed from "../../pages/feedPage/MainFeed";
@@ -59,7 +58,7 @@ export default function DashboardLayoutBasic(props: any) {
     },
     {
       segment: "chats",
-      title: "צאטים",
+      title: "לידים",
       icon: <CalendarTodayOutlinedIcon />,
     },
     {
@@ -143,7 +142,6 @@ export default function DashboardLayoutBasic(props: any) {
 
   // Update the route mapping
   const routeComponents: { [key: string]: React.ReactNode } = {
-    "/my-campign": <MyPosts />, // matan- to edit
     "/analytics": <GoogleAdsAnalytics />,
     "/settings/account": <AccountSettings />,
     "/settings/business-settings": <BusinessSetting />,

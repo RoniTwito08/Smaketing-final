@@ -84,9 +84,9 @@ const CampaignPopup: React.FC<CampaignPopupProps> = ({ open, onClose /*, onSubmi
     }
   }, [userFont]);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
-    setForm((prev) => ({ ...prev, [name]: value })); 
+    setForm((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -327,6 +327,7 @@ const CampaignPopup: React.FC<CampaignPopupProps> = ({ open, onClose /*, onSubmi
 
   // פונקציה לסגירת כל הפופאפים ואיפוס המצבים
   const handleClose = () => {
+    setForm({ ...form, campaignName: "", campaignContent: "" });
     setLandingPageData(null);
     setSubmitted(false);
     setShowMobilePopup(false);
@@ -339,7 +340,7 @@ const CampaignPopup: React.FC<CampaignPopupProps> = ({ open, onClose /*, onSubmi
 
   return (
     <div>
-      {loading && <p className="text-blue-500">🔄 טוען... נא להמתין</p>}
+      
       {error && <p className="text-red-500">❌ {error}</p>}
   
       {submitted && landingPageData ? (
@@ -466,27 +467,142 @@ const CampaignPopup: React.FC<CampaignPopupProps> = ({ open, onClose /*, onSubmi
           <div className="popup-form" dir="rtl">
             <h2>צור קמפיין חדש</h2>
             <form onSubmit={handleSubmit}>
-              <div className="form-grid">
-                <input name="campaignName" placeholder="שם הקמפיין" onChange={handleChange} />
-                <input type="number" name="budget" placeholder="תקציב" onChange={handleChange} />
-                <input name="marketingLevel" placeholder="רמת שיווק" onChange={handleChange} />
-                <input name="campaginPurpose" placeholder="מטרת הקמפיין" onChange={handleChange} />
-                <input name="actionToCall" placeholder="קריאה לפעולה" onChange={handleChange} />
-                <input name="targetAudience" placeholder="קהל יעד" onChange={handleChange} />
-                <input name="targetGender" placeholder="מין קהל היעד" onChange={handleChange} />
-                <input name="language" placeholder="שפה" onChange={handleChange} />
-                <input name="targetLocation" placeholder="מיקום יעד" onChange={handleChange} />
-                <input name="targetAge" placeholder="גיל יעד" onChange={handleChange} />
-                <textarea name="campaignContent" placeholder="תיאור הקמפיין" onChange={handleChange} />
+            <div className="form-grid">
+              <input
+                name="campaignName"
+                placeholder="שם הקמפיין"
+                value={form.campaignName}
+                onChange={handleChange}
+              />
+
+              <div className="form-group">
+                <label>תקציב: {form.budget} ₪</label>
+                <input
+                  type="range"
+                  name="budget"
+                  min="1000"
+                  max="20000"
+                  step="500"
+                  value={form.budget}
+                  onChange={handleChange}
+                />
               </div>
+
+              <div className="form-group">
+                <label>רמת שיווק</label>
+                <select
+                  name="marketingLevel"
+                  value={form.marketingLevel}
+                  onChange={handleChange}
+                >
+                  <option value="">בחר רמה</option>
+                  <option value="נמוכה">נמוכה</option>
+                  <option value="בינונית">בינונית</option>
+                  <option value="גבוהה">גבוהה</option>
+                </select>
+              </div>
+
+              <div className="form-group">
+                <label>מטרת הקמפיין</label>
+                <select
+                  name="campaginPurpose"
+                  value={form.campaginPurpose}
+                  onChange={handleChange}
+                >
+                  <option value="">בחר מטרה</option>
+                  <option value="הגברת מודעות למותג">הגברת מודעות למותג</option>
+                  <option value="השגת לידים">השגת לידים</option>
+                  <option value="קידום מכירות">קידום מכירות</option>
+                </select>
+              </div>
+
+              <input
+                name="actionToCall"
+                placeholder="קריאה לפעולה"
+                value={form.actionToCall}
+                onChange={handleChange}
+              />
+
+              <div className="form-group">
+                <label>קהל יעד</label>
+                <select
+                  name="targetAudience"
+                  value={form.targetAudience}
+                  onChange={handleChange}
+                >
+                  <option value="">בחר קהל</option>
+                  <option value="לקוחות חדשים">לקוחות חדשים</option>
+                  <option value="לקוחות קיימים">לקוחות קיימים</option>
+                  <option value="עסקים">עסקים</option>
+                </select>
+              </div>
+
+              <div className="form-group">
+                <label>מין קהל היעד</label>
+                <select
+                  name="targetGender"
+                  value={form.targetGender}
+                  onChange={handleChange}
+                >
+                  <option value="">בחר מין</option>
+                  <option value="גברים">גברים</option>
+                  <option value="נשים">נשים</option>
+                  <option value="שני המינים">שני המינים</option>
+                </select>
+              </div>
+
+              <div className="form-group">
+                <label>שפה</label>
+                <select
+                  name="language"
+                  value={form.language}
+                  onChange={handleChange}
+                >
+                  <option value="">בחר שפה</option>
+                  <option value="עברית">עברית</option>
+                  <option value="אנגלית">אנגלית</option>
+                  <option value="ערבית">ערבית</option>
+                </select>
+              </div>
+
+              <input
+                name="targetLocation"
+                placeholder="מיקום יעד"
+                value={form.targetLocation}
+                onChange={handleChange}
+              />
+
+              <input
+                name="targetAge"
+                placeholder="גיל יעד (למשל 25-45)"
+                value={form.targetAge}
+                onChange={handleChange}
+              />
+
+              <textarea
+                name="campaignContent"
+                placeholder="תיאור הקמפיין"
+                value={form.campaignContent}
+                onChange={handleChange}
+              />
+            </div>
+
   
               <div className="popup-actions">
                 <button className="cancel-btn" type="button" onClick={handleClose}>
                   ביטול
                 </button>
-                <button className="submit-btn" type="submit">
-                  צור קמפיין
+                <button className="submit-btn" type="submit" disabled={loading}>
+                  {loading ? (
+                    <div className="btn-loader-wrapper">
+                      <span className="loader loader-in-btn"></span>
+                      טוען...
+                    </div>
+                  ) : (
+                    "צור קמפיין"
+                  )}
                 </button>
+
               </div>
             </form>
           </div>

@@ -7,7 +7,7 @@ import { Campaign } from "../services/googleAds/types";
 
 dotenv.config();
 
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || "");
+const genAI = new GoogleGenerativeAI(process.env.KEYWORDS_GEMINI_API_KEY || "");
 
 export async function getGeminiKeywordsFromCampaign(
   campaign: Campaign
@@ -23,7 +23,8 @@ Campaign Information:
 - Name: ${campaign.name}
 - Type: ${campaign.advertisingChannelType}
 - Goal: ${
-    campaign.optimizationGoalSetting?.optimizationGoalTypes?.[0] ?? "not specified"
+    campaign.optimizationGoalSetting?.optimizationGoalTypes?.[0] ??
+    "not specified"
   }
 - Start Date: ${campaign.startDate}
 - End Date: ${campaign.endDate}

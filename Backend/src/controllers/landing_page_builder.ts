@@ -2,7 +2,6 @@ import { Request, Response } from 'express';
 import { generateContent, fetchPexelsImage } from '../services/landing_page_generator/textAndImage_generator';
 import { BusinessData , CampaignInfo , UserEmailData } from '../services/landing_page_generator/businessInfoTypes_LP';
 import path from 'path';
-import { text } from 'body-parser';
 
 export const generateLandingPageContext = async (req: Request, res: Response): Promise<void> => {
     try {
@@ -14,19 +13,12 @@ export const generateLandingPageContext = async (req: Request, res: Response): P
         const inputDetails: BusinessData = req.body.BusinessData;
         const campaignInfo: CampaignInfo = req.body.campaignInfo;
         const userInfo: UserEmailData = req.body.UserEmailData;
-
         const business = inputDetails.data;
 
-        console.log("Input Details:", business);
-        console.log("Campaign Info:", campaignInfo);
-        console.log("User Info:", userInfo);
-
-        const businessFieldKeyword = await generateContent(
-            `Translate the following business field into a single, precise English keyword that best represents its core concept for image search.
-            For example, if the field is "בתי קפה", return "coffee".
-            Business field: ${business.businessField}.
-            Write in Hebrew language.`
-        );
+        const businessFieldKeyword = await generateContent(`תרגם את התחום הבא למילת מפתח מדויקת אחת באנגלית שמתארת אותו בצורה פשוטה לחיפוש תמונה.
+לדוגמה: "בתי קפה" → "coffee"
+החזר רק מילה אחת ללא טקסט נוסף:
+${business.businessField}`);
 
         const nameOfMainPicture = `${Date.now() + businessFieldKeyword.replace(/\s+/g, "_")}.jpg`;
         const imageFeatureGeneratePath = path.join(__dirname, '../pexels_images', nameOfMainPicture);
@@ -34,78 +26,59 @@ export const generateLandingPageContext = async (req: Request, res: Response): P
         const headerSection = {
             sectionName: "header",
             businessName: business.businessName,
-            buttonText: await generateContent(
-                `Create a short and compelling call to action for a marketing campaign with the following objective: "${campaignInfo.campaginPurpose}".
-                Example actions: "Contact Us", "Buy Now", "Get a Quote".
-                Limit to 3 words.
-                Write in Hebrew language.`
-            )
+            buttonText: await generateContent(`כתוב קריאה לפעולה ממוקדת ומושכת (3 מילים לכל היותר) עבור קמפיין שמטרתו: "${campaignInfo.campaginPurpose}".
+לדוגמה: "צרו קשר", "התחילו עכשיו".
+החזר רק טקסט בעברית, בלי הסברים.`)
         };
 
         const heroSection = {
             sectionName: "hero",
-            title: await generateContent(
-                `Write an engaging and professional landing page title for the business "${business.businessName}" operating in the field of "${business.businessField}".
-                The title should be clear, attractive, and deliver the business's main value in one sentence.
-                Avoid unnecessary punctuation.
-                Write in Hebrew language.`
-            ),
-            content: await generateContent(
-                `Write a short paragraph (max 3 lines) describing the business "${business.businessName}" clearly and professionally.
-                Include the following information:
-                - Business type: ${business.businessType}
-                - Field description: ${business.businessFieldDetails}
-                - Service areas: ${business.serviceAreas}
-                - Services: ${business.serviceDescription}
-                - Target audience: ${campaignInfo.targetAudience}, Age group: ${campaignInfo.targetAge}, Gender: ${campaignInfo.targetGender}
-                Avoid unnecessary punctuation.
-                Write in Hebrew language.`
-            ),
+            title: await generateContent(`כתוב כותרת שיווקית חזקה וברורה לעסק בשם "${business.businessName}" בתחום "${business.businessField}".
+שמור על משפט אחד בלבד בעברית. ללא סימני פיסוק מיותרים.`),
+            content: await generateContent(`כתוב פסקה קצרה וממוקדת על העסק "${business.businessName}".
+כלול:
+- סוג עסק: ${business.businessType}
+- פירוט התחום: ${business.businessFieldDetails}
+- אזורי שירות: ${business.serviceAreas}
+- שירותים: ${business.serviceDescription}
+- קהל יעד: ${campaignInfo.targetAudience}, גיל: ${campaignInfo.targetAge}, מין: ${campaignInfo.targetGender}
+שלוש שורות לכל היותר. בעברית בלבד.`),
             buttonText: headerSection.buttonText
         };
 
         const featuresSection = {
             sectionName: "features",
-            content: await generateContent(
-                `Create a JSON array of 4 strong service offerings for the business "${business.businessName}".
-                Each service must start with ✔️, use persuasive marketing language, and contain 5–6 words max.
-                Do NOT copy from user input. Example format:
-                [
-                    "✔️ High-quality personalized service",
-                    "✔️ Fast response time and support"
-                ]
-                Write in Hebrew language.`
-            ),
+            content: await generateContent(`כתוב מערך JSON של 4 יתרונות בולטים של העסק "${business.businessName}".
+כל יתרון יתחיל ב־✔️, יהיה שיווקי, קצר (עד 6 מילים), ולא מועתק מהקלט.
+פורמט:
+[
+  "✔️ שירות אישי ומהיר",
+  "✔️ מחירים תחרותיים"
+]
+עברית בלבד.`),
             image: await fetchPexelsImage(businessFieldKeyword, imageFeatureGeneratePath)
         };
 
         const reviewsSection = {
             sectionName: "reviews",
-            content: await generateContent(
-                `Write 4 positive and professional customer reviews about the business "${business.businessName}".
-                Each review should have 2 sentences and use present tense (e.g., "Professional", "Reliable", "Kind").
-                Avoid names, personal references, and excessive punctuation.
-                Format:
-                [
-                    "First review...",
-                    "Second review...",
-                    ...
-                ]
-                Write in Hebrew language.`
-            )
+            content: await generateContent(`כתוב 4 חוות דעת חיוביות על העסק "${business.businessName}".
+כל אחת תהיה 2 משפטים, בזמן הווה, ללא שמות או סימני פיסוק מיותרים.
+פורמט:
+[
+  "שירות מצוין. מקצועיות לאורך כל הדרך",
+  ...
+]
+בבקשה בעברית בלבד.`)
         };
 
         const aboutUsSection = {
             sectionName: "aboutUs",
-            content: await generateContent(
-                `Write a professional "About Us" section for the business "${business.businessName}" in 5 lines.
-                Include:
-                - Unique value or offering: ${business.uniqueService}
-                - Target age group: ${campaignInfo.targetAge}
-                - Design preference or brand tone: ${business.designPreferences}
-                Avoid punctuation at the end of lines.
-                Write in Hebrew language.`
-            )
+            content: await generateContent(`כתוב פסקת "אודות" מקצועית ב־5 שורות עבור העסק "${business.businessName}".
+כלול:
+- מה מייחד את השירות: ${business.uniqueService}
+- גיל קהל יעד: ${campaignInfo.targetAge}
+- סגנון עיצוב או טון מותג: ${business.designPreferences}
+הימנע מנקודות בסוף שורות. בעברית בלבד.`)
         };
 
         const gallerySection = { sectionName: "gallery" };
@@ -118,31 +91,17 @@ export const generateLandingPageContext = async (req: Request, res: Response): P
             copyRights: "©2025 כל הזכויות שמורות לצוות Smarketing"
         };
 
-        // בתוך ה־generateLandingPageContext, לאחר שמוגדר business:
         const colorAndFontPrompt = {
-            primaryColor: await generateContent(
-            `Provide only a single primary color hex code (e.g. #1A2B3C) suitable for the business "${business.businessName}". Do NOT wrap it in JSON or add any text. without \n in the end`
-            ),
-            secondaryColor: await generateContent(
-            `Provide only a single secondary color hex code (e.g. #4D5E6F) suitable for the business "${business.businessName}". Do NOT wrap it in JSON or add any text. without \n in the end`
-            ),
-            tertiaryColor: await generateContent(
-            `Provide only a single tertiary (accent) color hex code (e.g. #AABBCC) suitable for the business "${business.businessName}". Do NOT wrap it in JSON or add any text. without \n in the end`
-            ),
-            textColor: await generateContent(
-            `Provide only a single text color hex code (e.g. #FFFFFF) suitable for the business "${business.businessName}". Do NOT wrap it in JSON or add any text. without \n in the end `
-            ),
-            font: await generateContent(
-            `Provide only a single font-family name (e.g. "Roboto" or "Arial, sans-serif") suitable as the default font for the business "${business.businessName}". Do NOT wrap it in JSON or add any text. without \n in the end`
-            )
+            primaryColor: await generateContent(`בחר צבע ראשי מעניין (hex בלבד, למשל #123456) לעסק בשם "${business.businessName}" בתחום "${business.businessField}".
+הימנע משחור, לבן ואפור. צבע שיתאים לאופי המותג. כל פעם צבע שונה. החזר רק הקוד.`),
+            secondaryColor: await generateContent(`בחר צבע משלים לצבע הראשי לעסק "${business.businessName}".
+שונה אך בהרמוניה. החזר hex בלבד. כל פעם צבע שונה. אל תצרף טקסט נוסף.`),
+            tertiaryColor: await generateContent(`בחר צבע שלישי נועז או מעניין שמשלים את שני הקודמים לעסק "${business.businessName}".
+אל תחזור על צבעים. אל תשתמש בשחור, לבן או אפור. החזר hex בלבד.`),
+            textColor: await generateContent(`בחר צבע טקסט ברור ונעים שייראה טוב על הרקע הקיים לעסק "${business.businessName}". החזר hex בלבד. עברית.`),
+            font: await generateContent(`בחר שם פונט אחד שמתאים לעסק "${business.businessName}". דוגמה: "Rubik" או "Assistant". החזר רק את שם הפונט. ללא טקסט נוסף.`)
         };
-        
-        // דוגמא לפלט של כל שדה:
-        // colorAndFontPrompt.primaryColor === "#007bff"
-        // colorAndFontPrompt.secondaryColor === "#28a745"
-        // colorAndFontPrompt.tertiaryColor === "#adb5bd"
-        // colorAndFontPrompt.font === "Open Sans"
-  
+
         const context = {
             headerSection,
             heroSection,
@@ -162,11 +121,17 @@ export const generateLandingPageContext = async (req: Request, res: Response): P
     }
 };
 
-
 export const getTextSuggestions = async (req: Request, res: Response): Promise<void> => {
     const { text, tone } = req.body;
     try {
-        const prompt = `Please improve the following text by making it more concise and precise, while reflecting the following tone instructions: "${tone}". Please provide your answer exclusively in Hebrew. Original text: ${text}`;
+        const prompt = `שפר את הטקסט הבא כך שיהיה חד, מדויק ותואם את הטון המבוקש: "${tone}".
+הטקסט:
+${text}
+הנחיות:
+- כתוב בעברית בלבד
+- אל תחרוג מ־3 משפטים
+- אל תוסיף הסברים או הקדמות
+החזר רק את הנוסח המשופר:`;
         const suggestion = await generateContent(prompt);
         res.status(200).json({ suggestion });
     } catch (error) {
@@ -174,5 +139,3 @@ export const getTextSuggestions = async (req: Request, res: Response): Promise<v
         res.status(500).json({ error: "Internal server error" });
     }
 };
-
-
