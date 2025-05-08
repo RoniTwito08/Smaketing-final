@@ -11,8 +11,8 @@ const Rectangle: React.FC<RectangleProps> = ({
   backgroundColor,
   width,
   height,
-  top,
-  left,
+  // top,
+  // left,
   zIndex,
 }) => {
   return (

@@ -3,7 +3,7 @@ import MainButton from "../../../components/UI/MainButton";
 import SeconderyButton from "../../../components/UI/SeconderyButton";
 import MainAnimation from "./MainAnimation";
 import MainSentence from "./MainSentence";
-import { min } from "date-fns";
+//import { min } from "date-fns";
 
 const SecondSection: React.FC = () => {
   const navigate = useNavigate();
