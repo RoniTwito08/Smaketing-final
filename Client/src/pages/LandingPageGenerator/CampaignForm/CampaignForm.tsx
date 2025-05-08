@@ -10,6 +10,7 @@ import "./CampaignForm.css";
 import { useAuth } from "../../../context/AuthContext";
 import { IoRocketOutline } from "react-icons/io5";
 import { MdCancel } from "react-icons/md";
+import { config } from "../../../config";
 
 interface CampaignForm {
   creatorId: string;
@@ -97,7 +98,7 @@ const CampaignPopup: React.FC<CampaignPopupProps> = ({ open, onClose /*, onSubmi
     e.preventDefault();
     setLoading(true);
     setError("");
-    const businessInfo = await fetch(`http://localhost:3000/business-info/${user._id}`, {
+    const businessInfo = await fetch(`${config.apiUrl}/business-info/${user._id}`, {
       method: "GET",
       headers: { "Content-Type": "application/json" },
     });
@@ -111,7 +112,7 @@ const CampaignPopup: React.FC<CampaignPopupProps> = ({ open, onClose /*, onSubmi
       return;
     }
     console.log("Business Data:", BusinessData);
-    const userEmail = await fetch(`http://localhost:3000/users/${user._id}`, {
+    const userEmail = await fetch(`${config.apiUrl}/users/${user._id}`, {
       method: "GET",
       headers: { "Content-Type": "application/json" },
     });
@@ -127,7 +128,7 @@ const CampaignPopup: React.FC<CampaignPopupProps> = ({ open, onClose /*, onSubmi
     document.body.style.overflow = "auto";
     console.log("User Email Data:", userEmailData.email);
     try {
-      const response = await fetch("http://localhost:3000/landing-page-generator/generateLandingPageContext", {
+      const response = await fetch(`${config.apiUrl}/landing-page-generator/generateLandingPageContext`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -221,34 +222,34 @@ const CampaignPopup: React.FC<CampaignPopupProps> = ({ open, onClose /*, onSubmi
       const landingPageHTML = clone.innerHTML;
   
       const completeHTML = `
-  <!DOCTYPE html>
-  <html>
-    <head>
-      <meta charset="UTF-8">
-      <title>Landing Page</title>
-      <link rel="stylesheet" href="http://localhost:3000/dist/assets/index-B2wtabiK.css">
-      <style>
-        :root {
-          --primary-color: ${colors.primaryColor};
-          --secondary-color: ${colors.secondaryColor};
-          --tertiary-color: ${colors.tertiaryColor};
-          --text-color: ${colors.textColor};
-          --font: ${userFont};
-        }
-        body {
-          font-family: ${userFont} !important;
-        }
-      </style>
-    </head>
-    <body>
-      ${landingPageHTML}
-      <script type="module" src="http://localhost:3000/dist/assets/index-C0XqnHoo.js"></script>
-    </body>
-  </html>
+        <!DOCTYPE html>
+        <html>
+          <head>
+            <meta charset="UTF-8">
+            <title>Landing Page</title>
+            <link rel="stylesheet" href="${config.apiUrl}/dist/assets/index-B2wtabiK.css">
+            <style>
+              :root {
+                --primary-color: ${colors.primaryColor};
+                --secondary-color: ${colors.secondaryColor};
+                --tertiary-color: ${colors.tertiaryColor};
+                --text-color: ${colors.textColor};
+                --font: ${userFont};
+              }
+              body {
+                font-family: ${userFont} !important;
+              }
+            </style>
+          </head>
+          <body>
+            ${landingPageHTML}
+            <script type="module" src="${config.apiUrl}/dist/assets/index-C0XqnHoo.js"></script>
+          </body>
+        </html>
       `;
   
       try {
-        const saveResponse = await fetch("http://localhost:3000/api/saveLandingPage", {
+        const saveResponse = await fetch(`${config.apiUrl}/api/saveLandingPage`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
@@ -273,7 +274,7 @@ const CampaignPopup: React.FC<CampaignPopupProps> = ({ open, onClose /*, onSubmi
           landingPage: savedLandingPage.file,
         };
   
-        const campaignResponse = await fetch("http://localhost:3000/campaigns", {
+        const campaignResponse = await fetch(`${config.apiUrl}/campaigns`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(campaignData),

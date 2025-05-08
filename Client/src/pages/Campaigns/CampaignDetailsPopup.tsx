@@ -6,6 +6,7 @@ import { IoMdAnalytics } from "react-icons/io";
 import { MdDeleteOutline } from "react-icons/md";
 import { IoIosSend } from "react-icons/io";
 import { FaRegCirclePause } from "react-icons/fa6";
+import { config } from "../../config";
 
 interface CampaignDetailsPopupProps {
   campaign: any;
@@ -26,7 +27,7 @@ const CampaignDetailsPopup: React.FC<CampaignDetailsPopupProps> = ({ campaign, o
         <div className={styles.content}>
           {campaign.landingPage ? (
             <iframe
-              src={`http://localhost:3000/landingPages/${campaign.landingPage}`}
+              src ={`${config.apiUrl}/landingPages/${campaign.landingPage}`}
               title="Landing Page Preview"
               className={styles.landingPageIframe}
               frameBorder="0"
