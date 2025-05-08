@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import chatStyles from "./Chat.module.css";
-
+import { config } from "../../../../config";
 export default function Chat() {
   const [userInput, setUserInput] = useState("");
   const [userInputTone, setUserInputTone] = useState("");
@@ -36,7 +36,7 @@ export default function Chat() {
     setUserInputTone("");
     setUserInput("");
     try {
-      const response = await fetch("http://localhost:3000/landing-page-generator/getTextSuggestions", {
+      const response = await fetch(`${config.apiUrl}/landing-page-generator/getTextSuggestions`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ text: input, tone }),

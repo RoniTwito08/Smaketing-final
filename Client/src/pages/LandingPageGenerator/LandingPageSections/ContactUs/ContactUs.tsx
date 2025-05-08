@@ -1,7 +1,7 @@
 import { useState } from "react";
 import axios from "axios";
 import contactStyles from "./contactUs.module.css";
-
+import { config } from "../../../../config";
 const ContactUs = () => {
   const [formData, setFormData] = useState({
     fullName: "",
@@ -22,7 +22,7 @@ const ContactUs = () => {
     setLoading(true);
     setError(null);
     try {
-      await axios.post("http://localhost:3000/leads/createLead", {
+      await axios.post(`${config.apiUrl}/leads/createLead`, {
         name: formData.fullName,
         email: formData.email,
         phone: formData.phone,

@@ -7,6 +7,7 @@ import Reviews from "../LandingPageSections/Reviews/Reviews";
 import AboutUs from "../LandingPageSections/AboutUs/AboutUs";
 import ContactUs from "../LandingPageSections/ContactUs/ContactUs";
 import Gallery from "../LandingPageSections/Gallery/Gallery";
+import {config} from "../../../config";
 
 interface Section {
   sectionName?: string;
@@ -53,7 +54,7 @@ const SectionRenderer = ({ section, onDeleteSection }: SectionRendererProps) => 
           <Features
             content={section.content ? section.content.split("\n") : []}
             image={
-              "http://localhost:3000/api/pexels_images/" +
+              `${config.apiUrl}/api/pexels_images/` +
               (section.image?.split("/").pop() || "")
             }
             onDelete={onDeleteSection}
