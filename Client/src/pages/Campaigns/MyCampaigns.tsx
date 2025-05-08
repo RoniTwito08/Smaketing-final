@@ -76,13 +76,16 @@ export const MyCampaigns: React.FC<{ onSelectCampaign: (campaign: any) => void }
 
   return (
     <div className={styles.campaignsContainer}>
-      <h2>הקמפיינים שלי</h2>
       {campaigns.length > 0 ? (
-        campaigns.map((campaign) => (
-          <div key={campaign._id} onClick={() => handleCampaignClick(campaign)}>
-            <CampaignCard campaign={campaign} />
-          </div>
-        ))
+        <div className={styles.cardsGrid}>
+          {campaigns.map((campaign) => (
+            <CampaignCard
+              key={campaign._id}
+              campaign={campaign}
+              onClick={() => handleCampaignClick(campaign)}
+            />
+          ))}
+        </div>
       ) : (
         <p>לא נמצאו קמפיינים</p>
       )}
@@ -92,10 +95,11 @@ export const MyCampaigns: React.FC<{ onSelectCampaign: (campaign: any) => void }
           campaign={selectedCampaign}
           onClose={closePopup}
           onSubmit={handleSubmitCampaign}
-          onDelete={handleDeleteCampaign}  // Pass the handleDelete function
+          onDelete={handleDeleteCampaign}
         />
       )}
     </div>
+
   );
 };
 
