@@ -19,17 +19,17 @@ export const BusinessSetting = () => {
     control,
     handleSubmit,
     setValue,
-    getValues,
-    formState: { errors },
+    // getValues,
+    // formState: { errors },
   } = useForm<FormValues>();
 
-  const socialPlatforms = [
-    "Facebook",
-    "Instagram",
-    "TikTok",
-    "Twitter",
-    "Other",
-  ];
+  // const socialPlatforms = [
+  //   "Facebook",
+  //   "Instagram",
+  //   "TikTok",
+  //   "Twitter",
+  //   "Other",
+  // ];
 
   const professions = [
     "מעצב גרפי",

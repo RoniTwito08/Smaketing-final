@@ -1,7 +1,7 @@
 "use client";
 
 import { Footer } from "flowbite-react";
-import { BsFacebook, BsInstagram, BsTwitter } from "react-icons/bs";
+//import { BsFacebook, BsInstagram, BsTwitter } from "react-icons/bs";
 import Logo from "../../../../components/UI/Logo";
 
 export default function FooterComp() {
