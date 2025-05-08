@@ -11,9 +11,6 @@ const Feed: React.FC<{ className?: string }> = ({ className }) => {
 
   const handleCampaignSubmit = (data: any) => {
     console.log("Campaign submitted:", data);
-    setRefreshFeed(true); // Trigger refresh of the feed
-    // Refresh the feed immediately after a short timeout
-    setTimeout(() => setRefreshFeed(false), 1000);
   };
 
   const handleDeleteCampaign = (campaignId: string) => {
