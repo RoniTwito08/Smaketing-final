@@ -1,5 +1,4 @@
 // CampaignDetailsPopup.tsx
-
 import React from "react";
 import styles from "./CampaignDetailsPopup.module.css";
 import { IoMdAnalytics } from "react-icons/io";
@@ -11,10 +10,31 @@ import { config } from "../../config";
 interface CampaignDetailsPopupProps {
   campaign: any;
   onClose: () => void;
-  onSubmit: () => void;
+  onSubmit: (campaignId: string) => void;  // יש להוסיף פרמטר שיבצע את פעולת ה־submit
+  onDelete: (campaignId: string) => void;  // פונקציית מחיקה
 }
 
-const CampaignDetailsPopup: React.FC<CampaignDetailsPopupProps> = ({ campaign, onClose, onSubmit }) => {
+const CampaignDetailsPopup: React.FC<CampaignDetailsPopupProps> = ({ campaign, onClose, onSubmit, onDelete }) => {
+  const handleDelete = async () => {
+    try {
+      window.confirm("האם אתה בטוח שברצונך למחוק את הקמפיין?"); 
+      const response = await fetch(`${config.apiUrl}/campaigns/${campaign._id}`, {
+        method: "DELETE",
+      });
+
+      if (!response.ok) {
+        throw new Error("שגיאה במחיקת הקמפיין");
+      }
+
+      
+
+      onDelete(campaign._id); // נעדכן את הסטייט בצד הפיד אחרי שמחקנו את הקמפיין
+      onClose(); // סגירת הפופאפ אחרי מחיקת הקמפיין
+    } catch (error) {
+      console.error("Error deleting campaign:", error);
+    }
+  };
+
   return (
     <div className={styles.overlay}>
       <div className={styles.popup}>
@@ -27,7 +47,7 @@ const CampaignDetailsPopup: React.FC<CampaignDetailsPopupProps> = ({ campaign, o
         <div className={styles.content}>
           {campaign.landingPage ? (
             <iframe
-              src ={`${config.apiUrl}/landingPages/${campaign.landingPage}`}
+              src={`${config.apiUrl}/landingPages/${campaign.landingPage}`}
               title="Landing Page Preview"
               className={styles.landingPageIframe}
               frameBorder="0"
@@ -39,29 +59,16 @@ const CampaignDetailsPopup: React.FC<CampaignDetailsPopupProps> = ({ campaign, o
           )}
         </div>
         <div className={styles.footer}>
-          <button
-            className={styles.submitBtn}
-            onClick={onSubmit}
-            data-tooltip="שלח"
-          >
+          <button className={styles.submitBtn} onClick={() => onSubmit(campaign._id)} data-tooltip="שלח">
             <IoIosSend />
           </button>
-          <button
-            className={styles.AnalyticsBtn}
-            data-tooltip="גרפים ואנליטיקות"
-          >
+          <button className={styles.AnalyticsBtn} data-tooltip="גרפים ואנליטיקות">
             <IoMdAnalytics />
           </button>
-          <button
-            className={styles.deleteBtn}
-            data-tooltip="מחק"
-          >
+          <button className={styles.deleteBtn} onClick={handleDelete} data-tooltip="מחק">
             <MdDeleteOutline />
           </button>
-          <button
-            className={styles.pauseBtn}
-            data-tooltip="השהה"
-          >
+          <button className={styles.pauseBtn} data-tooltip="השהה">
             <FaRegCirclePause />
           </button>
         </div>

@@ -1,3 +1,4 @@
+// MyCampaigns.tsx
 import React, { useState, useEffect } from "react";
 import styles from "./MyCampaigns.module.css";
 import { useAuth } from "../../context/AuthContext";
@@ -5,7 +6,7 @@ import { config } from "../../config";
 import CampaignCard from "./CampaignCard";
 import CampaignDetailsPopup from "./CampaignDetailsPopup";
 
-export const MyCampaigns: React.FC = () => {
+export const MyCampaigns: React.FC<{ onSelectCampaign: (campaign: any) => void }> = ({ onSelectCampaign }) => {
   const { user } = useAuth();
   const [campaigns, setCampaigns] = useState<any[]>([]);
   const [selectedCampaign, setSelectedCampaign] = useState<any>(null);
@@ -28,10 +29,16 @@ export const MyCampaigns: React.FC = () => {
 
   const handleCampaignClick = (campaign: any) => {
     setSelectedCampaign(campaign);
+    onSelectCampaign(campaign);  // Pass the selected campaign to the parent component
   };
 
   const closePopup = () => {
     setSelectedCampaign(null);
+  };
+
+  const handleDeleteCampaign = (campaignId: string) => {
+    // Remove the deleted campaign from the list
+    setCampaigns((prevCampaigns) => prevCampaigns.filter((campaign) => campaign._id !== campaignId));
   };
 
   const handleSubmitCampaign = async () => {
@@ -64,7 +71,6 @@ export const MyCampaigns: React.FC = () => {
 
     } catch (error) {
       console.error('Error launching campaign:', error);
-      // You might want to show an error message to the user here
       alert('Failed to launch campaign. Please try again.');
     }
   };
@@ -87,6 +93,7 @@ export const MyCampaigns: React.FC = () => {
           campaign={selectedCampaign}
           onClose={closePopup}
           onSubmit={handleSubmitCampaign}
+          onDelete={handleDeleteCampaign}  // Pass the handleDelete function
         />
       )}
     </div>
