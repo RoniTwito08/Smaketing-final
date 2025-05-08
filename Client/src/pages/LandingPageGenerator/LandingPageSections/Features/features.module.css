@@ -1,4 +1,5 @@
 .featuresSection {
+  container-type: inline-size;
   position: relative;
   width: 100%;
   display: flex;
@@ -8,23 +9,26 @@
   overflow: hidden;
   transition: all 0.3s ease-in-out;
   margin-bottom: 10%;
-  padding: 20px;
+  padding: 40px 20px;
+  border-radius: 16px;
+  flex-wrap: wrap;
+  gap: 20px;
 }
 
 .featuresContentContainer {
   display: flex;
-  justify-content: center;
+  justify-content: space-between;
   align-items: center;
   width: 100%;
-  margin-right: 10%;
+  flex-wrap: wrap;
+  gap: 30px;
 }
 
 .featuresContent {
-  flex: 1;
-  max-width: 50%;
+  flex: 1 1 45%;
+  max-width: 45%;
   text-align: right;
   padding: 20px;
-  margin-right: 10%;
 }
 
 .featuresList {
@@ -34,27 +38,27 @@
 }
 
 .featureItem {
-  margin-bottom: 10px;
-  margin-right: 40px;
+  margin-bottom: 12px;
+  margin-right: 20px;
   text-align: right;
 }
 
 .featureText {
   font-size: 18px;
-  color: #333;
-  cursor: text;               /* סמן טקסט */
-  outline: none;              /* מסיר קו אדום בפוקוס */
+  color: var(--text-color, #555);
+  cursor: text;
+  outline: none;
 }
 
 .featureText:focus {
   outline: 2px solid rgba(0, 0, 0, 0.1);
   border-radius: 4px;
-  background: rgba(255, 255, 255, 0.6);
+  background: rgba(255, 255, 255, 0.5);
 }
 
 .featuresImageContainer {
-  flex: 1;
-  max-width: 40%;
+  flex: 1 1 45%;
+  max-width: 45%;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -65,7 +69,7 @@
   max-width: 100%;
   height: auto;
   border-radius: 12px;
-  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+  box-shadow: 0px 4px 14px rgba(0, 0, 0, 0.1);
 }
 
 .actionBar {
@@ -74,44 +78,84 @@
   right: -20px;
 }
 
+/* רספונסיביות לפי רוחב מסך */
 @media (max-width: 768px) {
-  .featuresSection {
-    flex-direction: column;
-    padding: 30px 20px;
-  }
   .featuresContent,
   .featuresImageContainer {
     max-width: 100%;
-    padding: 10px;
-  }
-  .featuresContent {
+    flex: 1 1 100%;
     text-align: center;
-    margin-top: 20px;
   }
   .featureText {
     font-size: 16px;
-    margin: 5px 0;
-    text-align: center;
+  }
+  .featuresSection {
+    padding: 30px 15px;
   }
   .featuresImage {
     max-width: 80%;
   }
 }
 
-@media (max-width: 576px) {
-  .featuresSection {
-    padding: 20px 10px;
-  }
+/* רספונסיביות קטנה יותר */
+@media (max-width: 480px) {
   .featuresContent {
     padding: 10px;
   }
   .featureText {
     font-size: 14px;
-    margin-bottom: 8px;
   }
   .featuresImage {
     max-width: 90%;
   }
 }
 
-/* Container queries — ללא שינוי מהקודם */
+/* קונטיינרים - למי שתומך ב־@container */
+@container (max-width: 768px) and (min-width: 577px) {
+  .featuresSection {
+    flex-direction: column;
+    padding: 25px;
+  }
+
+  .featuresContent {
+    max-width: 100%;
+    text-align: center;
+  }
+
+  .featuresImageContainer {
+    max-width: 100%;
+  }
+
+  .featureText {
+    font-size: 16px;
+  }
+}
+
+@container (max-width: 576px) {
+  .featuresSection {
+    flex-direction: column;
+    padding: 20px 10px;
+  }
+
+  .featuresContent {
+    max-width: 100%;
+    padding: 10px;
+    text-align: center;
+  }
+
+  .featureText {
+    font-size: 14px;
+  }
+
+  .featuresImageContainer {
+    max-width: 100%;
+    padding: 10px;
+  }
+
+  .featuresImage {
+    width: 100%;
+    max-width: 100%;
+    height: auto;
+    border-radius: 10px;
+  }
+}

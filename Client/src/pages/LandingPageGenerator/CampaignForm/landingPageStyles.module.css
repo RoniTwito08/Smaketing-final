@@ -175,11 +175,13 @@ body {
 }
 
 .sectionsContainer {
-  background-color: var(--primary-color);
   flex: 1;
   box-sizing: border-box;
   transition: all 0.3s ease-out;
+  background-color: var(--primary-color);
+  background-image: var(--primary-gradient, none);
 }
+
 
 .removedSection {
   background-color: #fff;
@@ -405,6 +407,44 @@ input[type="range"] {
   display: flex;
   justify-content: flex-end;
   gap: 10px;
+}
+
+.linearButton {
+  background: linear-gradient(135deg, #6a11cb, #2575fc); 
+  width:80%;
+  color: #fff;
+  font-weight: bold;
+  padding: 10px 18px;
+  border-radius: 30px;
+  cursor: pointer;
+  border: none;
+  margin-bottom: 10px;
+  font-size: 14px;
+  letter-spacing: 0.5px;
+  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.linearButton:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.15);
+}
+
+.linearButton::before {
+  content: "🎨";
+  font-size: 18px;
+}
+
+
+
+.sidebarGradient {
+  background-image: var(--primary-color);
+}
+
+.sectionsContainerGradient {
+  background-image: var(--primary-color);
 }
 
 

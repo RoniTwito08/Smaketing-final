@@ -1,3 +1,13 @@
+:root {
+  --primary-color: #ffffff;
+  --secondary-color: #ffffff;
+  --tertiary-color: #ffffff;
+  --text-color: #000000;
+  --primary-gradient: none;
+  --secondary-gradient: none;
+  --tertiary-gradient: none;
+}
+
 .heroContainer {
   position: relative;
   width: 100%;
@@ -21,17 +31,33 @@
 }
 
 .heroTitle {
-  font-size: 40px;
-  font-weight: 700;
-  color: #333;
-  text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.1);
-  margin-bottom: 15px;
+  font-size: 52px;
+  font-weight: 900;
+  color: var(--text-color, #333);
+  border-image: var(--primary-gradient);
+  background-clip: text;
+  -webkit-background-clip: text;
+  text-shadow:
+    2px 2px 4px rgba(0, 0, 0, 0.2),
+    0 0 25px rgba(255, 255, 255, 0.1),
+    0 0 50px rgba(255, 255, 255, 0.1);
+  margin-bottom: 20px;
   cursor: pointer;
+  transition: transform 0.3s ease-in-out, text-shadow 0.3s ease-in-out;
 }
+
+.heroTitle:hover {
+  transform: scale(1.05);
+  text-shadow:
+    4px 4px 8px rgba(0, 0, 0, 0.4),
+    0 0 30px rgba(255, 255, 255, 0.7),
+    0 0 60px rgba(255, 255, 255, 0.5);
+}
+
 
 .heroText {
   font-size: 18px;
-  color: #555;
+  color: var(--text-color, #555);
   margin-bottom: 25px;
   line-height: 1.6;
   cursor: pointer;
@@ -41,14 +67,14 @@
   font-size: 18px;
   font-weight: bold;
   padding: 12px 24px;
-  border: 1px solid #333;
+  border: none;
   border-radius: 8px;
   cursor: pointer;
   transition: all 0.3s ease-in-out;
   box-shadow: 0 3px 6px rgba(0, 0, 0, 0.15);
   background-color: var(--tertiary-color);
-  color: #333;
-  cursor: pointer;
+  background-image: var(--tertiary-gradient);
+  color: var(--text-color, #333);
 }
 
 .heroButton:hover {
@@ -98,23 +124,9 @@
 .heroTitle[contenteditable]:focus,
 .heroText[contenteditable]:focus,
 .heroButton[contenteditable]:focus {
-  outline: none;       
-  box-shadow: none;   
-}
-
-.heroTitle,
-.heroText,
-.heroButton {
-  outline: none;
-}
-
-.heroTitle[contenteditable]:focus,
-.heroText[contenteditable]:focus,
-.heroButton[contenteditable]:focus {
   outline: 2px solid rgba(0, 0, 0, 0.1);
   outline-offset: 4px;
 }
-
 
 @media (max-width: 768px) {
   .heroContainer {
@@ -191,4 +203,3 @@
     padding: 8px 16px;
   }
 }
-

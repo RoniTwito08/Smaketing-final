@@ -1,3 +1,13 @@
+:root {
+  --primary-color: #ffffff;
+  --secondary-color: #ffffff;
+  --tertiary-color: #ffffff;
+  --text-color: #000000;
+  --primary-gradient: none;
+  --secondary-gradient: none;
+  --tertiary-gradient: none;
+}
+
 .headerWrapper {
   container-type: inline-size;
   width: 100%;
@@ -12,7 +22,7 @@
   min-height: 80px;
   width: 100%;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  color: #333;
+  color: var(--text-color, #333);
   padding: 0 20px;
   gap: 10px;
 }
@@ -42,7 +52,7 @@
 
 .uploadText {
   font-size: 16px;
-  color: #333;
+  color: var(--text-color, #333);
 }
 
 .businessName {
@@ -51,6 +61,7 @@
   text-align: center;
   flex-grow: 1;
   word-break: break-word;
+  color: var(--text-color, #333);
 }
 
 .sectionTitle {
@@ -58,6 +69,7 @@
   font-weight: 600;
   text-align: center;
   opacity: 0.9;
+  color: var(--text-color, #333);
 }
 
 .headerButtonContainer {
@@ -73,9 +85,11 @@
   font-weight: bold;
   padding: 10px 20px;
   border-radius: 8px;
-  border: 1px solid #333;
+  border: none;
   cursor: pointer;
-  background: var(--tertiary-color);
+  background-color: var(--tertiary-color);
+  background-image: var(--tertiary-gradient);
+  color: var(--text-color, #333);
   transition: all 0.3s ease-in-out;
 }
 
@@ -83,7 +97,6 @@
   transform: translateY(-5px);
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
-
 
 @container (max-width: 768px) and (min-width: 577px) {
   .headerSectionContainer {
@@ -138,6 +151,6 @@
   }
 
   .headerSectionButton {
-    display:none;
+    display: none;
   }
 }

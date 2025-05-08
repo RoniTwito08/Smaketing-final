@@ -229,7 +229,7 @@ const CampaignPopup: React.FC<CampaignPopupProps> = ({ open, onClose , onSubmit 
           <head>
             <meta charset="UTF-8">
             <title>Landing Page</title>
-            <link rel="stylesheet" href="${config.apiUrl}/dist/assets/index-B2wtabiK.css">
+            <link rel="stylesheet" href="${config.apiUrl}/dist/assets/index-Dpumvyt-.css">
             <style>
               :root {
                 --primary-color: ${colors.primaryColor};
@@ -237,11 +237,23 @@ const CampaignPopup: React.FC<CampaignPopupProps> = ({ open, onClose , onSubmit 
                 --tertiary-color: ${colors.tertiaryColor};
                 --text-color: ${colors.textColor};
                 --font: ${userFont};
+                --primary-gradient: ${getComputedStyle(document.documentElement).getPropertyValue("--primary-gradient")};
+                --secondary-gradient: ${getComputedStyle(document.documentElement).getPropertyValue("--secondary-gradient")};
+                --tertiary-gradient: ${getComputedStyle(document.documentElement).getPropertyValue("--tertiary-gradient")};
               }
-              body {
+              html, body {
+                height: 100%;
+                margin: 0;
+                padding: 0;
+                background-image: var(--primary-gradient);
+                background-repeat: no-repeat;
+                background-size: cover; /* או "100% 100%" */
+                background-attachment: fixed; /* לא חובה אבל מוסיף עומק */
                 font-family: ${userFont} !important;
               }
+
             </style>
+
           </head>
           <body style="background-color: ${colors.primaryColor};">
             ${landingPageHTML}
@@ -390,16 +402,19 @@ const CampaignPopup: React.FC<CampaignPopupProps> = ({ open, onClose , onSubmit 
                 <Droppable droppableId="sections">
                   {(provided) => (
                     <div
-                      className={`${styles.sectionsContainer} ${isSidebarOpen ? styles.withSidebar : ""} ${responsiveView ? styles[responsiveView] : ""}`}
-                      ref={(node) => {
-                        if (node) {
-                          landingPageRef.current = node;
-                          provided.innerRef(node);
-                        }
-                      }}
-                      {...provided.droppableProps}
-                      style={containerStyle}
-                    >
+                    className={`${styles.sectionsContainer} ${isSidebarOpen ? styles.withSidebar : ""} ${
+                      responsiveView ? styles[responsiveView] : ""
+                    }`}
+                    ref={(node) => {
+                      if (node) {
+                        landingPageRef.current = node;
+                        provided.innerRef(node);
+                      }
+                    }}
+                    {...provided.droppableProps}
+                    style={containerStyle}
+                  >
+                  
                       {landingPageData.map((section, index) => (
                         <Draggable
                         draggableId={section.sectionName + index}  // This should be unique
