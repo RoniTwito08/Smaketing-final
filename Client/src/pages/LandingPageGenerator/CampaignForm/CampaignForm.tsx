@@ -297,6 +297,7 @@ const CampaignPopup: React.FC<CampaignPopupProps> = ({ open, onClose , onSubmit 
         if (onClose) {
           onClose();
         }
+        handleClose();
 
         
       } catch (error) {
