@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, MutableRefObject } from "react";
+import React, { useState, useEffect, useRef, MutableRefObject, CSSProperties } from "react";
 import { DropResult, DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import SectionRenderer from "./sectionRendering"; 
 import Sidebar from "../SideBar/sideBar"; 
@@ -38,11 +38,20 @@ interface CampaignPopupProps {
   onSubmit: (form: CampaignForm) => void;
 }
 
+const defaultTheme = {
+  primaryColor: "#ffffff",
+  secondaryColor: "#ffffff",
+  tertiaryColor: "#ffffff",
+  textColor: "#000000",
+  font: "sans-serif",
+};
+
 const CampaignPopup: React.FC<CampaignPopupProps> = ({ open, onClose /*, onSubmit*/ }) => {
   const { user } = useAuth();
   if (!user || !user._id) {
     throw new Error("User is not authenticated or userId is missing");
   }
+
   const [form, setForm] = useState<CampaignForm>({
     creatorId: "1234567890",
     campaignName: "קמפיין אביב 2025",
@@ -61,15 +70,10 @@ const CampaignPopup: React.FC<CampaignPopupProps> = ({ open, onClose /*, onSubmi
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const [landingPageData, setLandingPageData] = useState<any>(null);
   const [submitted, setSubmitted] = useState(false);
-  const [colors, setColors] = useState({
-    primaryColor: "#ffffff",
-    secondaryColor: "#ffffff",
-    tertiaryColor: "#ffffff",
-    textColor: "#000000",
-  });
-  const [userFont, setUserFont] = useState("sans-serif");
+  const [landingPageData, setLandingPageData] = useState<any[]|null>(null);
+  const [colors, setColors] = useState(defaultTheme);
+  const [userFont, setUserFont] = useState(defaultTheme.font);
   const [removedSections, setRemovedSections] = useState<RemovedSection[]>([]);
   const [responsiveView, setResponsiveView] = useState<"desktop" | "tablet" | "mobile" | "">("");
   const landingPageRef = useRef<HTMLDivElement>(null) as MutableRefObject<HTMLDivElement | null>;
@@ -150,40 +154,23 @@ const CampaignPopup: React.FC<CampaignPopupProps> = ({ open, onClose /*, onSubmi
   };
 
   useEffect(() => {
-    if (submitted && landingPageData) {
-      // theme מגיע באינדקס 8
-      const theme = landingPageData[8] as {
-        primaryColor: string;
-        secondaryColor: string;
-        tertiaryColor: string;
-        font: string;
-      };
-  
-      // מגדירים משתני CSS גלובליים
-      document.documentElement.style.setProperty(
-        "--primary-color",
-        theme.primaryColor.trim()
-      );
-      document.documentElement.style.setProperty(
-        "--secondary-color",
-        theme.secondaryColor.trim()
-      );
-      document.documentElement.style.setProperty(
-        "--tertiary-color",
-        theme.tertiaryColor.trim()
-      );
-      // אין textColor ב־theme, אפשר לוותר או להגדיר ברירת־מחדל
-      // document.documentElement.style.setProperty("--text-color", "#333");
-  
-      // מגדירים פונט גלובלי
-      document.documentElement.style.setProperty(
-        "--font",
-        theme.font.trim()
-      );
-  
-      // שאר אתחול הדף
+    if (!landingPageData) return;
+    const theme = landingPageData[8];  // Make sure this index exists and contains a valid theme
+    
+    if (theme && theme.primaryColor) {
+      setColors({
+        primaryColor: theme.primaryColor.trim(),
+        secondaryColor: theme.secondaryColor.trim(),
+        tertiaryColor: theme.tertiaryColor.trim(),
+        textColor: "#333333",  // or any other color you prefer
+        font: theme.font.trim(),
+      });
+      setUserFont(theme.font.trim());
+    } else {
+      console.error("Invalid theme data");
     }
-  }, [submitted, landingPageData]);
+  }, [landingPageData]);
+  
   
 
   useEffect(() => {
@@ -194,7 +181,7 @@ const CampaignPopup: React.FC<CampaignPopupProps> = ({ open, onClose /*, onSubmi
 
   const onDragEnd = (result: DropResult) => {
     if (!result.destination) return;
-    const newSections = Array.from(landingPageData);
+    const newSections = Array.from(landingPageData || []);
     const [removed] = newSections.splice(result.source.index, 1);
     newSections.splice(result.destination.index, 0, removed);
     setLandingPageData(newSections);
@@ -206,13 +193,18 @@ const CampaignPopup: React.FC<CampaignPopupProps> = ({ open, onClose /*, onSubmi
     tertiaryColor: string,
     textColor: string
   ) => {
-    document.documentElement.style.setProperty("--primary-color", primaryColor);
-    document.documentElement.style.setProperty("--secondary-color", secondaryColor);
-    document.documentElement.style.setProperty("--tertiary-color", tertiaryColor);
-    document.documentElement.style.setProperty("--text-color", textColor);
-    setColors({ primaryColor, secondaryColor, tertiaryColor, textColor });
+    setColors({ primaryColor, secondaryColor, tertiaryColor, textColor, font: userFont });
   };
 
+  useEffect(() => {
+    document.documentElement.style.setProperty("--primary-color", colors.primaryColor);
+    document.documentElement.style.setProperty("--secondary-color", colors.secondaryColor);
+    document.documentElement.style.setProperty("--tertiary-color", colors.tertiaryColor);
+    document.documentElement.style.setProperty("--text-color", colors.textColor);
+    document.documentElement.style.setProperty("--font", userFont);
+  }, [colors, userFont]);
+  
+  
   const handleFontChange = (font: string) => {
     document.documentElement.style.setProperty("--font", font);
     setUserFont(font);
@@ -221,16 +213,13 @@ const CampaignPopup: React.FC<CampaignPopupProps> = ({ open, onClose /*, onSubmi
   const handleSaveLandingPage = async () => {
     setIsSidebarOpen(false);
   
-    // נשמור קודם את תוכן ה־body (ל־preview) ונבנה את ה־HTML המלא רק לצורך השמירה
     setTimeout(async () => {
       if (!landingPageRef.current) return;
   
-      // 1. clone landing page container בלבד (לצורך preview)
       const clone = landingPageRef.current.cloneNode(true) as HTMLElement;
       clone.querySelectorAll("[data-resize-handle]").forEach(el => el.remove());
       const landingPageHTML = clone.innerHTML;
   
-      // 3. build complete HTML only for saving
       const completeHTML = `
   <!DOCTYPE html>
   <html>
@@ -252,13 +241,12 @@ const CampaignPopup: React.FC<CampaignPopupProps> = ({ open, onClose /*, onSubmi
       </style>
     </head>
     <body>
-      ${landingPageHTML}ֿ
+      ${landingPageHTML}
       <script type="module" src="http://localhost:3000/dist/assets/index-C0XqnHoo.js"></script>
     </body>
   </html>
       `;
   
-      // 4. לשמור לשרת
       try {
         const saveResponse = await fetch("http://localhost:3000/api/saveLandingPage", {
           method: "POST",
@@ -305,27 +293,30 @@ const CampaignPopup: React.FC<CampaignPopupProps> = ({ open, onClose /*, onSubmi
     }, 500);
   };
   
-  
 
   const handleDelete = (index: number, section: any) => {
     setRemovedSections((prev) => [...prev, { section, index }]);
-    setLandingPageData((prev: any[]) => prev.filter((_, i) => i !== index));
+    setLandingPageData((prev) => {
+      if (!prev) return [];
+      return prev.filter((_, i) => i !== index);  // Ensure that you remove the section correctly
+    });
   };
-
+  
   const handleRestore = (item: RemovedSection) => {
-    setLandingPageData((prev: any[]) => {
+    setLandingPageData((prev) => {
+      if (!prev) return [item.section];
       const newSections = [...prev];
       newSections.splice(item.index, 0, item.section);
       return newSections;
     });
     setRemovedSections((prev) => prev.filter((rs) => rs !== item));
   };
+  
 
   const handleResponsiveChange = (view: "desktop" | "tablet" | "mobile" | "") => {
     setResponsiveView(view);
   };
 
-  // פונקציה לסגירת כל הפופאפים ואיפוס המצבים
   const handleClose = () => {
     setForm({ ...form, campaignName: "", campaignContent: "" });
     setLandingPageData(null);
@@ -338,6 +329,15 @@ const CampaignPopup: React.FC<CampaignPopupProps> = ({ open, onClose /*, onSubmi
 
   if (!open) return null;
 
+  const containerStyle: CSSProperties = {
+    "--primary-color": colors.primaryColor,
+    "--secondary-color": colors.secondaryColor,
+    "--tertiary-color": colors.tertiaryColor,
+    "--text-color": colors.textColor,
+    backgroundColor: colors.primaryColor,     // ← paint the background directly
+  } as any;
+  
+  
   return (
     <div>
       
@@ -372,13 +372,11 @@ const CampaignPopup: React.FC<CampaignPopupProps> = ({ open, onClose /*, onSubmi
 
   
             <div className={styles.landingPageLayout}>
-              <DragDropContext onDragEnd={onDragEnd}>
+            <DragDropContext onDragEnd={onDragEnd}>
                 <Droppable droppableId="sections">
                   {(provided) => (
                     <div
-                      className={`${styles.sectionsContainer} ${
-                        isSidebarOpen ? styles.withSidebar : ""
-                      } ${responsiveView ? styles[responsiveView] : ""}`}
+                      className={`${styles.sectionsContainer} ${isSidebarOpen ? styles.withSidebar : ""} ${responsiveView ? styles[responsiveView] : ""}`}
                       ref={(node) => {
                         if (node) {
                           landingPageRef.current = node;
@@ -386,16 +384,15 @@ const CampaignPopup: React.FC<CampaignPopupProps> = ({ open, onClose /*, onSubmi
                         }
                       }}
                       {...provided.droppableProps}
+                      style={containerStyle}
                     >
-                      {landingPageData.map((section: any, index: number) => (
+                      {landingPageData.map((section, index) => (
                         <Draggable
-                          key={section.sectionName + index}
-                          draggableId={section.sectionName + index}
-                          index={index}
-                          isDragDisabled={["header", "hero", "footer"].includes(
-                            section.sectionName || ""
-                          )}
+                        draggableId={section.sectionName + index}  // This should be unique
+                        index={index}
+                        isDragDisabled={["header", "hero", "footer"].includes(section.sectionName || "")}
                         >
+                      
                           {(providedDraggable) => (
                             <div
                               ref={providedDraggable.innerRef}
@@ -415,6 +412,7 @@ const CampaignPopup: React.FC<CampaignPopupProps> = ({ open, onClose /*, onSubmi
                   )}
                 </Droppable>
               </DragDropContext>
+
   
               <Sidebar
                 isOpen={isSidebarOpen}
