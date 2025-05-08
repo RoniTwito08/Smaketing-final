@@ -257,7 +257,7 @@ const CampaignPopup: React.FC<CampaignPopupProps> = ({ open, onClose , onSubmit 
           </head>
           <body style="background-color: ${colors.primaryColor};">
             ${landingPageHTML}
-            <script type="module" src="${config.apiUrl}/dist/assets/index-C0XqnHoo.js"></script>
+            <script type="module" src="${config.apiUrl}/dist/assets/index-HrVjgDpR.js"></script>
           </body>
         </html>
       `;
