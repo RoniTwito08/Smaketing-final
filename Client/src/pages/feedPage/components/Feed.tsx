@@ -5,9 +5,12 @@ import MyCampaigns from "../../Campaigns/MyCampaigns";
 
 const Feed: React.FC<{ className?: string }> = ({ className }) => {
   const [showPopup, setShowPopup] = useState(false);
+  const [refreshFeed, setRefreshFeed] = useState(false); // State חדש לשמירה
 
   const handleCampaignSubmit = (data: any) => {
     console.log("Campaign submitted:", data);
+    setRefreshFeed(true); // עדכון ה-state כדי לעדכן את הפיד
+    setTimeout(() => setRefreshFeed(false), 1000); // כדי לאפס את ה-state אחרי זמן קצר (אפשרות לשדרג בהמשך)
   };
 
   return (
@@ -16,7 +19,7 @@ const Feed: React.FC<{ className?: string }> = ({ className }) => {
         <button className="noPostsButton" onClick={() => setShowPopup(true)}>
           צור קמפיין
         </button>
-        <MyCampaigns />
+        <MyCampaigns key={refreshFeed ? Date.now() : ""} /> {/* הרנדר מחדש של MyCampaigns */}
       </div>
 
       <CampaignPopup
@@ -27,5 +30,6 @@ const Feed: React.FC<{ className?: string }> = ({ className }) => {
     </div>
   );
 };
+
 
 export default Feed;

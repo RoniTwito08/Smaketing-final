@@ -47,7 +47,7 @@ const defaultTheme = {
   font: "sans-serif",
 };
 
-const CampaignPopup: React.FC<CampaignPopupProps> = ({ open, onClose /*, onSubmit*/ }) => {
+const CampaignPopup: React.FC<CampaignPopupProps> = ({ open, onClose , onSubmit }) => {
   const { user } = useAuth();
   if (!user || !user._id) {
     throw new Error("User is not authenticated or userId is missing");
@@ -145,6 +145,7 @@ const CampaignPopup: React.FC<CampaignPopupProps> = ({ open, onClose /*, onSubmi
         const sectionsArray = Object.keys(data).map((key) => data[key]);
         setLandingPageData(sectionsArray);
         setSubmitted(true);
+        
       }
     } catch (err) {
       if (err instanceof Error) setError(err.message || "שגיאה בלתי צפויה");
@@ -152,6 +153,7 @@ const CampaignPopup: React.FC<CampaignPopupProps> = ({ open, onClose /*, onSubmi
     } finally {
       setLoading(false);
     }
+
   };
 
   useEffect(() => {
@@ -213,7 +215,7 @@ const CampaignPopup: React.FC<CampaignPopupProps> = ({ open, onClose /*, onSubmi
 
   const handleSaveLandingPage = async () => {
     setIsSidebarOpen(false);
-  
+    
     setTimeout(async () => {
       if (!landingPageRef.current) return;
   
@@ -223,7 +225,7 @@ const CampaignPopup: React.FC<CampaignPopupProps> = ({ open, onClose /*, onSubmi
   
       const completeHTML = `
         <!DOCTYPE html>
-        <html>
+        <html style="background-color: ${colors.primaryColor};">
           <head>
             <meta charset="UTF-8">
             <title>Landing Page</title>
@@ -241,7 +243,7 @@ const CampaignPopup: React.FC<CampaignPopupProps> = ({ open, onClose /*, onSubmi
               }
             </style>
           </head>
-          <body>
+          <body style="background-color: ${colors.primaryColor};">
             ${landingPageHTML}
             <script type="module" src="${config.apiUrl}/dist/assets/index-C0XqnHoo.js"></script>
           </body>
@@ -287,6 +289,16 @@ const CampaignPopup: React.FC<CampaignPopupProps> = ({ open, onClose /*, onSubmi
         console.log("Campaign created:", campaignResult);
         
         alert("Landing page saved successfully!");
+
+        if(onSubmit) {
+          onSubmit(form);
+        }
+
+        if (onClose) {
+          onClose();
+        }
+
+        
       } catch (error) {
         console.error(error);
         alert("Error saving landing page and campaign");
@@ -335,7 +347,7 @@ const CampaignPopup: React.FC<CampaignPopupProps> = ({ open, onClose /*, onSubmi
     "--secondary-color": colors.secondaryColor,
     "--tertiary-color": colors.tertiaryColor,
     "--text-color": colors.textColor,
-    backgroundColor: colors.primaryColor,     // ← paint the background directly
+    //backgroundColor: colors.primaryColor,     // ← paint the background directly
   } as any;
   
   
