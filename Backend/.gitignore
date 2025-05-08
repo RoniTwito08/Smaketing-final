@@ -8,3 +8,7 @@ dist/
 .env
 
 .env_dev
+
+src/landingPages/
+
+src/pexels_images/
