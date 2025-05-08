@@ -10,7 +10,7 @@ interface HeaderProps {
   buttonText: string;
 }
 
-function Header({ businessName, title, buttonText }: HeaderProps) {
+function Header({ title, buttonText }: HeaderProps) {
   const [logoPreview, setLogoPreview] = useState<string | null>(null);
   const { user, accessToken } = useAuth();
   const userId = user?._id;
@@ -76,7 +76,6 @@ function Header({ businessName, title, buttonText }: HeaderProps) {
             <span className={headerStyles.uploadText}>אין לוגו להציג</span>
           )}
         </div>
-        <h1 className={headerStyles.businessName}>{businessName}</h1>
         <h2 className={headerStyles.sectionTitle}>{title}</h2>
         <div className={headerStyles.headerButtonContainer}>
           <button

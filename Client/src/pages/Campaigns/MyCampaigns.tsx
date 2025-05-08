@@ -28,7 +28,6 @@ export const MyCampaigns: React.FC<{ onSelectCampaign: (campaign: any) => void }
   };
 
   const handleCampaignClick = (campaign: any) => {
-    setSelectedCampaign(campaign);
     onSelectCampaign(campaign);  // Pass the selected campaign to the parent component
   };
 

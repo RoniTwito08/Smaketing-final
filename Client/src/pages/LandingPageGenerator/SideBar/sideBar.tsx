@@ -1,4 +1,5 @@
 // Sidebar.tsx
+import { useEffect } from "react";
 import { motion } from "framer-motion";
 import { IoChatbubbleEllipsesOutline, IoDesktopSharp } from "react-icons/io5";
 import { IoIosRemoveCircleOutline, IoIosColorFilter } from "react-icons/io";
@@ -52,6 +53,13 @@ const Sidebar = ({
 }: SidebarProps) => {
   const [selectedIcon, setSelectedIcon] = useState<string | null>(null);
   const [_responsiveView, setResponsiveView] = useState<"desktop" | "tablet" | "mobile" | "">("");
+  const [isLinearColors, setIsLinearColors] = useState(false);
+  const [originalColors, setOriginalColors] = useState({
+    primaryColor: '',
+    secondaryColor: '',
+    tertiaryColor: '',
+    textColor: ''
+  });
 
   const handleIconClick = (icon: string) => {
     if (icon === "chat") {
@@ -76,12 +84,32 @@ const Sidebar = ({
     tertiaryColor: string,
     textColor: string
   ) => {
+    setOriginalColors({ primaryColor, secondaryColor, tertiaryColor, textColor });
     document.documentElement.style.setProperty("--primary-color", primaryColor);
     document.documentElement.style.setProperty("--secondary-color", secondaryColor);
     document.documentElement.style.setProperty("--tertiary-color", tertiaryColor);
     document.documentElement.style.setProperty("--text-color", textColor);
+    document.documentElement.style.setProperty("--primary-gradient", "none");
+    setIsLinearColors(false);
     onColorChange(primaryColor, secondaryColor, tertiaryColor, textColor);
   };
+
+  const handleLinearToggle = () => {
+    setIsLinearColors(prev => !prev);
+  };
+
+  useEffect(() => {
+    if (isLinearColors) {
+      document.documentElement.style.setProperty("--primary-gradient", `linear-gradient(135deg, ${originalColors.primaryColor}, ${originalColors.secondaryColor})`);
+      document.documentElement.style.setProperty("--secondary-gradient", `linear-gradient(135deg, ${originalColors.secondaryColor}, ${originalColors.tertiaryColor})`);
+      document.documentElement.style.setProperty("--tertiary-gradient", `linear-gradient(135deg, ${originalColors.tertiaryColor}, ${originalColors.primaryColor})`);
+    } else {
+      document.documentElement.style.setProperty("--primary-gradient", "none");
+      document.documentElement.style.setProperty("--secondary-gradient", "none");
+      document.documentElement.style.setProperty("--tertiary-gradient", "none");
+    }
+  }, [isLinearColors, originalColors]);  
+  
 
   const handleClickFontChange = (font: string) => {
     document.documentElement.style.setProperty("--font", font);
@@ -162,6 +190,29 @@ const Sidebar = ({
         {isOpen && <div className={styles.divider}></div>}
         {isOpen && (
           <div className={styles.subMenuContainer}>
+            {selectedIcon === "color" && (
+              <div>
+                <button className={styles.linearButton} onClick={handleLinearToggle}>
+                  {isLinearColors ? "צבעים רגילים" : "צבעים ליניאריים"}
+                </button>
+                <div className={styles.subMenuColors}>
+                  {colorComboData.map((colorCombo, index) => (
+                    <ColorCombo
+                      key={index}
+                      {...colorCombo}
+                      onColorComboSelect={() =>
+                        handleClickColorChange(
+                          colorCombo.primaryColor,
+                          colorCombo.secondaryColor,
+                          colorCombo.tertiaryColor,
+                          colorCombo.textColor
+                        )
+                      }
+                    />
+                  ))}
+                </div>
+              </div>
+            )}
             {selectedIcon === "responsive" && (
               <div className={styles.responsiveExplanation}>
                 <p>בחרו את התצוגה הרצויה:</p>
@@ -219,24 +270,7 @@ const Sidebar = ({
                 <p>בואו להפוך את דף הנחיתה שלכם לכלי שיווקי עוצמתי ומותאם אישית!</p>
               </div>
             )}
-            {selectedIcon === "color" && (
-              <div className={styles.subMenuColors}>
-                {colorComboData.map((colorCombo, index) => (
-                  <ColorCombo
-                    key={index}
-                    {...colorCombo}
-                    onColorComboSelect={() =>
-                      handleClickColorChange(
-                        colorCombo.primaryColor,
-                        colorCombo.secondaryColor,
-                        colorCombo.tertiaryColor,
-                        colorCombo.textColor
-                      )
-                    }
-                  />
-                ))}
-              </div>
-            )}
+            
             {selectedIcon === "font" && (
               <div className={styles.subMenuFonts}>
                 {FontData.map((font, index) => (
