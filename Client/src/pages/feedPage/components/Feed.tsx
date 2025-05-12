@@ -16,6 +16,7 @@ const Feed: React.FC<{ className?: string }> = ({ className }) => {
 
   const handleCampaignSubmit = async (_data: any) => {
     try{
+      console.log("Campaign submitted:", _data);
        const response = await fetch(`${config.apiUrl}/campaigns/google-launch`, {
               method: 'POST',
               headers: {
@@ -27,11 +28,13 @@ const Feed: React.FC<{ className?: string }> = ({ className }) => {
                 userId: user?._id
               }),
             });
+            console.log("Response from server:", response);
       
             if (!response.ok) {
               const errorData = await response.json();
               throw new Error(errorData.error || 'Failed to launch campaign');
             }
+            console
       
             const data = await response.json();
             console.log('Campaign launched successfully:', data);
