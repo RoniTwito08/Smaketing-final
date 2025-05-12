@@ -15,6 +15,8 @@ interface CampaignDetailsPopupProps {
 }
 
 const CampaignDetailsPopup: React.FC<CampaignDetailsPopupProps> = ({ campaign, onClose, onSubmit, onDelete }) => {
+
+  
   const handleDelete = async () => {
     try {
       window.confirm("האם אתה בטוח שברצונך למחוק את הקמפיין?"); 
