@@ -264,6 +264,7 @@ export class GoogleAdsService {
         },
       ],
     };
+    console.log("Operation to create campaign:", operation);
     
     const response = await request<{ results?: Array<{ campaign: Campaign }> }>({
       url: `${this.baseUrl}/customers/${targetCustomerId}/googleAds:mutate`,
@@ -271,8 +272,17 @@ export class GoogleAdsService {
       headers: await this.getHeaders(),
       data: operation,
     });
-    
+    if (!response.data) {
+      throw new Error("Failed to create campaign; no response data.");
+    }
 
+    console.log("Response from createCampaign:", response.data);
+    // if we have error in data console.log it
+    if (response.status !== 200) {
+      console.error("Error creating campaign:", response.data);
+      
+      throw new Error("Failed to create campaign; check logs for details.");
+    }
     const campaignData = response.data.results?.[0]?.campaign;
     if (!campaignData) {
       throw new Error("Failed to create campaign; no response data.");
@@ -427,7 +437,7 @@ export class GoogleAdsService {
         },
         validateStatus: (status: number) => true,
       };
-
+      // if no customer id, create a new one
       const response = await request<{ resourceName: string }>(requestConfig);
       console.log("Response from createCustomerClient:", response.data);
 

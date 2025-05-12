@@ -44,6 +44,7 @@ export const MyCampaigns: React.FC<{ onSelectCampaign: (campaign: any) => void }
     if (!selectedCampaign || !user?._id) return;
 
     try {
+      console.log("Submitting campaign:", selectedCampaign);
       const response = await fetch(`${config.apiUrl}/campaigns/google-launch`, {
         method: 'POST',
         headers: {
