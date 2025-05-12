@@ -266,37 +266,65 @@ export class GoogleAdsService {
     };
     console.log("Operation to create campaign:", operation);
     
-    const response = await request<{ results?: Array<{ campaign: Campaign }> }>({
-      url: `${this.baseUrl}/customers/${targetCustomerId}/googleAds:mutate`,
-      method: "POST",
-      headers: await this.getHeaders(),
-      data: operation,
-    });
-    if (!response.data) {
-      throw new Error("Failed to create campaign; no response data.");
-    }
+    try {
+      const response = await request<{ results?: Array<{ campaign: Campaign; partialFailureError?: any }> }>({
+        url: `${this.baseUrl}/customers/${targetCustomerId}/googleAds:mutate`,
+        method: "POST",
+        headers: await this.getHeaders(),
+        data: operation,
+      });
 
-    console.log("Response from createCampaign:", response.data);
-    // if we have error in data console.log it
-    if (response.status !== 200) {
-      console.error("Error creating campaign:", response.data);
-      
-      throw new Error("Failed to create campaign; check logs for details.");
-    }
-    const campaignData = response.data.results?.[0]?.campaign;
-    if (!campaignData) {
-      throw new Error("Failed to create campaign; no response data.");
-    }
+      if (!response.data) {
+        throw new Error("Failed to create campaign; no response data.");
+      }
 
-    return {
-      id: campaignData.id,
-      resourceName: campaignData.resourceName,
-      name: campaignData.name,
-      status: campaignData.status,
-      advertisingChannelType: campaignData.advertisingChannelType,
-      startDate: campaignData.startDate,
-      endDate: campaignData.endDate,
-    } as Campaign;
+      console.log("Response from createCampaign:", response.data);
+
+      const campaignResult = response.data.results?.[0];
+
+      // Check for partial failure error first (can happen even with 200 OK)
+      if (campaignResult && campaignResult.partialFailureError) {
+        console.error("Partial failure error during campaign creation:", JSON.stringify(campaignResult.partialFailureError, null, 2));
+        throw new Error("Partial failure during campaign creation; check logs for details.");
+      }
+
+      // Check response status if not a partial failure
+      if (response.status !== 200) {
+        console.error("Error creating campaign. Status:", response.status);
+        console.error("Full response data:", JSON.stringify(response.data, null, 2));
+        throw new Error(`Google Ads API Error: Status ${response.status}`);
+      }
+
+      const campaignData = campaignResult?.campaign;
+      if (!campaignData) {
+        // This case might be covered by the partial failure check, but good to keep
+        console.error("Campaign data missing in successful response:", JSON.stringify(response.data, null, 2));
+        throw new Error("Failed to create campaign; no campaign data returned.");
+      }
+
+      return {
+        id: campaignData.id,
+        resourceName: campaignData.resourceName,
+        name: campaignData.name,
+        status: campaignData.status,
+        advertisingChannelType: campaignData.advertisingChannelType,
+        startDate: campaignData.startDate,
+        endDate: campaignData.endDate,
+      } as Campaign;
+
+    } catch (error: any) {
+      console.error("Caught error during createCampaign API call:");
+      // Log detailed error from GaxiosError response if available
+      if (error.response && error.response.data) {
+         console.error("Detailed Google Ads API Error:", JSON.stringify(error.response.data.error || error.response.data, null, 2));
+      } else {
+        // Log the generic error message if no detailed response data
+        console.error("Generic Error:", error.message);
+      }
+      // Log the GaxiosError object itself for more context if needed
+      // console.error("Full GaxiosError object:", error); 
+      throw new Error("Failed to create campaign via Google Ads API."); // Re-throw a generic error
+    }
   }
 
   // ------------------------------------------------------
