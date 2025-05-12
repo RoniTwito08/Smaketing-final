@@ -243,12 +243,67 @@ export class GoogleAdsService {
   // ------------------------------------------------------
   async createCampaign(
     campaign: Omit<Campaign, "id">,
-    customerId?: string
+    customerId?: string,
+    budgetAmountMicros?: number
   ): Promise<Campaign> {
     const targetCustomerId = customerId || this.customerId;
 
-    const operation = {
-      mutateOperations: [
+    // Step 1: Create a Campaign Budget first
+    const budgetName = `Budget for ${campaign.name} - ${Date.now()}`;
+    const finalBudgetAmountMicros = budgetAmountMicros || 50_000_000; // Use provided or default
+
+    const budgetOperation = {
+      create: {
+        name: budgetName,
+        amountMicros: finalBudgetAmountMicros,
+        deliveryMethod: "STANDARD", 
+        explicitlyShared: false,
+      },
+    };
+
+    let campaignBudgetResourceName: string;
+    try {
+      // Define budget response type based on actual log output
+      type BudgetCreateResponse = {
+        results?: Array<{ resourceName?: string }>;
+        // No partialFailureError expected at this level for this endpoint type
+      };
+      const budgetResponse = await request<BudgetCreateResponse>({
+        url: `${this.baseUrl}/customers/${targetCustomerId}/campaignBudgets:mutate`,
+        method: "POST",
+        headers: await this.getHeaders(),
+        // Send operations directly, not nested under mutateOperations for budget
+        data: { operations: [budgetOperation] }, 
+      });
+
+      // Log the actual response data for debugging
+      console.log("Budget Creation Response Data:", JSON.stringify(budgetResponse.data, null, 2));
+
+      // Correctly parse the budget creation response
+      const budgetResourceName = budgetResponse.data?.results?.[0]?.resourceName;
+      
+      if (!budgetResourceName) {
+         // No need to check for partialFailureError here as this is not a mutateOperationResponse
+         console.error("Failed to create campaign budget. Full Response:", JSON.stringify(budgetResponse.data, null, 2));
+         throw new Error("Failed to create campaign budget; resource name missing in response.");
+      }
+      campaignBudgetResourceName = budgetResourceName;
+      console.log(`Successfully created budget: ${campaignBudgetResourceName}`);
+
+    } catch (error: any) {
+      console.error("Caught error during createCampaignBudget API call:");
+      if (error.response && error.response.data) {
+         console.error("Detailed Google Ads API Error (Budget):", JSON.stringify(error.response.data.error || error.response.data, null, 2));
+      } else {
+        console.error("Generic Error (Budget):", error.message);
+      }
+      throw new Error("Failed to create campaign budget via Google Ads API.");
+    }
+
+    // Step 2: Create the Campaign using the new budget's resource name
+    const campaignOperation = {
+      // Use mutateOperations array for campaign creation
+      mutateOperations: [ 
         {
           campaignOperation: {
             create: {
@@ -257,21 +312,30 @@ export class GoogleAdsService {
               advertisingChannelType: campaign.advertisingChannelType,
               startDate: campaign.startDate,
               endDate: campaign.endDate,
-              manualCpc: {}, // You must include a bidding strategy like this
-              campaignBudget: `customers/${targetCustomerId}/campaignBudgets/1234567890`, // Ensure this is correct!
+              manualCpc: {}, 
+              campaignBudget: campaignBudgetResourceName, // Use the dynamically created budget
             },
           },
         },
       ],
     };
-    console.log("Operation to create campaign:", operation);
+    console.log("Operation to create campaign:", campaignOperation);
     
     try {
-      const response = await request<{ results?: Array<{ campaign: Campaign; partialFailureError?: any }> }>({
+      // Define a more accurate response type including potential partial failure
+      type CampaignMutateResponse = {
+        mutateOperationResponses?: Array<{
+          campaignResult?: { resourceName?: string }; 
+          partialFailureError?: any; 
+        }>;
+      };
+
+      const response = await request<CampaignMutateResponse>({
         url: `${this.baseUrl}/customers/${targetCustomerId}/googleAds:mutate`,
         method: "POST",
         headers: await this.getHeaders(),
-        data: operation,
+        // Send campaignOperation directly for campaign mutate
+        data: campaignOperation, 
       });
 
       if (!response.data) {
@@ -280,9 +344,10 @@ export class GoogleAdsService {
 
       console.log("Response from createCampaign:", response.data);
 
-      const campaignResult = response.data.results?.[0];
+      // Use mutateOperationResponses based on the defined type
+      const campaignResult = response.data.mutateOperationResponses?.[0]; 
 
-      // Check for partial failure error first (can happen even with 200 OK)
+      // Check for partial failure error first
       if (campaignResult && campaignResult.partialFailureError) {
         console.error("Partial failure error during campaign creation:", JSON.stringify(campaignResult.partialFailureError, null, 2));
         throw new Error("Partial failure during campaign creation; check logs for details.");
@@ -295,21 +360,28 @@ export class GoogleAdsService {
         throw new Error(`Google Ads API Error: Status ${response.status}`);
       }
 
-      const campaignData = campaignResult?.campaign;
-      if (!campaignData) {
+      // Access campaignResult correctly
+      const campaignResponseData = campaignResult?.campaignResult; 
+      const resourceName = campaignResponseData?.resourceName;
+
+      if (!resourceName) {
         // This case might be covered by the partial failure check, but good to keep
         console.error("Campaign data missing in successful response:", JSON.stringify(response.data, null, 2));
-        throw new Error("Failed to create campaign; no campaign data returned.");
+        throw new Error("Failed to create campaign; no resourceName returned.");
       }
 
+      // Extract the ID from the resource name (e.g., customers/123/campaigns/456 -> 456)
+      const campaignId = resourceName.split('/').pop();
+      if (!campaignId) {
+         console.error("Could not parse campaignId from resourceName:", resourceName);
+         throw new Error("Failed to parse campaignId from resourceName.");
+      }
+
+      // Return the known campaign data along with the ID and resourceName from the response
       return {
-        id: campaignData.id,
-        resourceName: campaignData.resourceName,
-        name: campaignData.name,
-        status: campaignData.status,
-        advertisingChannelType: campaignData.advertisingChannelType,
-        startDate: campaignData.startDate,
-        endDate: campaignData.endDate,
+        ...campaign, // Spread the original input data (name, status, dates etc.)
+        id: campaignId, // Use the variable holding the parsed ID
+        resourceName: resourceName, // The resourceName from the API response
       } as Campaign;
 
     } catch (error: any) {

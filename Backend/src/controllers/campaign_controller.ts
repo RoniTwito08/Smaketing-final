@@ -7,6 +7,7 @@ import { GoogleAdsService } from "../services/googleAds/googleAds.service";
 import { googleAdsConfig } from "../config/google.config"; 
 import { CampaignStatus, AdvertisingChannelType } from "../services/googleAds/types";
 import {getGeminiKeywordsFromCampaign} from "../controllers/gemini_controller"; // Adjust the import path as necessary
+import mongoose from "mongoose";
 const googleAdsService = new GoogleAdsService(googleAdsConfig);
 
 export const createCampaign = async (req: Request, res: Response) => {
@@ -181,11 +182,25 @@ export const fetchCampaignStatistics = async (req: Request, res: Response): Prom
 
 export const launchGoogleAdsCampaign = async (req: Request, res: Response): Promise<void> => {
   try {
-    const { businessName, objective, userId } = req.body;
+    // Destructure budget from request body
+    const { businessName, objective, userId, campaignMongoId, budget } = req.body;
 
     if (!userId) {
       res.status(400).json({ error: "Missing userId" });
       return ;
+    }
+    if (!campaignMongoId) {
+      res.status(400).json({ error: "Missing campaignMongoId" });
+      return;
+    }
+    // Validate budget (ensure it's a positive number)
+    if (budget === undefined || typeof budget !== 'number' || budget <= 0) {
+      res.status(400).json({ error: "Missing or invalid budget value" });
+      return;
+    }
+    if (!mongoose.Types.ObjectId.isValid(campaignMongoId)) {
+      res.status(400).json({ error: "Invalid campaignMongoId format" });
+      return;
     }
     const user = await userModel.findById(userId);
     const googleCustomerIdFromDb = user?.googleCustomerId;
@@ -211,15 +226,20 @@ export const launchGoogleAdsCampaign = async (req: Request, res: Response): Prom
       .split("T")[0]
       .replace(/-/g, "");
 
+    // Convert budget from ILS to micros (multiply by 1,000,000)
+    const budgetMicros = budget * 1_000_000;
 
+    // Generate a unique campaign name using a timestamp
+    const uniqueCampaignName = `קמפיין של ${businessName} - ${Date.now()}`;
+    console.log("Generated unique campaign name:", uniqueCampaignName);
 
     const campaign = await googleAdsService.createCampaign({
-      name: `קמפיין של ${businessName}`,
+      name: uniqueCampaignName,
       status: CampaignStatus.PAUSED,
       advertisingChannelType: AdvertisingChannelType.SEARCH,
       startDate,
       endDate,
-    }, customerId);
+    }, customerId, budgetMicros);
 
     const adGroup = await googleAdsService.createAdGroup({
       name: "Ad Group for Shoes",
@@ -227,10 +247,17 @@ export const launchGoogleAdsCampaign = async (req: Request, res: Response): Prom
       status: "ENABLED",
     }, customerId);
 
-    // save adgroup in campain model
-    await campaignModel.findByIdAndUpdate(campaign.id, {
+    // Add detailed logging right before the failing call
+    console.log("--- Debugging findByIdAndUpdate ---");
+    console.log(`Value passed as ID: ${campaignMongoId}`);
+    console.log(`Type of value: ${typeof campaignMongoId}`);
+    console.log(`Is value a valid ObjectId string?: ${mongoose.Types.ObjectId.isValid(campaignMongoId)}`);
+    console.log("--- End Debugging ---");
+
+    const updatedCampaignDoc = await campaignModel.findByIdAndUpdate(campaignMongoId, {
       adGroupId: adGroup.id,
-    });
+      googleCampaignId: campaign.id,
+    }, { new: true });
 
     console.log('daaa');
     // Generate keywords using Gemini
@@ -248,8 +275,6 @@ export const launchGoogleAdsCampaign = async (req: Request, res: Response): Prom
     res.status(500).json({ error: "Failed to launch campaign" });
   }
 };
-
-
 
 export const getAllCampaignsByUserId = async (req: Request, res: Response): Promise<void> => {
   const { userId } = req.params;
