@@ -1,16 +1,45 @@
 import React, { useState } from "react";
 import CampaignPopup from "../../LandingPageGenerator/CampaignForm/CampaignForm";
 import "./Feed.css";
+import { useAuth } from "../../../context/AuthContext";
+
 import MyCampaigns from "../../Campaigns/MyCampaigns";
 import CampaignDetailsPopup from "../../Campaigns/CampaignDetailsPopup";
+import { config } from "../../../config";
 
 const Feed: React.FC<{ className?: string }> = ({ className }) => {
+    const { user } = useAuth();
+  
   const [showPopup, setShowPopup] = useState(false);
   const [refreshFeed, setRefreshFeed] = useState(false); // State for forcing re-render
   const [selectedCampaign, setSelectedCampaign] = useState<any>(null);
 
-  const handleCampaignSubmit = (data: any) => {
-    console.log("Campaign submitted:", data);
+  const handleCampaignSubmit = async (_data: any) => {
+    try{
+       const response = await fetch(`${config.apiUrl}/campaigns/google-launch`, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({
+                businessName: selectedCampaign.campaignName,
+                objective: selectedCampaign.campaginPurpose,
+                userId: user?._id
+              }),
+            });
+      
+            if (!response.ok) {
+              const errorData = await response.json();
+              throw new Error(errorData.error || 'Failed to launch campaign');
+            }
+      
+            const data = await response.json();
+            console.log('Campaign launched successfully:', data);
+            setRefreshFeed(true); // Trigger refresh after submission
+
+    }catch (error) {
+      console.error("Error launching campaign:", error);
+    }
   };
 
   const handleDeleteCampaign = (campaignId: string) => {
@@ -57,7 +86,7 @@ const Feed: React.FC<{ className?: string }> = ({ className }) => {
           e.currentTarget.style.transform = "translateY(-2px)";
         }}
       >
-        צור קמפיין
+        קמפיין חדש
       </button>
 
         <MyCampaigns 
