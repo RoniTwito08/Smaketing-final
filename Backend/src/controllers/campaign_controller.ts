@@ -187,23 +187,31 @@ export const launchGoogleAdsCampaign = async (req: Request, res: Response): Prom
       res.status(400).json({ error: "Missing userId" });
       return ;
     }
-
-    const customerId = await googleAdsService.createCustomerClient({
+    const user = await userModel.findById(userId);
+    const googleCustomerIdFromDb = user?.googleCustomerId;
+    let customerId = null;
+    if (!googleCustomerIdFromDb) {
+    customerId = await googleAdsService.createCustomerClient({
       businessName,
       currencyCode: "ILS",
       timeZone: "Asia/Jerusalem"
     });
-
     await userModel.findByIdAndUpdate(userId, {
       googleCustomerId: customerId
     });
+  }else{
+    customerId = googleCustomerIdFromDb;
+  }
 
+    
     const today = new Date();
     const startDate = today.toISOString().split("T")[0].replace(/-/g, "");
     const endDate = new Date(today.setMonth(today.getMonth() + 1))
       .toISOString()
       .split("T")[0]
       .replace(/-/g, "");
+
+
 
     const campaign = await googleAdsService.createCampaign({
       name: `קמפיין של ${businessName}`,
