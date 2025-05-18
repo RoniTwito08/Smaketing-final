@@ -247,6 +247,8 @@ export const launchGoogleAdsCampaign = async (req: Request, res: Response): Prom
       status: "ENABLED",
     }, customerId);
 
+    console.log('adGrou$%%$#%$##%$$#%$#%%$################################################################p', adGroup);
+
     // Add detailed logging right before the failing call
     console.log("--- Debugging findByIdAndUpdate ---");
     console.log(`Value passed as ID: ${campaignMongoId}`);
@@ -261,7 +263,8 @@ export const launchGoogleAdsCampaign = async (req: Request, res: Response): Prom
 
     console.log('daaa');
     // Generate keywords using Gemini
-    const keywords = await getGeminiKeywordsFromCampaign(campaign);
+    // const keywords = await getGeminiKeywordsFromCampaign(campaign);
+    const keywords = [{keywordText: "ייעוץ משפטי לעסקים", matchType: "PHRASE"}]
     console.log('asdadads');
     await googleAdsService.addKeywordsToAdGroup(adGroup.id, keywords.map(kw => ({ text: kw.keywordText, matchType: kw.matchType })));
 
@@ -270,8 +273,12 @@ export const launchGoogleAdsCampaign = async (req: Request, res: Response): Prom
       customerId,
       campaign,
     });
-  } catch (error) {
-    console.error("Error launching campaign:", error);
+  } catch (error: any) {
+    if (error?.response?.data?.error) {
+      console.error("3:Error launching campaign:", JSON.stringify(error.response.data.error, null, 2));
+    } else {
+      console.error("3:Error launching campaign:", error);
+    }
     res.status(500).json({ error: "Failed to launch campaign" });
   }
 };
