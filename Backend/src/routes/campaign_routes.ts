@@ -11,7 +11,7 @@ import {
   fetchCampaignStatistics,
   launchGoogleAdsCampaign,
   getAllCampaignsByUserId,
-  addDemoKeywords,
+  
 } from "../controllers/campaign_controller";
 
 const router = express.Router();
@@ -27,6 +27,5 @@ router.put("/uninterest/:campaignId", removeInterest);
 router.get('/campaigns/:id/statistics', fetchCampaignStatistics);
 router.post("/google-launch", launchGoogleAdsCampaign);
 router.get("/user/:userId", getAllCampaignsByUserId);
-router.post("/demo-keywords", addDemoKeywords);
 
 export default router;

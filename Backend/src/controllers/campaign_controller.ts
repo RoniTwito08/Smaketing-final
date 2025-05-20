@@ -246,13 +246,18 @@ export const launchGoogleAdsCampaign = async (req: Request, res: Response): Prom
       endDate,
     }, customerId, budgetMicros);
 
-    const adGroup = await googleAdsService.createAdGroup({
-      name: businessName,
-      campaignResourceName: campaign.resourceName!,
-      status: "ENABLED",
-    }, customerId);
-
-    console.log('adGrou$%%$#%$##%$$#%$#%%$################################################################p', adGroup);
+    
+    const adgroupfromdb = await campaignModel.findById(campaignMongoId);
+    let adGroupId = adgroupfromdb?.adGroupId;
+    
+    if (!adGroupId) {
+      const newAdGroup = await googleAdsService.createAdGroup({
+        name: businessName,
+        campaignResourceName: campaign.resourceName!,
+        status: "ENABLED",
+      }, customerId);
+      adGroupId = newAdGroup.id;
+    }
 
     // Add detailed logging right before the failing call
     console.log("--- Debugging findByIdAndUpdate ---");
@@ -262,16 +267,30 @@ export const launchGoogleAdsCampaign = async (req: Request, res: Response): Prom
     console.log("--- End Debugging ---");
 
     const updatedCampaignDoc = await campaignModel.findByIdAndUpdate(campaignMongoId, {
-      adGroupId: adGroup.id,
+      adGroupId: adGroupId,
       googleCampaignId: campaign.id,
     }, { new: true });
 
     console.log('daaa');
     // Generate keywords using Gemini
     // const keywords = await getGeminiKeywordsFromCampaign(campaign);
-    const keywords = [{keywordText: "ייעוץ משפטי לעסקים", matchType: "PHRASE"}]
+    const keywords = [
+      { keywordText: "ייעוץ משפטי לעסקים", matchType: "PHRASE" },
+      { keywordText: "עורך דין לעסקים", matchType: "EXACT" }
+    ];
     console.log('asdadads');
-    await googleAdsService.addKeywordsToAdGroup(adGroup.id, keywords.map(kw => ({ text: kw.keywordText, matchType: kw.matchType })));
+    if (adGroupId) {
+      await googleAdsService.addKeywordsToAdGroup(
+        adGroupId, 
+        keywords.map(kw => ({ 
+          text: kw.keywordText, 
+          matchType: kw.matchType 
+        })),
+        customerId
+      );
+    } else {
+      throw new Error("Failed to create or retrieve ad group ID");
+    }
 
     res.status(201).json({
       message: "Campaign launched successfully",
@@ -297,73 +316,6 @@ export const getAllCampaignsByUserId = async (req: Request, res: Response): Prom
     res.status(500).json({ error: "Internal server error" });
   }
   
-};
-
-export const addDemoKeywords = async (req: Request, res: Response): Promise<void> => {
-  try {
-    const adGroupId = "180408034952";
-    const demoKeywords = [
-      { keywordText: "ייעוץ משפטי לעסקים", matchType: "PHRASE" },
-      { keywordText: "עורך דין לעסקים", matchType: "EXACT" },
-      { keywordText: "ייעוץ משפטי לחברות", matchType: "BROAD" },
-      { keywordText: "עורך דין מסחרי", matchType: "PHRASE" },
-      { keywordText: "ייעוץ משפטי אונליין", matchType: "EXACT" }
-    ];
-
-    console.log("Attempting to add keywords to ad group:", adGroupId);
-    console.log("Keywords to add:", JSON.stringify(demoKeywords, null, 2));
-
-    // First verify the ad group exists
-    try {
-      const adGroup = await googleAdsService.getAdGroup(adGroupId);
-      console.log("Found ad group:", JSON.stringify(adGroup, null, 2));
-    } catch (error: any) {
-      console.error("Ad group verification failed:", error.response?.data || error.message);
-      res.status(404).json({ 
-        error: "Ad group not found", 
-        message: "The specified ad group does not exist or is not accessible",
-        adGroupId
-      });
-      return;
-    }
-
-    const result = await googleAdsService.addKeywordsToAdGroup(
-      adGroupId,
-      demoKeywords.map(kw => ({ text: kw.keywordText, matchType: kw.matchType }))
-    );
-
-    console.log("Google Ads API Response:", JSON.stringify(result, null, 2));
-
-    res.status(200).json({
-      message: "Demo keywords added successfully",
-      keywords: demoKeywords,
-      result
-    });
-  } catch (error: any) {
-    console.error("Detailed error information:");
-    console.error("Error name:", error.name);
-    console.error("Error message:", error.message);
-    console.error("Error stack:", error.stack);
-    
-    if (error.response) {
-      console.error("Error response data:", JSON.stringify(error.response.data, null, 2));
-      console.error("Error response status:", error.response.status);
-      console.error("Error response headers:", JSON.stringify(error.response.headers, null, 2));
-    }
-    
-    if (error.request) {
-      console.error("Error request:", error.request);
-    }
-
-    res.status(500).json({ 
-      error: "Failed to add demo keywords",
-      details: {
-        message: error.message,
-        response: error.response?.data,
-        status: error.response?.status
-      }
-    });
-  }
 };
 
 

@@ -577,9 +577,11 @@ export class GoogleAdsService {
    */
   async addKeywordsToAdGroup(
     adGroupId: string,
-    keywords: { text: string; matchType: string }[]
+    keywords: { text: string; matchType: string }[],
+    customerId?: string
   ) {
-    const adGroupResourceName = `customers/${this.customerId}/adGroups/${adGroupId}`;
+    const targetCustomerId = customerId || this.customerId;
+    const adGroupResourceName = `customers/${targetCustomerId}/adGroups/${adGroupId}`;
 
     const operations = keywords.map((k) => ({
       create: {
@@ -593,7 +595,7 @@ export class GoogleAdsService {
     }));
 
     const response = await request({
-      url: `${this.baseUrl}/customers/${this.customerId}/adGroupCriteria:mutate`,
+      url: `${this.baseUrl}/customers/${targetCustomerId}/adGroupCriteria:mutate`,
       method: "POST",
       headers: await this.getHeaders(),
       data: { operations },
