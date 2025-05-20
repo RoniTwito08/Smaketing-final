@@ -182,6 +182,7 @@ export const fetchCampaignStatistics = async (req: Request, res: Response): Prom
 
 export const launchGoogleAdsCampaign = async (req: Request, res: Response): Promise<void> => {
   try {
+    console.log('req.body', req.body);
     // Destructure budget from request body
     const { businessName, objective, userId, campaignMongoId, budget } = req.body;
 
@@ -189,14 +190,18 @@ export const launchGoogleAdsCampaign = async (req: Request, res: Response): Prom
       res.status(400).json({ error: "Missing userId" });
       return ;
     }
+    console.log('budget', budget);
+
     if (!campaignMongoId) {
       res.status(400).json({ error: "Missing campaignMongoId" });
       return;
     }
+    console.log('budget', budget);
     // Validate budget (ensure it's a positive number)
     if (budget === undefined || typeof budget !== 'number' || budget <= 0) {
       res.status(400).json({ error: "Missing or invalid budget value" });
       return;
+    
     }
     if (!mongoose.Types.ObjectId.isValid(campaignMongoId)) {
       res.status(400).json({ error: "Invalid campaignMongoId format" });
@@ -242,7 +247,7 @@ export const launchGoogleAdsCampaign = async (req: Request, res: Response): Prom
     }, customerId, budgetMicros);
 
     const adGroup = await googleAdsService.createAdGroup({
-      name: "Ad Group for Shoes",
+      name: businessName,
       campaignResourceName: campaign.resourceName!,
       status: "ENABLED",
     }, customerId);

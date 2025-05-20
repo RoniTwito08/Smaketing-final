@@ -25,7 +25,9 @@ const Feed: React.FC<{ className?: string }> = ({ className }) => {
               body: JSON.stringify({
                 businessName: selectedCampaign.campaignName,
                 objective: selectedCampaign.campaginPurpose,
-                userId: user?._id
+                userId: user?._id,
+                campaignMongoId: selectedCampaign._id,
+                budget: selectedCampaign.budget
               }),
             });
             console.log("Response from server:", response);
@@ -34,7 +36,6 @@ const Feed: React.FC<{ className?: string }> = ({ className }) => {
               const errorData = await response.json();
               throw new Error(errorData.error || 'Failed to launch campaign');
             }
-            console
       
             const data = await response.json();
             console.log('Campaign launched successfully:', data);
