@@ -23,7 +23,8 @@ export const createCampaign = async (req: Request, res: Response) => {
 
 export const getAllCampaigns = async (req: Request, res: Response) => {
   try {
-    const campaigns = await campaignModel.find().populate("feedbacks");
+    //get only campaigns by user id
+    const campaigns = await campaignModel.find({ creatorId: req.body.userId });
     res.status(200).json(campaigns);
   } catch (error) {
     res.status(500).json({ error: "Internal server error" });
@@ -182,7 +183,6 @@ export const fetchCampaignStatistics = async (req: Request, res: Response): Prom
 
 export const launchGoogleAdsCampaign = async (req: Request, res: Response): Promise<void> => {
   try {
-    console.log('req.body', req.body);
     // Destructure budget from request body
     const { businessName, objective, userId, campaignMongoId, budget } = req.body;
 
@@ -190,13 +190,11 @@ export const launchGoogleAdsCampaign = async (req: Request, res: Response): Prom
       res.status(400).json({ error: "Missing userId" });
       return ;
     }
-    console.log('budget', budget);
 
     if (!campaignMongoId) {
       res.status(400).json({ error: "Missing campaignMongoId" });
       return;
     }
-    console.log('budget', budget);
     // Validate budget (ensure it's a positive number)
     if (budget === undefined || typeof budget !== 'number' || budget <= 0) {
       res.status(400).json({ error: "Missing or invalid budget value" });
@@ -236,7 +234,6 @@ export const launchGoogleAdsCampaign = async (req: Request, res: Response): Prom
 
     // Generate a unique campaign name using a timestamp
     const uniqueCampaignName = `קמפיין של ${businessName} - ${Date.now()}`;
-    console.log("Generated unique campaign name:", uniqueCampaignName);
 
     const campaign = await googleAdsService.createCampaign({
       name: uniqueCampaignName,
@@ -260,25 +257,18 @@ export const launchGoogleAdsCampaign = async (req: Request, res: Response): Prom
     }
 
     // Add detailed logging right before the failing call
-    console.log("--- Debugging findByIdAndUpdate ---");
-    console.log(`Value passed as ID: ${campaignMongoId}`);
-    console.log(`Type of value: ${typeof campaignMongoId}`);
-    console.log(`Is value a valid ObjectId string?: ${mongoose.Types.ObjectId.isValid(campaignMongoId)}`);
-    console.log("--- End Debugging ---");
 
     const updatedCampaignDoc = await campaignModel.findByIdAndUpdate(campaignMongoId, {
       adGroupId: adGroupId,
       googleCampaignId: campaign.id,
     }, { new: true });
 
-    console.log('daaa');
     // Generate keywords using Gemini
     const keywords = await getGeminiKeywordsFromCampaign(campaign);
     // const keywords = [
       // { keywordText: "ייעוץ משפטי לעסקים", matchType: "PHRASE" },
       // { keywordText: "עורך דין לעסקים", matchType: "EXACT" }
     // ];
-    console.log('asdadads');
     if (adGroupId) {
       await googleAdsService.addKeywordsToAdGroup(
         adGroupId, 

@@ -5,14 +5,11 @@ import { GoogleAdsService } from "../services/googleAds/googleAds.service";
 import userModel from "../models/user_models";
 import { Campaign } from "../services/googleAds/types";
 
-console.log("🔁 Cron system loaded");
 
 // everyday at 8:00 AM
 async function handleDailyMarketingJob() {
-  console.log("running marketing analysis job...");
   try {
     const users = await userModel.find({ googleCustomerId: { $ne: null } });
-    console.log("users found:", users.length);
 
     for (const user of users) {
       try {
@@ -23,7 +20,6 @@ async function handleDailyMarketingJob() {
 
         const rawBusiness = await findBusinessInfoByUserId(userId);
 
-        console.log("before google ads service:", rawBusiness);
         const googleAdsService = new GoogleAdsService({
           clientId: process.env.GOOGLE_ADS_CLIENT_ID!,
           clientSecret: process.env.GOOGLE_ADS_CLIENT_SECRET!,
@@ -32,16 +28,9 @@ async function handleDailyMarketingJob() {
           redirectUri: process.env.GOOGLE_ADS_REDIRECT_URI!,
           customerId: customerId,
         });
-        console.log("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~:", googleAdsService);
-        console.log(googleAdsService);
-
-        console.log("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!google ads service created:", googleAdsService);
-
-        console.log("before get campaigns");
 
         // get all campigns of the user
         const campaigns: Campaign[] = await googleAdsService.getCampaigns();
-console.log('asfdasdds');
         // for test:
         // enum CampaignStatus {
         //   ENABLED = "ENABLED",
@@ -100,15 +89,10 @@ console.log('asfdasdds');
         //   },
         // ];
 
-        console.log("campaigns found:", campaigns.length);
 
         for (const campaign of campaigns) {
           const result = await runMarketingAlgo(campaign, rawBusiness);
 
-          console.log(
-            `Analysis result for ${user.email} / campaign "${campaign.name}"`
-          );
-          console.log("result:", result);
 
           const { suggestions } = result;
 
@@ -121,7 +105,6 @@ console.log('asfdasdds');
             campaignBudget: campaign.campaignBudget,
           };
 
-          console.log("updateFields:", updateFields);
 
           const keywordIdeas = suggestions.llmSuggestions?.keywordIdeas ?? [];
           const formattedKeywords = keywordIdeas.map((kw) => ({
@@ -142,7 +125,6 @@ console.log('asfdasdds');
               formattedKeywords
             );
 
-            console.log(`Campaign "${campaign.name}" updated with keywords`);
           } catch (err) {
             console.error(`Failed to update campaign "${campaign.name}":`, err);
           }

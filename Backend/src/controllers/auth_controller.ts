@@ -484,12 +484,10 @@ prepare(): void;
 
 class pizzaMargherita implements Pizza{
     prepare(): void {
-        console.log("Preparing Margherita pizza...");
     }
 }
 class pizzaPepperoni implements Pizza{
     prepare(): void {
-        console.log("Preparing Pepperoni pizza...");
     }
 }
 class pizzaFectory{
@@ -518,6 +516,5 @@ class Singelton{
     }
 
     public doSomething(): void {
-        console.log("Doing something...");
     }
 }

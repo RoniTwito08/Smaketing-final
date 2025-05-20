@@ -14,7 +14,6 @@ export class AuthService {
   private config: GoogleAdsConfig;
 
   constructor(config: GoogleAdsConfig) {
-    console.log("💡 Using refresh token:", config.refreshToken);
 
     this.config = config;
     this.oauth2Client = new OAuth2Client({

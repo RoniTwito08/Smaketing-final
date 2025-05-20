@@ -127,8 +127,6 @@ export class GoogleAdsService {
     `; // <-- entire query is now a backtick-enclosed string
     try {
 
-      console.log(await this.getHeaders());
-      console.log('asd;lkjdaslkadsjklasdjlkdsajklsdalkjsdajlkasdjkldaskjldskaljlkjdaslkjdasdas');
       const response = await request({
         url: `${this.baseUrl}/customers/${this.customerId}/googleAds:search`, // <--- backticks
         method: "POST",
@@ -277,7 +275,6 @@ export class GoogleAdsService {
       });
 
       // Log the actual response data for debugging
-      console.log("Budget Creation Response Data:", JSON.stringify(budgetResponse.data, null, 2));
 
       // Correctly parse the budget creation response
       const budgetResourceName = budgetResponse.data?.results?.[0]?.resourceName;
@@ -288,7 +285,6 @@ export class GoogleAdsService {
          throw new Error("Failed to create campaign budget; resource name missing in response.");
       }
       campaignBudgetResourceName = budgetResourceName;
-      console.log(`Successfully created budget: ${campaignBudgetResourceName}`);
 
     } catch (error: any) {
       console.error("Caught error during createCampaignBudget API call:");
@@ -319,7 +315,6 @@ export class GoogleAdsService {
         },
       ],
     };
-    console.log("Operation to create campaign:", campaignOperation);
     
     try {
       // Define a more accurate response type including potential partial failure

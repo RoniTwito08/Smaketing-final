@@ -173,7 +173,6 @@ const initApp = (): Promise<Express> => {
     if (!process.env.DB_CONNECT) {
       reject(new Error("DB_CONNECT is not defined in .env file"));
     } else {
-      console.log("daaa");
       mongoose
         .connect(process.env.DB_CONNECT)
         .then(() => {
