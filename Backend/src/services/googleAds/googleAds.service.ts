@@ -616,9 +616,11 @@ export class GoogleAdsService {
   async updateKeyword(
     adGroupId: string,
     criterionId: string,
-    updates: { text?: string; matchType?: string; status?: string }
+    updates: { text?: string; matchType?: string; status?: string },
+    customerId?: string
   ) {
-    const resourceName = `customers/${this.customerId}/adGroupCriteria/${adGroupId}~${criterionId}`;
+    const targetCustomerId = customerId || this.customerId;
+    const resourceName = `customers/${targetCustomerId}/adGroupCriteria/${adGroupId}~${criterionId}`;
 
     const updateObj: any = { resourceName };
     const paths: string[] = [];
@@ -651,7 +653,7 @@ export class GoogleAdsService {
     };
 
     const response = await request({
-      url: `${this.baseUrl}/customers/${this.customerId}/adGroupCriteria:mutate`,
+      url: `${this.baseUrl}/customers/${targetCustomerId}/adGroupCriteria:mutate`,
       method: "POST",
       headers: await this.getHeaders(),
       data: body,
@@ -666,8 +668,13 @@ export class GoogleAdsService {
    * @param adGroupId   e.g. "123456"
    * @param criterionId e.g. "7890"
    */
-  async removeKeyword(adGroupId: string, criterionId: string) {
-    const resourceName = `customers/${this.customerId}/adGroupCriteria/${adGroupId}~${criterionId}`;
+  async removeKeyword(
+    adGroupId: string, 
+    criterionId: string,
+    customerId?: string
+  ) {
+    const targetCustomerId = customerId || this.customerId;
+    const resourceName = `customers/${targetCustomerId}/adGroupCriteria/${adGroupId}~${criterionId}`;
 
     const body = {
       operations: [
@@ -678,7 +685,7 @@ export class GoogleAdsService {
     };
 
     const response = await request({
-      url: `${this.baseUrl}/customers/${this.customerId}/adGroupCriteria:mutate`,
+      url: `${this.baseUrl}/customers/${targetCustomerId}/adGroupCriteria:mutate`,
       method: "POST",
       headers: await this.getHeaders(),
       data: body,
@@ -704,7 +711,8 @@ export class GoogleAdsService {
       matchType: string;
       criterionId?: string;
       status?: string;
-    }>
+    }>,
+    customerId?: string
   ): Promise<Campaign> {
     // Step 1: Update campaign fields
     const updatedCampaign = await this.updateCampaign(
@@ -716,15 +724,22 @@ export class GoogleAdsService {
     if (adGroupId && Array.isArray(keywords) && keywords.length > 0) {
       for (const kw of keywords) {
         if (kw.criterionId) {
-          await this.updateKeyword(adGroupId, kw.criterionId, {
-            text: kw.text,
-            matchType: kw.matchType,
-            status: kw.status,
-          });
+          await this.updateKeyword(
+            adGroupId, 
+            kw.criterionId, 
+            {
+              text: kw.text,
+              matchType: kw.matchType,
+              status: kw.status,
+            },
+            customerId
+          );
         } else {
-          await this.addKeywordsToAdGroup(adGroupId, [
-            { text: kw.text, matchType: kw.matchType },
-          ]);
+          await this.addKeywordsToAdGroup(
+            adGroupId, 
+            [{ text: kw.text, matchType: kw.matchType }],
+            customerId
+          );
         }
       }
     }
