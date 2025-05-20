@@ -15,6 +15,8 @@ import GoogleAdsRadarChart from "../charts/GoogleAdsRadarChart";
 import GoogleAdsPieChart from "../charts/GoogleAdsPieChart";
 import GoogleAdsChart from "../charts/GoogleAdsChart";
 import GoogleAdsBarChart from "../charts/GoogleAdsBarChart";
+import { useAuth } from "../../context/AuthContext";
+import { config } from "../../config";
 
 interface DailyStat {
   date: string;
@@ -34,16 +36,23 @@ interface CampaignStats {
 }
 
 interface Campaign {
-  id: string;
-  name: string;
-  status: string;
-  metrics?: {
-    clicks: number;
-    impressions: number;
-    costMicros: number;
-    conversions: number;
-    ctr: number;
-  };
+  _id: string;
+  campaignName: string;
+  creatorId: string;
+  adGroupId?: string;
+  budget: number;
+  campaginPurpose: string;
+  campaignContent: string;
+  language: string;
+  marketingLevel: string;
+  targetAge: string;
+  targetAudience: string;
+  targetGender: string;
+  targetLocation: string;
+  actionToCall: string;
+  landingPage?: string;
+  feedbacks: any[];
+  interestedUsers: string[];
 }
 
 export const GoogleAdsAnalytics: React.FC = () => {
@@ -53,20 +62,18 @@ export const GoogleAdsAnalytics: React.FC = () => {
   const [startDate, setStartDate] = useState<Date | null>(null);
   const [endDate, setEndDate] = useState<Date | null>(null);
   const [stats, setStats] = useState<CampaignStats | null>(null);
-
+  const { user } = useAuth();
   useEffect(() => {
     fetchCampaigns();
   }, [customerId]);
 
   const fetchCampaigns = async () => {
     try {
-      const response = await axios.get(
-        `${import.meta.env.VITE_API_URL}/api/google-ads/campaigns`,
-        {
-          params: { customerId },
-        }
-      );
-      setCampaigns(response.data);
+      const response = await fetch(
+        `${config.apiUrl}/campaigns/user/${user?._id}`,
+      ); 
+      const data = await response.json();
+      setCampaigns(data);
     } catch (error) {
       console.error("Failed to fetch campaigns:", error);
     }
@@ -77,12 +84,13 @@ export const GoogleAdsAnalytics: React.FC = () => {
 
     try {
       const response = await axios.get(
-        `${import.meta.env.VITE_API_URL}/api/google-ads/campaigns/${selectedCampaign}/statistics`,
+        `${import.meta.env.VITE_API_URL}/google-ads/campaigns/${selectedCampaign}/statistics`,
         {
           params: {
             customerId,
             startDate: startDate.toISOString().split("T")[0],
             endDate: endDate.toISOString().split("T")[0],
+            
           },
         }
       );
@@ -127,7 +135,7 @@ export const GoogleAdsAnalytics: React.FC = () => {
     stats?.dailyBreakdown?.map((day) => ({
       campaignId: selectedCampaign,
       campaignName:
-        campaigns.find((c) => c.id === selectedCampaign)?.name || "",
+        campaigns.find((c) => c._id === selectedCampaign)?.campaignName || "",
       impressions: day.impressions,
       clicks: day.clicks,
       cost: day.costMicros / 1_000_000,
@@ -165,8 +173,8 @@ export const GoogleAdsAnalytics: React.FC = () => {
               <option value="">Select a campaign</option>
               {Array.isArray(campaigns) &&
                 campaigns.map((campaign) => (
-                  <option key={campaign.id} value={campaign.id}>
-                    {campaign.name}
+                  <option key={campaign._id} value={campaign._id}>
+                    {campaign.campaignName} - {campaign.campaginPurpose}
                   </option>
                 ))}
             </TextField>
