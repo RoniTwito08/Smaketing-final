@@ -21,6 +21,7 @@ import { initializeSocket } from "./socket";
 import marketingRoutes from "./routes/marketingAnalysis_routes";
 import fs from "fs";
 import "./cron/cronJobs";
+import axios from "axios";
 
 const app = express();
 const httpServer = http.createServer(app);
@@ -178,6 +179,24 @@ const initApp = (): Promise<Express> => {
         .then(() => {
           // הפעלת Socket.IO לאחר חיבור למסד הנתונים
           const io = initializeSocket(httpServer);
+          
+          // Call demo keywords endpoint after server starts
+          const callDemoKeywords = async () => {
+            try {
+              const baseUrl = process.env.NODE_ENV?.trim().toLowerCase() === "production"
+                ? "https://smarketing.cs.colman.ac.il"
+                : "http://localhost:3000";
+              
+              await axios.post(`${baseUrl}/campaigns/demo-keywords`);
+              console.log("Demo keywords added successfully");
+            } catch (error) {
+              console.error("Error adding demo keywords:", error);
+            }
+          };
+
+          // Call after a short delay to ensure server is fully initialized
+          setTimeout(callDemoKeywords, 2000);
+          
           resolve(app);
         })
         .catch((error) => {
