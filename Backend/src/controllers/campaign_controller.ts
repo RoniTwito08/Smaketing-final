@@ -14,7 +14,6 @@ export const createCampaign = async (req: Request, res: Response) => {
   try {
     const newCampaign = new campaignModel({ ...req.body });
     await newCampaign.save();
-
     res.status(201).json(newCampaign);
   } catch (error) {
     res.status(500).json({ error: "Internal server error", details: error });

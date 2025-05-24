@@ -189,5 +189,18 @@ const initApp = (): Promise<Express> => {
   });
 };
 
+app.use('/landing-page/:landingPageNameFile', (req, res) => {
+  const landingPageNameFile = req.params.landingPageNameFile;
+  const filePath = path.join(__dirname, 'landingPages', landingPageNameFile);
+  fs.readFile(filePath, 'utf8', (err, data) => {
+    if (err) {
+      console.error("Error reading landing page file:", err);
+      return res.status(404).send("Landing page not found");
+    }
+    res.setHeader('Content-Type', 'text/html');
+    res.send(data);
+  });
+});
+
 export { app, httpServer };
 export default initApp;

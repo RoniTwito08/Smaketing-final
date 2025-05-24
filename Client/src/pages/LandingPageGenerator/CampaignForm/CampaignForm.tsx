@@ -286,6 +286,7 @@ const CampaignPopup: React.FC<CampaignPopupProps> = ({ open, onClose , onSubmit 
           ...form,
           creatorId: user._id,
           landingPage: savedLandingPage.file,
+          campaignURL: `https://Smarketing.cs.colman.ac.il/landing-page/${savedLandingPage.file}`,
         };
   
         const campaignResponse = await fetch(`${config.apiUrl}/campaigns`, {
