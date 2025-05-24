@@ -21,24 +21,20 @@ const TourPopup = ({
   onNext,
   onBack,
   onSkip,
-}: 
-TourPopupProps) => {
-    
-    useEffect(() => {
-        const target = targetRef.current;
-        console.log("targetRef.current = ", target); 
-        if (!target) return;
-      
-        target.scrollIntoView({ behavior: "smooth", block: "center" });
-      
-        target.classList.add("tour-highlight");
-      
-        return () => {
-          target.classList.remove("tour-highlight");
-        };
-      }, [targetRef, step]);
-  
-  
+}: TourPopupProps) => {
+
+  useEffect(() => {
+    const target = targetRef.current;
+    if (!target) return;
+
+    target.scrollIntoView({ behavior: "smooth", block: "center" });
+    target.classList.add(styles["tour-highlight"]);
+
+    return () => {
+      target.classList.remove(styles["tour-highlight"]);
+    };
+  }, [targetRef, step]);
+
   return (
     <div className={styles.overlay}>
       <div className={styles.popup}>
@@ -46,21 +42,16 @@ TourPopupProps) => {
         <p>{description}</p>
         <div className={styles.controls}>
           <button onClick={onBack} disabled={step === 0}>הקודם</button>
-          {
-          step < totalSteps - 1 ? 
-          (
+          {step < totalSteps - 1 ? (
             <button onClick={onNext}>הבא</button>
-          ) :
-           (
+          ) : (
             <button onClick={onSkip}>סיום</button>
-          )
-          }
+          )}
           <button onClick={onSkip} className={styles.skip}>דלג</button>
         </div>
       </div>
     </div>
   );
-  
 };
 
 export default TourPopup;

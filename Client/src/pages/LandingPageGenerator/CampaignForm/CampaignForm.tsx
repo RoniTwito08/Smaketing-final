@@ -100,22 +100,22 @@ const tourSteps = [
   {
     ref: sectionRefs.hero,
     title: "סקשן כותרת ראשית",
-    description: "כאן תוכל לערוך את הכותרת הראשית והתמונה המרכזית.",
+    description: "כאן תוכל לערוך את הכותרת הראשית והכותרת המשנית.",
   },
   {
     ref: sectionRefs.features,
     title: "סקשן פיצ'רים",
-    description: "כאן אפשר להוסיף את היתרונות והשירותים שלך.",
+    description: "כאן אפשר לשנות את היתרונות והשירותים שלך.",
   },
   {
     ref: sectionRefs.reviews,
     title: "סקשן ביקורות",
-    description: "כאן תוכל להוסיף ביקורות מלקוחות מרוצים.",
+    description: "כאן תוכל לשנות ביקורות מלקוחות מרוצים.",
   },
   {
     ref: sectionRefs.aboutUs,
     title: "סקשן אודותינו",
-    description: "כאן תוכל להוסיף מידע על העסק שלך.",
+    description: "כאן תוכל לשנות מידע על העסק שלך.",
   },
   {
     ref: sectionRefs.gallery,
