@@ -22,7 +22,6 @@ const TourPopup = ({
   onBack,
   onSkip,
 }: TourPopupProps) => {
-
   useEffect(() => {
     const target = targetRef.current;
     if (!target) return;
@@ -36,18 +35,24 @@ const TourPopup = ({
   }, [targetRef, step]);
 
   return (
-    <div className={styles.overlay}>
-      <div className={styles.popup}>
-        <h3>{title}</h3>
-        <p>{description}</p>
-        <div className={styles.controls}>
-          <button onClick={onBack} disabled={step === 0}>הקודם</button>
-          {step < totalSteps - 1 ? (
-            <button onClick={onNext}>הבא</button>
-          ) : (
-            <button onClick={onSkip}>סיום</button>
+    <div className={styles.bookContainer}>
+      <div key={step} className={styles.bookPage}>
+        <div className={styles.pageFront}>
+          <h3>{title}</h3>
+          <p>{description}</p>
+          <div className={styles.controls}>
+            <button onClick={onBack} disabled={step === 0} className={styles.button}>
+              הקודם
+            </button>
+            {step < totalSteps - 1 ? (
+              <button onClick={onNext} className={styles.button}>הבא</button>
+            ) : (
+              <button onClick={onSkip} className={styles.button}>סיום</button>
+            )}
+          </div>
+          {step < totalSteps - 1 && (
+            <button onClick={onSkip} className={styles.skip}>דלג</button>
           )}
-          <button onClick={onSkip} className={styles.skip}>דלג</button>
         </div>
       </div>
     </div>
