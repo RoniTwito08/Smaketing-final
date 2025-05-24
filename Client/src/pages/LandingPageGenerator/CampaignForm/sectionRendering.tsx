@@ -7,7 +7,8 @@ import Reviews from "../LandingPageSections/Reviews/Reviews";
 import AboutUs from "../LandingPageSections/AboutUs/AboutUs";
 import ContactUs from "../LandingPageSections/ContactUs/ContactUs";
 import Gallery from "../LandingPageSections/Gallery/Gallery";
-import {config} from "../../../config";
+import { config } from "../../../config";
+import React from "react";
 
 interface Section {
   sectionName?: string;
@@ -27,15 +28,17 @@ interface Section {
 interface SectionRendererProps {
   section: Section;
   onDeleteSection?: () => void;
+  refMap?: Record<string, React.RefObject<HTMLDivElement>>;
 }
 
-const SectionRenderer = ({ section, onDeleteSection }: SectionRendererProps) => {
+const SectionRenderer = ({ section, onDeleteSection, refMap }: SectionRendererProps) => {
   if (!section || !section.sectionName) return null;
+
   const renderSection = () => {
     switch (section.sectionName) {
       case "header":
         return (
-          <Header 
+          <Header
             businessName={section.businessName || ""}
             title={section.title || ""}
             buttonText={section.buttonText || ""}
@@ -75,7 +78,11 @@ const SectionRenderer = ({ section, onDeleteSection }: SectionRendererProps) => 
           />
         );
       case "contactUs":
-        return <div id="contact-us-root"><ContactUs /></div>;
+        return (
+          <div id="contact-us-root">
+            <ContactUs />
+          </div>
+        );
       case "gallery":
         return <Gallery />;
       case "footer":
@@ -90,7 +97,15 @@ const SectionRenderer = ({ section, onDeleteSection }: SectionRendererProps) => 
         return null;
     }
   };
-  return <div className={section.sectionName}>{renderSection()}</div>;
+
+  return (
+    <div
+      ref={refMap?.[section.sectionName || ""]}
+      className={section.sectionName}
+    >
+      {renderSection()}
+    </div>
+  );
 };
 
 export default SectionRenderer;
