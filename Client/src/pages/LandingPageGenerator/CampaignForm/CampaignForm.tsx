@@ -229,7 +229,7 @@ const CampaignPopup: React.FC<CampaignPopupProps> = ({ open, onClose , onSubmit 
           <head>
             <meta charset="UTF-8">
             <title>Landing Page</title>
-            <link rel="stylesheet" href="${config.apiUrl}/dist/assets/index-Dpumvyt-.css">
+            <link rel="stylesheet" href="${config.apiUrl}/dist/assets/index-CzkOOIZN.css">
             <style>
               :root {
                 --primary-color: ${colors.primaryColor};
@@ -257,7 +257,7 @@ const CampaignPopup: React.FC<CampaignPopupProps> = ({ open, onClose , onSubmit 
           </head>
           <body style="background-color: ${colors.primaryColor};">
             ${landingPageHTML}
-            <script type="module" src="${config.apiUrl}/dist/assets/index-HrVjgDpR.js"></script>
+            <script type="module" src="${config.apiUrl}/dist/assets/index-9HPqurC3.js"></script>
           </body>
         </html>
       `;
@@ -302,6 +302,7 @@ const CampaignPopup: React.FC<CampaignPopupProps> = ({ open, onClose , onSubmit 
         console.log("Campaign created:", campaignResult);
         
         alert("Landing page saved successfully!");
+    
 
         if(onSubmit) {
           onSubmit(form);
@@ -351,6 +352,7 @@ const CampaignPopup: React.FC<CampaignPopupProps> = ({ open, onClose , onSubmit 
     setShowMobilePopup(false);
     setShowTabletPopup(false);
     setShowDesktopPopup(false);
+    window.location.reload();
     onClose();
   };
 
