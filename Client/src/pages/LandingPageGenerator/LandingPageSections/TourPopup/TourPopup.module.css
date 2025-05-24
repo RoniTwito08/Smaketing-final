@@ -1,0 +1,73 @@
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 9999;
+    pointer-events: none;
+    background-color: transparent;
+  }
+  
+  .popup {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    width: 300px;
+    transform: translate(-50%, -50%);
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+    padding: 20px;
+    z-index: 10000;
+    pointer-events: auto;
+    text-align: center;
+  }
+  
+  .controls {
+    margin-top: 16px;
+    display: flex;
+    justify-content: space-between;
+    gap: 8px;
+  }
+  
+  button {
+    padding: 6px 12px;
+    border: none;
+    border-radius: 6px;
+    background-color: #007bff;
+    color: white;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background-color 0.2s ease-in-out;
+  }
+  
+  button:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+  }
+  
+  .skip {
+    background: none;
+    color: #888;
+    font-size: 12px;
+    margin-left: auto;
+  }
+    .skip:hover {
+        text-decoration: underline;
+        cursor: pointer;
+    }
+    .tour-highlight {
+        outline: 3px solid #ff9800 !important;
+        box-shadow: 0 0 15px 4px rgba(255, 152, 0, 0.7)inset 0 0 0 0 !important;
+        background-color: rgba(255, 152, 0, 0.2) !important;
+        background-clip: padding-box !important;
+        filter: none !important;
+        pointer-events: none !important;
+        outline-offset: -3px !important;
+        border-radius: 8px important;
+        transition: outline 0.3s, box-shadow 0.3s !important;
+        z-index: 9998 !important;
+        position: relative !important;
+      }
+               

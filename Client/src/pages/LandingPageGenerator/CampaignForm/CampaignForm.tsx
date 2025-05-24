@@ -11,6 +11,7 @@ import { useAuth } from "../../../context/AuthContext";
 import { IoRocketOutline } from "react-icons/io5";
 import { MdCancel } from "react-icons/md";
 import { config } from "../../../config";
+import TourPopup from "../LandingPageSections/TourPopup/TourPopup";
 
 interface CampaignForm {
   creatorId: string;
@@ -82,7 +83,58 @@ const CampaignPopup: React.FC<CampaignPopupProps> = ({ open, onClose , onSubmit 
   const [showTabletPopup, setShowTabletPopup] = useState(false);
   const [showDesktopPopup, setShowDesktopPopup] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [tourStep, setTourStep] = useState(0);
+  const [showTour, setShowTour] = useState(true);
 
+ const sectionRefs = {
+  hero: useRef<HTMLDivElement>(null),
+  features: useRef<HTMLDivElement>(null),
+  reviews: useRef<HTMLDivElement>(null),
+  aboutUs: useRef<HTMLDivElement>(null),
+  footer: useRef<HTMLDivElement>(null),
+  header: useRef<HTMLDivElement>(null),
+  contactUs: useRef<HTMLDivElement>(null),
+  gallery: useRef<HTMLDivElement>(null),
+};
+const tourSteps = [
+  {
+    ref: sectionRefs.hero,
+    title: "סקשן כותרת ראשית",
+    description: "כאן תוכל לערוך את הכותרת הראשית והתמונה המרכזית.",
+  },
+  {
+    ref: sectionRefs.features,
+    title: "סקשן פיצ'רים",
+    description: "כאן אפשר להוסיף את היתרונות והשירותים שלך.",
+  },
+  {
+    ref: sectionRefs.reviews,
+    title: "סקשן ביקורות",
+    description: "כאן תוכל להוסיף ביקורות מלקוחות מרוצים.",
+  },
+  {
+    ref: sectionRefs.aboutUs,
+    title: "סקשן אודותינו",
+    description: "כאן תוכל להוסיף מידע על העסק שלך.",
+  },
+  {
+    ref: sectionRefs.gallery,
+    title: "סקשן גלריה",
+    description: "כאן תוכל להוסיף תמונות נוספות מהגלריה שלך ולשנות את מיקומם",
+  },
+  {
+    ref: sectionRefs.contactUs,
+    title: "סקשן צור קשר",
+    description: "כאן הלקוחות יכולים להשאיר פרטים ליצירת קשר.",
+  },
+  
+  {
+    ref: sectionRefs.footer,
+    title: "סקשן תחתון",
+    description: "מכאן הלקחות ישלחו את הפרטים אליך",
+  },
+];
+ 
   useEffect(() => {
     if (landingPageRef.current) {
       landingPageRef.current.style.fontFamily = userFont;
@@ -380,6 +432,20 @@ const CampaignPopup: React.FC<CampaignPopupProps> = ({ open, onClose , onSubmit 
               width: "95%",
             }}
           >
+            {showTour && (
+                <TourPopup
+                 step={tourStep}
+                 totalSteps={tourSteps.length}
+                 title={tourSteps[tourStep].title}
+                 description={tourSteps[tourStep].description}
+                 targetRef={tourSteps[tourStep].ref}
+                 onNext={() => setTourStep((prev) => prev + 1)}
+                 onBack={() => setTourStep((prev) => prev - 1)}
+                 onSkip={() => setShowTour(false)}
+                   
+  />
+)}
+
             <div className="popup-header">
               <p className="promptText">
                 האם אתה מעוניין לשגר את דף הנחיתה?
@@ -431,6 +497,7 @@ const CampaignPopup: React.FC<CampaignPopupProps> = ({ open, onClose , onSubmit 
                               <SectionRenderer
                                 section={section}
                                 onDeleteSection={() => handleDelete(index, section)}
+                                refMap={sectionRefs}
                               />
                             </div>
                           )}
